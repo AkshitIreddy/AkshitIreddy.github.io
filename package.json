@@ -1,0 +1,16 @@
+{
+  "name": "akshit-museum-of-behaviors",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Akshit Ireddy's interactive Museum of Behaviors portfolio.",
+  "scripts": {
+    "dev": "node scripts/serve.js",
+    "qa": "playwright test",
+    "qa:production": "playwright test tests/museum-production.spec.js",
+    "capture": "node scripts/capture-museum-production.js",
+    "capture:closeups": "node scripts/capture-closeup-review.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1"
+  }
+}
