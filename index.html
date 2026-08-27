@@ -17,9 +17,13 @@
     <meta name="twitter:title" content="Akshit Ireddy — Software in Motion" />
     <meta name="twitter:description" content="I make software that refuses to sit still. Explore selected open-source projects in motion." />
     <meta name="twitter:image" content="https://akshitireddy.github.io/public/social-preview.png" />
-    <title>Akshit Ireddy — Software in Motion</title>
+    <title>Akshit Ireddy</title>
     <link rel="canonical" href="https://akshitireddy.github.io/" />
-    <link rel="icon" href="public/favicon-kitten.svg" type="image/svg+xml" sizes="any" />
+    <link rel="icon" href="public/favicon-aperture.svg" type="image/svg+xml" sizes="any" />
+    <link rel="icon" href="public/favicon-aperture-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="public/favicon-aperture-180.png" sizes="180x180" />
+    <link rel="mask-icon" href="public/favicon-aperture-mask.svg" color="#172326" />
+    <link rel="manifest" href="public/site.webmanifest" />
     <link rel="preload" href="public/fonts/fraunces-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="public/fonts/dm-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="public/media/akshit-avatar.webp" as="image" type="image/webp" />
@@ -57,6 +61,27 @@
             <div class="room-texture room-texture--foyer" aria-hidden="true"></div>
             <div class="ceiling-lights ceiling-lights--foyer" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="room-canvas room-canvas--foyer">
+              <div class="foyer-motion-field room__layer" data-depth=".34" aria-hidden="true">
+                <svg viewBox="0 0 1200 700" preserveAspectRatio="none">
+                  <path class="foyer-motion-field__path foyer-motion-field__path--ink" d="M335 235 C485 105 650 145 710 278 S884 488 1112 386 C974 568 724 612 506 514" pathLength="100" />
+                  <path class="foyer-motion-field__path foyer-motion-field__path--violet" d="M446 94 C676 11 921 77 884 264 C851 429 648 466 562 389" pathLength="100" />
+                  <path class="foyer-motion-field__path foyer-motion-field__path--coral" d="M414 438 C566 326 718 373 815 483 C901 581 1031 526 1127 428" pathLength="100" />
+                  <g class="foyer-motion-field__runner foyer-motion-field__runner--coral">
+                    <circle r="7" />
+                    <animateMotion dur="11s" begin="-7.2s" repeatCount="indefinite" path="M335 235 C485 105 650 145 710 278 S884 488 1112 386 C974 568 724 612 506 514" />
+                  </g>
+                  <g class="foyer-motion-field__runner foyer-motion-field__runner--violet">
+                    <path d="M0-8 7 0 0 8-7 0Z" />
+                    <animateMotion dur="17s" begin="-12.4s" repeatCount="indefinite" path="M446 94 C676 11 921 77 884 264 C851 429 648 466 562 389" />
+                  </g>
+                  <g class="foyer-motion-field__runner foyer-motion-field__runner--acid">
+                    <path d="M0-10 3-3 10 0 3 3 0 10-3 3-10 0-3-3Z" />
+                    <animateMotion dur="7.5s" begin="-3.8s" repeatCount="indefinite" path="M414 438 C566 326 718 373 815 483 C901 581 1031 526 1127 428" />
+                  </g>
+                </svg>
+                <span class="foyer-motion-field__note foyer-motion-field__note--one">movement study / 01</span>
+                <span class="foyer-motion-field__note foyer-motion-field__note--two">stillness rejected</span>
+              </div>
               <div class="foyer-copy room__layer" data-depth="1.1">
                 <p class="eyebrow"><span>Open-source, in motion</span> · selected work, 2023—2026</p>
                 <h1 id="foyer-title" tabindex="-1" data-restless-thesis aria-label="I make software that refuses to sit still.">
@@ -80,27 +105,37 @@
               </div>
 
               <div class="guide-plinth room__layer" data-depth="1.85" data-guide>
-                <div class="guide-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+                <svg class="guide-signal" viewBox="0 0 340 320" aria-hidden="true">
+                  <path id="guide-orbit-a" class="guide-signal__path guide-signal__path--ink" d="M35 184 C26 92 102 31 198 45 C286 58 322 138 286 210 C251 280 139 302 69 246 C44 226 31 205 35 184" />
+                  <path id="guide-orbit-b" class="guide-signal__path guide-signal__path--violet" d="M67 248 C118 292 221 278 272 211 C313 157 290 83 226 54" />
+                  <path id="guide-orbit-c" class="guide-signal__path guide-signal__path--coral" d="M45 153 C102 91 202 83 267 130 C307 159 308 214 271 248" />
+                  <g class="guide-signal__runner guide-signal__runner--coral"><circle r="6" /><animateMotion dur="11s" begin="-4.6s" repeatCount="indefinite"><mpath href="#guide-orbit-a" /></animateMotion></g>
+                  <g class="guide-signal__runner guide-signal__runner--violet"><path d="M0-7 7 0 0 7-7 0Z" /><animateMotion dur="17s" begin="-10s" repeatCount="indefinite"><mpath href="#guide-orbit-b" /></animateMotion></g>
+                  <g class="guide-signal__runner guide-signal__runner--acid"><path d="M0-8 2.5-2.5 8 0 2.5 2.5 0 8-2.5 2.5-8 0-2.5-2.5Z" /><animateMotion dur="7.5s" begin="-2.1s" repeatCount="indefinite"><mpath href="#guide-orbit-c" /></animateMotion></g>
+                </svg>
                 <button class="kinetic-guide" type="button" aria-label="Greet the studio kitten" data-guide-button>
-                  <svg viewBox="0 0 300 260" role="img" aria-label="A curious orange studio kitten with bright eyes, a violet collar, and a waving tail">
+                  <svg viewBox="0 0 300 260" role="img" aria-label="A curious orange studio kitten with bright eyes, a lime kerchief, and a waving tail">
                     <defs>
                       <linearGradient id="guide-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9f67" /><stop offset=".54" stop-color="#f06449" /><stop offset="1" stop-color="#bd3a50" /></linearGradient>
                       <linearGradient id="guide-tail-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8c79ff" stop-opacity="0" /><stop offset=".45" stop-color="#8c79ff" /><stop offset="1" stop-color="#f06449" /></linearGradient>
                     </defs>
                     <ellipse class="guide-shadow" cx="158" cy="226" rx="76" ry="12" />
+                    <g class="guide-character">
                     <g class="guide-tail"><path fill="none" stroke="#172326" stroke-width="28" stroke-linecap="round" d="M198 186 C258 211 285 171 249 141 C232 127 225 119 233 105" /><path fill="none" stroke="url(#guide-body)" stroke-width="19" stroke-linecap="round" d="M198 186 C258 211 285 171 249 141 C232 127 225 119 233 105" /><path fill="none" stroke="#ffb48b" stroke-width="4" stroke-linecap="round" d="M211 184 C248 194 268 168 246 148" /></g>
-                    <g class="guide-body"><path fill="url(#guide-body)" stroke="#172326" stroke-width="6" stroke-linejoin="round" d="M104 142 C96 170 101 207 128 220 C157 235 199 224 216 195 C235 162 215 130 178 126 C142 122 113 128 104 142 Z" /><path fill="#ffd7b6" opacity=".88" d="M129 151 C119 177 128 211 157 217 C186 220 203 196 200 166 C185 183 146 184 129 151 Z" /></g>
-                    <g class="guide-legs guide-legs--front" fill="#ff9f67" stroke="#172326" stroke-width="5"><path d="M119 191 Q112 217 126 226 Q143 231 151 219 L149 190 Z" /><path d="M171 190 L174 218 Q183 231 202 224 Q213 215 199 188 Z" /><path fill="none" stroke-width="2.5" d="M125 219 l7-4 m65 3 l-8-4" /></g>
+                    <g class="guide-body"><path fill="url(#guide-body)" stroke="#172326" stroke-width="6" stroke-linejoin="round" d="M108 146 C99 171 105 202 128 216 C151 231 188 225 207 202 C226 179 218 146 187 133 C156 120 119 130 108 146 Z" /><path fill="#ffd7b6" opacity=".88" d="M143 157 C140 169 145 181 154 187 C164 184 171 174 168 164 C160 171 151 170 143 157 Z" /></g>
+                    <g class="guide-legs guide-legs--front" fill="#ff9f67" stroke="#172326" stroke-width="5"><path class="guide-paw guide-paw--left" d="M120 192 C116 203 120 215 131 220 C141 224 152 217 151 207 C149 198 141 192 131 189 Z" /><path class="guide-paw guide-paw--right" d="M175 190 C167 196 168 211 176 218 C186 226 199 218 201 209 C203 200 196 192 187 189 Z" /><path fill="none" stroke-width="2.5" d="M128 215 l6-3 M195 213 l-7-3" /></g>
                     <g class="guide-ear guide-ear--left"><path fill="url(#guide-body)" stroke="#172326" stroke-width="6" stroke-linejoin="round" d="M101 91 L100 43 L135 72 Z" /><path fill="#f7a4a8" d="M107 76 L107 56 L124 72 Z" /></g>
                     <g class="guide-ear guide-ear--right"><path fill="url(#guide-body)" stroke="#172326" stroke-width="6" stroke-linejoin="round" d="M177 72 L211 43 L208 94 Z" /><path fill="#f7a4a8" d="M189 72 L205 56 L203 79 Z" /></g>
-                    <g class="guide-face"><path fill="url(#guide-body)" stroke="#172326" stroke-width="6" d="M88 112 C88 82 114 65 148 65 C184 64 211 83 213 113 C216 148 190 173 153 174 C116 175 86 150 88 112 Z" /><path fill="#ffb48b" opacity=".6" d="M102 101 Q134 70 177 78 Q132 80 108 124 Q98 143 116 161 Q91 147 102 101 Z" /><path fill="#fffaf0" d="M114 135 C122 127 139 130 153 142 C166 130 184 127 192 136 C187 160 169 168 153 168 C136 168 119 159 114 135 Z" />
+                    <g class="guide-kerchief"><path fill="#d9ee72" stroke="#172326" stroke-width="3" stroke-linejoin="round" d="M170 155 Q181 164 194 159 L184 183 Z" /></g>
+                    <g class="guide-face"><path fill="url(#guide-body)" stroke="#172326" stroke-width="6" d="M88 112 C88 82 114 65 148 65 C184 64 211 83 213 113 C216 148 190 173 153 174 C116 175 86 150 88 112 Z" /><path fill="#ffb48b" opacity=".6" d="M102 101 Q134 70 177 78 Q132 80 108 124 Q98 143 116 161 Q91 147 102 101 Z" /><path class="guide-muzzle" fill="#fffaf0" d="M114 135 C122 127 139 130 153 142 C166 130 184 127 192 136 C187 160 169 168 153 168 C136 168 119 159 114 135 Z" />
                       <ellipse fill="#fffdf4" stroke="#172326" stroke-width="4" cx="128" cy="116" rx="18" ry="19" /><ellipse fill="#fffdf4" stroke="#172326" stroke-width="4" cx="178" cy="116" rx="18" ry="19" /><ellipse class="guide-pupil" fill="#172326" cx="130" cy="119" rx="6" ry="10" /><ellipse class="guide-pupil" fill="#172326" cx="176" cy="119" rx="6" ry="10" /><circle class="guide-glint" fill="#fff" cx="127" cy="114" r="2.7" /><circle class="guide-glint" fill="#fff" cx="173" cy="114" r="2.7" />
                       <path fill="#8c79ff" stroke="#172326" stroke-width="3" stroke-linejoin="round" d="M146 140 Q153 135 160 140 L153 147 Z" /><path fill="none" stroke="#172326" stroke-width="3" stroke-linecap="round" d="M153 147 Q146 158 137 151 M153 147 Q160 158 169 151 M112 142 L83 136 M112 149 L80 151 M193 142 L222 136 M193 149 L225 151" /></g>
-                    <g class="guide-collar"><path fill="#d9ee72" stroke="#172326" stroke-width="4" d="M112 158 Q153 178 198 157 L195 173 Q153 190 115 173 Z" /><circle fill="#8c79ff" stroke="#172326" stroke-width="3" cx="155" cy="179" r="9" /><path fill="#fffaf0" d="M155 173 l2.3 4.2 4.7.7-3.4 3.4.8 4.7-4.4-2.2-4.3 2.2.8-4.7-3.5-3.4 4.8-.7z" /></g>
-                    <g class="guide-sparks" fill="#d9ee72" stroke="#172326" stroke-width="2.5"><path d="M65 105 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" /><circle cx="241" cy="88" r="5" /><circle cx="77" cy="188" r="4" /></g>
+                    </g>
+                    <g class="guide-sparks" fill="#d9ee72" stroke="#172326" stroke-width="2.5"><path d="M65 105 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" /><path d="m263 70 3 7 7 3-7 3-3 7-3-7-7-3 7-3z" /><circle cx="77" cy="188" r="4" /></g>
                   </svg>
                 </button>
                 <p class="guide-speech" data-guide-speech><span>studio companion</span>Psst—almost everything here reacts.</p>
+                <span class="guide-speech-trail" aria-hidden="true"><i></i><i></i><i></i></span>
                 <p class="guide-label">companion 00 · <b>resident kitten</b></p>
               </div>
             </div>
@@ -139,7 +174,7 @@
               </header>
               <figure class="media-exhibit pet-specimen room__layer" data-depth="1.4">
                 <div class="museum-window museum-window--pet"><video muted loop playsinline preload="none" data-poster="public/media/features/pet-poster.webp" aria-label="AI Desktop Pet walking and reacting on a computer desktop" data-room-video><source data-src="public/media/features/pet.webm" type="video/webm" /><source data-src="public/media/features/pet.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play AI Desktop Pet demo"><span aria-hidden="true">▶</span></button><span class="glass-glint" aria-hidden="true"></span><span class="window-label"><i></i> habitat · your desktop</span></div>
-                <figcaption><span><b>Behavior:</b> climbs windows, chases the cursor, remembers, converses, and coexists with other pets.</span><a class="repo-link" href="https://github.com/AkshitIreddy/convai-desktop-pet" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
+                <figcaption><span><b>Behavior:</b> climbs windows, chases the cursor, remembers, converses, and coexists with other pets.</span><a class="repo-link" href="https://github.com/AkshitIreddy/AI-Desktop-Pet" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
             </div>
             <button class="doorway doorway--left" type="button" data-room-target="1"><i aria-hidden="true">←</i><span>Living library</span></button><button class="doorway doorway--right doorway--night" type="button" data-room-target="3"><span><b>03</b> Light instrument</span><i aria-hidden="true">→</i></button>
@@ -208,10 +243,35 @@
 
       <div class="visitor-rail" aria-hidden="true"></div>
       <div class="visitor" aria-hidden="true">
-        <span class="visitor__tail"></span><span class="visitor__body"></span><span class="visitor__stripe visitor__stripe--a"></span><span class="visitor__stripe visitor__stripe--b"></span>
-        <span class="visitor__head"></span><span class="visitor__ear visitor__ear--a"></span><span class="visitor__ear visitor__ear--b"></span>
-        <span class="visitor__eye visitor__eye--a"></span><span class="visitor__eye visitor__eye--b"></span><span class="visitor__muzzle"></span>
-        <span class="visitor__scarf"></span><span class="visitor__charm"></span><span class="visitor__paw visitor__paw--a"></span><span class="visitor__paw visitor__paw--b"></span><span class="visitor__shadow"></span>
+        <svg class="visitor__art" viewBox="0 0 84 60" preserveAspectRatio="xMidYMid meet" focusable="false">
+          <ellipse class="visitor__shadow" cx="42" cy="56" rx="23" ry="2.2" />
+          <g class="visitor__pose">
+            <g class="visitor__tail">
+              <path class="visitor__tail-outline" d="M24 42 C13 45 9 38 12 29 C15 21 22 18 25 24 C28 30 24 35 19 35" />
+              <path class="visitor__tail-fill" d="M24 42 C13 45 9 38 12 29 C15 21 22 18 25 24 C28 30 24 35 19 35" />
+            </g>
+            <g class="visitor__body">
+              <path class="visitor__fur" d="M19 40 C19 30 29 24 43 24 C55 24 62 29 62 38 C62 45 55 49 42 49 C29 49 20 46 19 40 Z" />
+              <path class="visitor__chest" d="M47 27 C53 28 58 32 58 38 C58 43 56 46 52 48 C48 44 45 36 47 27 Z" />
+              <path class="visitor__stripes" d="m25 33 8 2.5 m-7 4 7 1.8" />
+              <path class="visitor__paw visitor__paw--a" d="M25 47 Q31 44 36 47 Q38 50 35 52 H29 Q25 52 25 49 Z" />
+              <path class="visitor__paw visitor__paw--b" d="M50 47 Q55 44 59 47 Q61 50 58 52 H53 Q49 52 50 47 Z" />
+            </g>
+            <path class="visitor__bandana" d="M46 34 Q52 37 59 35 L53 46 Z" />
+            <g class="visitor__head">
+              <path class="visitor__fur" d="M44 10 L49 2 L56 10 Q60 9 64 10 L71 3 L73 14 C76 18 77 23 75 29 C73 37 66 41 57 41 C47 41 40 35 40 26 C40 20 41 15 44 10 Z" />
+              <path class="visitor__ear visitor__ear--a" d="m48 9 1-4 4 5" />
+              <path class="visitor__ear visitor__ear--b" d="m65 10 6-5 v8" />
+              <ellipse class="visitor__eye visitor__eye--a" cx="51" cy="23" rx="4" ry="5" />
+              <ellipse class="visitor__eye visitor__eye--b" cx="64" cy="23" rx="4" ry="5" />
+              <circle class="visitor__pupil visitor__pupil--a" cx="52" cy="24" r="1.6" />
+              <circle class="visitor__pupil visitor__pupil--b" cx="63" cy="24" r="1.6" />
+              <path class="visitor__muzzle" d="M52 30 C56 27 62 27 66 30 C65 35 62 37 59 37 C56 37 53 35 52 30 Z" />
+              <path class="visitor__nose" d="m57 29 2-1 2 1-2 2 Z" />
+              <path class="visitor__smile" d="M59 31 Q56 35 53 33 M59 31 Q62 35 65 33" />
+            </g>
+          </g>
+        </svg>
       </div>
       <div class="first-visit-note" aria-hidden="true"><i></i><span>Anything marked like this reacts.</span></div>
       <div class="mobile-scroll-hint" aria-hidden="true"><span>Scroll chapter</span><i>↓</i></div>

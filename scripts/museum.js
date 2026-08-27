@@ -70,12 +70,15 @@
     if (themeColor) themeColor.content = frameColors[frame] || frameColors.foyer;
 
     if (room.id === "foyer") {
-      document.title = "Akshit Ireddy — Software in Motion";
+      document.title = "Akshit Ireddy";
       return;
     }
-    const selectedArtifact = room.querySelector(".archive-project-tab.is-active, .tool-selector.is-active")?.dataset.title;
-    const label = selectedArtifact || roomData[index]?.shortName || "Software in Motion";
-    document.title = `${label} — Akshit Ireddy`;
+    const label = room.id === "archive"
+      ? "Projects"
+      : room.id === "workbench"
+        ? "Tools"
+        : roomData[index]?.shortName || "Projects";
+    document.title = `${label} · Akshit`;
   }
 
   function getRoomFromHash() {
@@ -169,7 +172,7 @@
     if (!(video instanceof HTMLVideoElement)) return;
     video.defaultPlaybackRate = 1;
     video.playbackRate = 1;
-    if (video.dataset.poster && !video.getAttribute("poster")) video.poster = video.dataset.poster;
+    ensureVideoPoster(video);
     let changed = false;
     video.querySelectorAll("source[data-src]").forEach((source) => {
       if (!source.getAttribute("src")) {
@@ -178,6 +181,11 @@
       }
     });
     if (changed) video.load();
+  }
+
+  function ensureVideoPoster(video) {
+    if (!(video instanceof HTMLVideoElement)) return;
+    if (video.dataset.poster && !video.getAttribute("poster")) video.poster = video.dataset.poster;
   }
 
   function syncFeaturePlayButton(video) {
@@ -208,7 +216,9 @@
     document.querySelectorAll("[data-room-video]").forEach((video) => {
       if (!(video instanceof HTMLVideoElement)) return;
       const room = video.closest(".room");
-      const canPlay = room?.classList.contains("is-current") && !video.hidden && video.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
+      const active = room?.classList.contains("is-current") && !video.hidden;
+      if (active) ensureVideoPoster(video);
+      const canPlay = active && video.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
       if (canPlay) {
         ensureVideoSources(video);
         video.play().catch(() => {});
@@ -219,6 +229,7 @@
 
     const archiveVideo = document.querySelector("[data-archive-video]");
     if (!(archiveVideo instanceof HTMLVideoElement)) return;
+    if (state.room === 4) ensureVideoPoster(archiveVideo);
     const canPlay = state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
     if (canPlay) {
       ensureVideoSources(archiveVideo);
@@ -291,31 +302,20 @@
   function handleGlobalKeydown(event) {
     state.keyboardNavigation = true;
     if (shouldIgnoreGlobalKey(event)) return;
-    if (event.target.closest?.("[role='tablist']") && ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) return;
+    if (event.target.closest?.("[role='tablist']") && ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
 
-    if (event.key === "ArrowRight" || event.key === "PageDown") {
+    if (event.key === "ArrowRight") {
       if (event.target.closest?.("[role='tablist']")) return;
       event.preventDefault();
       goToRoom(state.room + 1, { pushHistory: true, focusHeading: true, resetScroll: true });
       return;
     }
-    if (event.key === "ArrowLeft" || event.key === "PageUp") {
+    if (event.key === "ArrowLeft") {
       if (event.target.closest?.("[role='tablist']")) return;
       event.preventDefault();
       goToRoom(state.room - 1, { pushHistory: true, focusHeading: true, resetScroll: true });
       return;
     }
-    if (event.key === "Home") {
-      event.preventDefault();
-      goToRoom(0, { pushHistory: true, focusHeading: true, resetScroll: true });
-      return;
-    }
-    if (event.key === "End") {
-      event.preventDefault();
-      goToRoom(rooms.length - 1, { pushHistory: true, focusHeading: true, resetScroll: true });
-      return;
-    }
-
     const directRoom = Number(event.key) - 1;
     if (directRoom >= 0 && directRoom < rooms.length) {
       event.preventDefault();
@@ -482,13 +482,14 @@
   const guide = document.querySelector("[data-guide]");
   const guideButton = document.querySelector("[data-guide-button]");
   const guideSpeech = document.querySelector("[data-guide-speech]");
+  const guideTrackingSurface = document.querySelector("#foyer");
   const guideLines = [
     "The good chapters move. Follow me.",
     "Did you know the shelves listen?",
     "I tested the light keys. Thoroughly.",
     "Everything here has a pulse.",
   ];
-  guideButton?.setAttribute("aria-pressed", "false");
+  let guideReactionTimer = 0;
 
   function resetGuideLook() {
     shell.style.setProperty("--look-x", "0px");
@@ -497,10 +498,11 @@
     shell.style.setProperty("--guide-tilt-y", "0deg");
   }
 
-  guide?.addEventListener("pointermove", (event) => {
-    const bounds = guide.getBoundingClientRect();
-    const nx = clamp(((event.clientX - bounds.left) / bounds.width - 0.5) * 2, -1, 1);
-    const ny = clamp(((event.clientY - bounds.top) / bounds.height - 0.5) * 2, -1, 1);
+  guideTrackingSurface?.addEventListener("pointermove", (event) => {
+    const bounds = guideButton?.getBoundingClientRect() || guide?.getBoundingClientRect();
+    if (!bounds) return;
+    const nx = Math.tanh((event.clientX - (bounds.left + bounds.width / 2)) / Math.max(bounds.width * .72, 1));
+    const ny = Math.tanh((event.clientY - (bounds.top + bounds.height / 2)) / Math.max(bounds.height * .78, 1));
     shell.style.setProperty("--look-x", `${(nx * 8).toFixed(2)}px`);
     shell.style.setProperty("--look-y", `${(ny * 6).toFixed(2)}px`);
     if (!reduceMotion.matches) {
@@ -509,19 +511,18 @@
     }
   }, { passive: true });
 
-  guide?.addEventListener("pointerleave", resetGuideLook);
+  guideTrackingSurface?.addEventListener("pointerleave", resetGuideLook);
 
   guideButton?.addEventListener("click", () => {
+    window.clearTimeout(guideReactionTimer);
     state.guideSpeech = (state.guideSpeech + 1) % guideLines.length;
     if (guideSpeech) guideSpeech.lastChild.textContent = guideLines[state.guideSpeech];
     guide?.classList.remove("is-greeting");
     void guide?.offsetWidth;
     guide?.classList.add("is-greeting");
-    guideButton.setAttribute("aria-pressed", "true");
     announceReaction(guideLines[state.guideSpeech]);
-    window.setTimeout(() => {
+    guideReactionTimer = window.setTimeout(() => {
       guide?.classList.remove("is-greeting");
-      guideButton.setAttribute("aria-pressed", "false");
     }, 1250);
   });
 
@@ -548,16 +549,13 @@
   const petRoom = document.querySelector(".room--pet");
   let petTimer = 0;
   const callPetButton = document.querySelector("[data-call-pet]");
-  callPetButton?.setAttribute("aria-pressed", "false");
   callPetButton?.addEventListener("click", () => {
     window.clearTimeout(petTimer);
     petRoom?.classList.remove("is-called");
     window.requestAnimationFrame(() => window.requestAnimationFrame(() => petRoom?.classList.add("is-called")));
-    callPetButton.setAttribute("aria-pressed", "true");
     announceReaction("The desktop pet comes running.");
     petTimer = window.setTimeout(() => {
       petRoom?.classList.remove("is-called");
-      callPetButton.setAttribute("aria-pressed", "false");
     }, 1050);
   });
 

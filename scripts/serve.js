@@ -2,7 +2,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const root = path.resolve(__dirname, '..');
+const repositoryRoot = path.resolve(__dirname, '..');
+// The authored horizontal site remains the default experience. The component
+// build is kept as an opt-in preview instead of silently replacing production.
+const siteMode = process.env.SITE_MODE === 'dist' ? 'dist' : 'legacy';
+const siteRoot = siteMode === 'dist' ? path.join(repositoryRoot, 'dist') : repositoryRoot;
 const port = Number(process.env.PORT || 49173);
 const host = process.env.HOST || '127.0.0.1';
 const types = {
@@ -13,10 +17,12 @@ const types = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.json': 'application/json; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
   '.mp4': 'video/mp4',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.webm': 'video/webm',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.webp': 'image/webp',
   '.woff2': 'font/woff2',
 };
@@ -26,7 +32,18 @@ function send(res, status, body, headers = {}) {
   res.end(body);
 }
 
-const server = http.createServer((req, res) => {
+function streamFile(res, filename, options) {
+  const source = fs.createReadStream(filename, options);
+  const abort = () => source.destroy();
+  res.once('close', abort);
+  source.once('close', () => res.off('close', abort));
+  source.once('error', () => {
+    if (!res.destroyed) res.destroy();
+  });
+  source.pipe(res);
+}
+
+function handleRequest(req, res) {
   let pathname;
   try {
     pathname = decodeURIComponent(new URL(req.url, `http://${req.headers.host || host}`).pathname);
@@ -36,8 +53,8 @@ const server = http.createServer((req, res) => {
   }
 
   const requested = pathname.endsWith('/') ? `${pathname}index.html` : pathname;
-  const filename = path.resolve(root, `.${requested}`);
-  if (filename !== root && !filename.startsWith(`${root}${path.sep}`)) {
+  const filename = path.resolve(siteRoot, `.${requested}`);
+  if (filename !== siteRoot && !filename.startsWith(`${siteRoot}${path.sep}`)) {
     send(res, 403, 'Forbidden');
     return;
   }
@@ -86,7 +103,7 @@ const server = http.createServer((req, res) => {
         res.end();
         return;
       }
-      fs.createReadStream(filename, { start, end }).on('error', () => res.destroy()).pipe(res);
+      streamFile(res, filename, { start, end });
       return;
     }
 
@@ -98,10 +115,23 @@ const server = http.createServer((req, res) => {
       res.end();
       return;
     }
-    fs.createReadStream(filename).on('error', () => send(res, 500, 'Read error')).pipe(res);
+    streamFile(res, filename);
   });
-});
+}
 
-server.listen(port, host, () => {
-  console.log(`Software in Motion: http://${host}:${port}`);
-});
+function createServer() {
+  return http.createServer(handleRequest);
+}
+
+if (require.main === module) {
+  const entry = path.join(siteRoot, 'index.html');
+  if (!fs.existsSync(entry)) {
+    throw new Error(`Built site is missing ${entry}. Run the production build before starting the server.`);
+  }
+  const server = createServer();
+  server.listen(port, host, () => {
+    console.log(`Software in Motion (${siteMode}): http://${host}:${port}`);
+  });
+}
+
+module.exports = { createServer, host, port, repositoryRoot, siteMode, siteRoot, types };

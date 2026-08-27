@@ -1,0 +1,23 @@
+{
+  "name": "Akshit Ireddy — Software in Motion",
+  "short_name": "Akshit Ireddy",
+  "description": "Open-source projects in characterful interfaces, AI companions, creative tools, and thoughtful desktop software.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4ead4",
+  "theme_color": "#172326",
+  "icons": [
+    {
+      "src": "favicon-aperture.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-aperture-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
