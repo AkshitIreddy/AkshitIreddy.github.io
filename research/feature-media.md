@@ -1,6 +1,6 @@
 # Feature media production notes
 
-Generated on 2026-08-27 for the Museum portfolio. All derivatives live in
+Generated on 2026-08-27 for the Software in Motion portfolio. All derivatives live in
 `public/media/features/`; the original files in `public/media/` were left
 untouched.
 
@@ -20,6 +20,13 @@ untouched.
   sources too long for ambient portfolio loops. Their derivatives are focused
   15.000 s excerpts. The remaining animations preserve one complete source
   cycle.
+
+The 2026-08-27 refinement supersedes the Alcove excerpt for the public feature:
+`public/media/features/alcove-full.webp` is a byte-for-byte copy of the complete
+177.600 s README animation. It is shown as the looping animated WebP in normal
+motion mode and swaps to `alcove-poster.webp` when reduced motion is requested.
+The older 15-second WebM/MP4 derivatives remain documented below as provenance
+but are no longer referenced by the site.
 
 ## Source audit and temporal selection
 

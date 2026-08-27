@@ -45,15 +45,23 @@ function closeupClips(viewportWidth, viewportHeight) {
   if (selection && hash === 'archive') await page.locator(`.archive-project-tab[data-archive-project="${selection}"]`).click();
   if (selection && hash === 'workbench') await page.locator(`.tool-selector[data-tool="${selection}"]`).click();
   if (selection === 'restless' && hash === 'foyer') {
-    const software = page.locator('.restless-word').filter({ hasText: 'software' });
-    const bounds = await software.boundingBox();
+    const thesis = page.locator('[data-restless-thesis]');
+    const bounds = await thesis.boundingBox();
     if (bounds) await page.mouse.move(bounds.x + bounds.width * .58, bounds.y + bounds.height * .52);
   }
   await page.waitForTimeout(550);
 
-  await page.screenshot({ path: path.join(outputRoot, '00-full.png') });
   for (const clip of closeupClips(width, height)) {
     await page.screenshot({ path: path.join(outputRoot, `${clip.name}.png`), clip });
+  }
+  await page.screenshot({ path: path.join(outputRoot, '07-full.png') });
+
+  const currentRoom = page.locator('.room.is-current');
+  const canScroll = await currentRoom.evaluate((room) => room.scrollHeight > room.clientHeight + 8);
+  if (canScroll) {
+    await currentRoom.evaluate((room) => room.scrollTo({ top: room.scrollHeight, behavior: 'instant' }));
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: path.join(outputRoot, '08-scroll-end.png') });
   }
 
   await browser.close();

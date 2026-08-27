@@ -1,14 +1,14 @@
 # Archive demo media provenance
 
-Audit and render date: 2026-08-27 UTC. This file covers only the three older, high-signal projects requested for the museum archive. Repository counts are a live GitHub API snapshot and will drift.
+Audit and render date: 2026-08-27 UTC. This file covers only the three older, high-signal projects selected for the earlier-experiments chapter. Repository counts are a live GitHub API snapshot and will drift.
 
 ## Selection rules
 
 - Primary sources only: the author's GitHub repositories, media embedded by those READMEs, and the author's Alystria AI YouTube channel linked by the README.
 - Keep the original downloads and shallow clones under `media-source/` and `source-repos/`; only the compact files under `public/media/archive/` are intended to ship.
-- Portfolio clips are muted, 24 fps, 16:9, and 1280 x 720. Native 720p is preserved and 1080p is Lanczos-downscaled; no selected source is upscaled.
+- Portfolio clips are muted, 16:9, and 1280 x 720. The NPC and CupcakeAGI edits use 24 fps; the tutorial keeps its native 30 fps cadence for natural presenter motion. Native 720p is preserved and 1080p is Lanczos-downscaled; no selected source is upscaled.
 - Each clip has H.264 MP4 fallback (`yuv420p`, `+faststart`) and VP9 WebM primary output. Compact WebP posters match each clip's shipping dimensions.
-- The museum should date these as 2023-era work and display the live star counts without presenting them as recent projects.
+- The portfolio should date these as 2023-era work and display the live star counts without presenting them as recent projects.
 
 ## Interactive LLM Powered NPCs
 
@@ -62,12 +62,12 @@ Outputs:
 | Local source | `media-source/vtg-quick-source.mp4` |
 | Source properties | 1920 x 1080, 30 fps, 88.833 s, 8,542,594 bytes, video-only |
 
-Transformation: build the narrative from three longer passages: 13.000–22.500 s (creative controls), 25.500–39.100 s (topic and generation transition), and 41.750–58.500 s (the generated presenter-and-slide tutorial). Crossfade adjacent passages by 0.500 s, remove audio, Lanczos-downscale to 1280 x 720, and normalize to 24 fps and square pixels. The first boundary audit showed that the completed thermodynamics slide hard-jumped back to the creative-control sliders when the file looped. The final render therefore crossfades the result into a 0.800 s clone of the opening frame for 0.650 s beginning at output time 38.200 s, retaining the complete narrative in a 39.000 s loop.
+Transformation: build the narrative from three longer passages: 13.000–22.500 s (creative controls), 25.500–39.100 s (topic and generation transition), and 41.750–58.500 s (the generated presenter-and-slide tutorial). Crossfade adjacent passages by 0.500 s, remove audio, Lanczos-downscale to 1280 x 720, and preserve the source's native 30 fps cadence and square pixels. No speed-changing `setpts` multiplier or `atempo` filter is used: every passage resets its timestamp origin only, and the website explicitly sets `playbackRate = 1`. The first boundary audit showed that the completed thermodynamics slide hard-jumped back to the creative-control sliders when the file looped. The final render therefore crossfades the result into a 0.800 s clone of the opening frame for 0.650 s beginning at output time 38.200 s, retaining the complete narrative in a 39.000 s loop.
 
 Exact loop-return filter appended after the existing three-passage composition (`[abc]`):
 
 ```text
-[d0]trim=start=13.000:end=13.020,setpts=PTS-STARTPTS,scale=1280:720:flags=lanczos,fps=24,setsar=1,tpad=stop_mode=clone:stop_duration=0.800,trim=duration=0.800,setpts=PTS-STARTPTS[d];
+[d0]trim=start=13.000:end=13.020,setpts=PTS-STARTPTS,scale=1280:720:flags=lanczos,fps=30,setsar=1,tpad=stop_mode=clone:stop_duration=0.800,trim=duration=0.800,setpts=PTS-STARTPTS[d];
 [abc][d]xfade=transition=fade:duration=0.650:offset=38.200,format=yuv420p[v]
 ```
 
@@ -77,8 +77,8 @@ Outputs:
 
 | File | Duration / dimensions | Size |
 | --- | --- | ---: |
-| `public/media/archive/video-tutorial.webm` | 39.000 s, 1280 x 720, VP9 | 2,044,058 B |
-| `public/media/archive/video-tutorial.mp4` | 39.000 s, 1280 x 720, H.264 | 3,736,797 B |
+| `public/media/archive/video-tutorial.webm` | 39.000 s, 1280 x 720, 30 fps VP9 | 3,031,243 B |
+| `public/media/archive/video-tutorial.mp4` | 39.000 s, 1280 x 720, 30 fps H.264 | 4,721,086 B |
 | `public/media/archive/video-tutorial-poster.webp` | 1280 x 720 | 51,788 B |
 
 The README's two full-demo GitHub assets were also preserved as `media-source/vtg-full-1-source.mp4` (852 x 480, 298.360 s, 7,248,192 B) and `media-source/vtg-full-2-source.mp4` (852 x 480, 133.600 s, 5,118,423 B). They were not selected because the quick demo is native 1080p and communicates the result more efficiently.
@@ -122,7 +122,7 @@ Contact sheets were rendered from every finished MP4 at four-second intervals an
 - Tutorial generator: the controls, generation state, video preview, and finished teaching layout remain readable; both narrative transitions blend without a blank frame. A boundary sheet at 0.000, 0.250, 38.000, 38.300, 38.650, and 38.950 s shows the final thermodynamics slide dissolving cleanly back into the opening slider composition. Decoded H.264 first/final-frame SSIM is `0.987400`.
 - CUPCAKEAGI: the greeting, request, response, state telemetry, and completed recipe form a comprehensible interaction sequence; the browser chrome and application bounds stay intact. A boundary sheet at 0.000, 0.250, 35.150, 35.400, 35.750, and 36.000 s shows the completed recipe dissolving back into the opening greeting state. Decoded H.264 first/final-frame SSIM is `0.976411`.
 
-`ffprobe` confirms every shipping clip contains exactly one 24 fps `yuv420p` video stream and no audio stream. A fresh full `ffmpeg` decode-to-null pass completed without an error for all four loop-corrected Tutorial Generator and CUPCAKEAGI files; the NPC pair had already passed the same check. The three WebP posters were opened at original resolution and contain the intended representative frames.
+`ffprobe` confirms every shipping clip contains exactly one `yuv420p` video stream and no audio stream, at the documented 24 or 30 fps cadence. A fresh full `ffmpeg` decode-to-null pass completed without an error for all four loop-corrected Tutorial Generator and CUPCAKEAGI files; the NPC pair had already passed the same check. The three WebP posters were opened at original resolution and contain the intended representative frames.
 
 ## Repository hygiene
 
