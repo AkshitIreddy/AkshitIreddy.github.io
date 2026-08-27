@@ -1,0 +1,60 @@
+# Dependencies and test output
+node_modules/
+test-results/
+playwright-report/
+qa/
+
+# Source clones, original downloads, and local deployment state
+source-repos/
+media-source/
+experiments/
+.vercel/
+
+# Secrets and signing material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Superseded concept-room artifacts retained locally
+/museum.html
+/PRODUCTION_TODO.md
+/cinema.html
+/field-manual.html
+/signal.html
+/styles/cinema.css
+/styles/field-manual.css
+/styles/index.css
+/styles/signal.css
+/scripts/cinema.js
+/scripts/field-manual.js
+/scripts/signal.js
+/scripts/capture-prototypes.js
+/scripts/capture-stills.js
+
+# Large source media replaced by optimized production derivatives
+/public/media/alcove-demo.webp
+/public/media/alcove-hero.png
+/public/media/compendium.webp
+/public/media/compendium-still.png
+/public/media/email.gif
+/public/media/email-still.png
+/public/media/gifsmith.webp
+/public/media/gifsmith-still.png
+/public/media/keyscape.webp
+/public/media/keyscape-still.png
+/public/media/pet.gif
+/public/media/pet-still.png
+/public/media/transparency.png
+/public/media/akshit-avatar.png
+/public/media/profile-wave.svg
+/public/media/archive/*-poster.png
+/public/favicon.svg
+
+# OS/editor accidents
+.DS_Store
+Thumbs.db
+/NUL

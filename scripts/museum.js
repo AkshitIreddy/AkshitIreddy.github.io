@@ -1,0 +1,949 @@
+(() => {
+  "use strict";
+
+  const shell = document.querySelector(".museum-shell");
+  const stage = document.querySelector(".museum-stage");
+  const world = document.querySelector(".museum-world");
+  const rooms = [...document.querySelectorAll(".room")];
+  const mapButtons = [...document.querySelectorAll(".museum-map [data-room-target]")];
+  const roomButtons = [...document.querySelectorAll(".room [data-room-target], .museum-masthead [data-room-target]")];
+  const roomReading = document.querySelector("[data-room-reading]");
+  const announcer = document.querySelector(".room-announcer");
+  const mobileScrollHint = document.querySelector(".mobile-scroll-hint");
+  const canvas = document.querySelector(".ambient-canvas");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+
+  if (!shell || !stage || !world || !rooms.length) return;
+
+  const roomData = rooms.map((room, index) => ({
+    index,
+    id: room.id,
+    shortName: mapButtons[index]?.querySelector("b")?.textContent.trim() || `Room ${index + 1}`,
+    name: room.querySelector("h1, h2")?.textContent.trim().replace(/\s+/g, " ") || `Room ${index + 1}`,
+    heading: room.querySelector("h1, h2"),
+  }));
+
+  const state = {
+    room: 0,
+    previousRoom: 0,
+    pointerStart: null,
+    wheelLockUntil: 0,
+    walkingTimer: 0,
+    headingFocusTimer: 0,
+    parallaxFrame: 0,
+    keyboardNavigation: false,
+    lastPointer: { x: 0.5, y: 0.5 },
+    guideSpeech: 0,
+    introTimer: 0,
+    touchStart: null,
+    lastSwipeAt: 0,
+  };
+
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const hasFinePointer = () => window.matchMedia("(pointer: fine)").matches;
+  const isMobile = () => window.matchMedia("(max-width: 760px)").matches;
+
+  const frameColors = {
+    foyer: "#f4ead4",
+    alcove: "#dce1ca",
+    pet: "#efd8cc",
+    keyscape: "#111722",
+    "archive-npc": "#ded9ef",
+    "archive-tutorial": "#efe2bd",
+    "archive-cupcake": "#f0cfd8",
+    "workbench-email": "#d3e6e3",
+    "workbench-gifsmith": "#ead3bd",
+    "workbench-compendium": "#d9dec5",
+    "workbench-transparency": "#ded9ed",
+  };
+
+  function syncFrameTheme(index = state.room) {
+    const room = rooms[index];
+    if (!room) return;
+    const frame = room.id === "archive"
+      ? `archive-${room.dataset.archiveProject || "npc"}`
+      : room.id === "workbench"
+        ? `workbench-${room.dataset.tool || "email"}`
+        : room.id;
+    shell.dataset.frame = frame;
+    if (themeColor) themeColor.content = frameColors[frame] || frameColors.foyer;
+
+    if (room.id === "foyer") {
+      document.title = "Akshit Ireddy — Museum of Behaviors";
+      return;
+    }
+    const selectedArtifact = room.querySelector(".archive-project-tab.is-active, .tool-selector.is-active")?.dataset.title;
+    const label = selectedArtifact || roomData[index]?.shortName || "Museum of Behaviors";
+    document.title = `${label} — Akshit Ireddy's Museum`;
+  }
+
+  function getRoomFromHash() {
+    const id = window.location.hash.slice(1).toLowerCase();
+    const found = roomData.find((room) => room.id.toLowerCase() === id);
+    return found ? found.index : 0;
+  }
+
+  function setSpatialVariables(index) {
+    const compact = isMobile();
+    const visitorStart = compact ? 2 : 4.5;
+    const visitorStep = compact ? 18.2 : 17.2;
+    const visitorMax = compact ? 83 : 84;
+
+    shell.style.setProperty("--room-index", String(index));
+    shell.style.setProperty("--world-offset", `${index * -100}vw`);
+    shell.style.setProperty("--visitor-left", `${Math.min(visitorStart + index * visitorStep, visitorMax)}vw`);
+    shell.style.setProperty("--map-progress", `${((index + 1) / rooms.length) * 100}%`);
+    shell.dataset.currentRoom = String(index);
+    syncFrameTheme(index);
+  }
+
+  function updateRoomAccessibility(index) {
+    rooms.forEach((room, roomIndex) => {
+      const current = roomIndex === index;
+      room.classList.toggle("is-current", current);
+      room.toggleAttribute("inert", !current);
+      room.setAttribute("aria-hidden", current ? "false" : "true");
+    });
+
+    mapButtons.forEach((button) => {
+      const current = Number(button.dataset.roomTarget) === index;
+      if (current) button.setAttribute("aria-current", "step");
+      else button.removeAttribute("aria-current");
+    });
+
+    if (roomReading) roomReading.textContent = `${String(index).padStart(2, "0")} — ${roomData[index].shortName}`;
+  }
+
+  function announceRoom(index) {
+    if (!announcer) return;
+    window.clearTimeout(announceRoom.timer);
+    announceRoom.timer = window.setTimeout(() => {
+      announcer.textContent = `Entered ${roomData[index].name}. Room ${index + 1} of ${rooms.length}.`;
+    }, reduceMotion.matches ? 20 : 440);
+  }
+
+  function announceReaction(message) {
+    if (!announcer) return;
+    window.clearTimeout(announceRoom.timer);
+    announcer.textContent = "";
+    window.requestAnimationFrame(() => { announcer.textContent = message; });
+  }
+
+  function updateHash(index, push = false) {
+    const hash = `#${roomData[index].id}`;
+    if (window.location.hash === hash) return;
+    window.history[push ? "pushState" : "replaceState"](null, "", hash);
+  }
+
+  function markWalking(from, to) {
+    window.clearTimeout(state.walkingTimer);
+    shell.classList.toggle("is-walking", from !== to && !reduceMotion.matches);
+    shell.dataset.walkDirection = to >= from ? "forward" : "backward";
+    state.walkingTimer = window.setTimeout(() => shell.classList.remove("is-walking"), reduceMotion.matches ? 20 : 940);
+  }
+
+  function focusRoomHeading(index) {
+    const heading = roomData[index].heading;
+    if (!heading) return;
+    window.clearTimeout(state.headingFocusTimer);
+    state.headingFocusTimer = window.setTimeout(() => {
+      state.headingFocusTimer = 0;
+      heading.focus({ preventScroll: true });
+    }, reduceMotion.matches ? 10 : 500);
+  }
+
+  /* A delayed arrival announcement must never steal focus after the visitor has
+     already moved into a control (for example, a Workbench drawer). */
+  document.addEventListener("focusin", (event) => {
+    if (!state.headingFocusTimer) return;
+    const pendingHeading = roomData[state.room]?.heading;
+    if (event.target === pendingHeading) return;
+    window.clearTimeout(state.headingFocusTimer);
+    state.headingFocusTimer = 0;
+  });
+
+  function ensureVideoSources(video) {
+    if (!(video instanceof HTMLVideoElement)) return;
+    let changed = false;
+    video.querySelectorAll("source[data-src]").forEach((source) => {
+      if (!source.getAttribute("src")) {
+        source.setAttribute("src", source.dataset.src);
+        changed = true;
+      }
+    });
+    if (changed) video.load();
+  }
+
+  function syncFeaturePlayButton(video) {
+    if (!(video instanceof HTMLVideoElement)) return;
+    const button = video.parentElement?.querySelector("[data-video-toggle]");
+    if (!(button instanceof HTMLButtonElement)) return;
+    const playing = !video.paused && !video.ended;
+    const label = video.getAttribute("aria-label") || "project demo";
+    button.classList.toggle("is-playing", playing);
+    button.hidden = video.hidden;
+    button.setAttribute("aria-label", `${playing ? "Pause" : "Play"} ${label}`);
+  }
+
+  function syncVideoPlayback() {
+    document.querySelectorAll("[data-room-video]").forEach((video) => {
+      if (!(video instanceof HTMLVideoElement)) return;
+      const room = video.closest(".room");
+      const canPlay = room?.classList.contains("is-current") && !video.hidden && video.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
+      if (canPlay) {
+        ensureVideoSources(video);
+        video.play().catch(() => {});
+      }
+      else video.pause();
+      syncFeaturePlayButton(video);
+    });
+
+    const archiveVideo = document.querySelector("[data-archive-video]");
+    if (!(archiveVideo instanceof HTMLVideoElement)) return;
+    const canPlay = state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
+    if (canPlay) {
+      ensureVideoSources(archiveVideo);
+      archiveVideo.play().catch(() => {});
+    } else {
+      archiveVideo.pause();
+    }
+    syncArchivePlayButton(archiveVideo);
+  }
+
+  function syncMobileScrollHint() {
+    if (!mobileScrollHint) return;
+    const room = rooms[state.room];
+    const hasMoreBelow = Boolean(
+      (isMobile() || (window.innerWidth > 760 && window.innerHeight <= 620))
+      && room
+      && room.scrollHeight > room.clientHeight + 18
+      && room.scrollTop < 56
+    );
+    mobileScrollHint.classList.toggle("is-visible", hasMoreBelow);
+  }
+
+  function goToRoom(target, options = {}) {
+    const index = clamp(Number(target), 0, rooms.length - 1);
+    if (!Number.isFinite(index)) return;
+
+    const from = state.room;
+    state.previousRoom = from;
+    state.room = index;
+    stage.scrollLeft = 0;
+    setSpatialVariables(index);
+    updateRoomAccessibility(index);
+    markWalking(from, index);
+
+    if (options.updateHash !== false) updateHash(index, Boolean(options.pushHistory));
+    if (from !== index || options.forceAnnounce) announceRoom(index);
+    if (options.focusHeading) focusRoomHeading(index);
+
+    const room = rooms[index];
+    if (room && options.resetScroll) room.scrollTo({ top: 0, behavior: "instant" });
+
+    window.requestAnimationFrame(() => {
+      stage.scrollLeft = 0;
+      window.requestAnimationFrame(() => {
+        stage.scrollLeft = 0;
+        syncMobileScrollHint();
+      });
+    });
+
+    syncVideoPlayback();
+    window.dispatchEvent(new CustomEvent("museum:roomchange", { detail: { room: index, previousRoom: from, id: roomData[index].id } }));
+  }
+
+  function handleRoomButton(event) {
+    const target = Number(event.currentTarget.dataset.roomTarget);
+    const insideRoom = Boolean(event.currentTarget.closest(".room"));
+    goToRoom(target, { pushHistory: true, focusHeading: insideRoom || state.keyboardNavigation, resetScroll: true });
+  }
+
+  [...mapButtons, ...roomButtons].forEach((button) => button.addEventListener("click", handleRoomButton));
+  rooms.forEach((room) => room.addEventListener("scroll", syncMobileScrollHint, { passive: true }));
+
+  function shouldIgnoreGlobalKey(event) {
+    const target = event.target;
+    if (!(target instanceof Element)) return false;
+    if (target.matches("input, textarea, select, [contenteditable='true']")) return true;
+    return event.altKey || event.ctrlKey || event.metaKey;
+  }
+
+  function handleGlobalKeydown(event) {
+    state.keyboardNavigation = true;
+    if (shouldIgnoreGlobalKey(event)) return;
+    if (event.target.closest?.("[role='tablist']") && ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) return;
+
+    if (event.key === "ArrowRight" || event.key === "PageDown") {
+      if (event.target.closest?.("[role='tablist']")) return;
+      event.preventDefault();
+      goToRoom(state.room + 1, { pushHistory: true, focusHeading: true, resetScroll: true });
+      return;
+    }
+    if (event.key === "ArrowLeft" || event.key === "PageUp") {
+      if (event.target.closest?.("[role='tablist']")) return;
+      event.preventDefault();
+      goToRoom(state.room - 1, { pushHistory: true, focusHeading: true, resetScroll: true });
+      return;
+    }
+    if (event.key === "Home") {
+      event.preventDefault();
+      goToRoom(0, { pushHistory: true, focusHeading: true, resetScroll: true });
+      return;
+    }
+    if (event.key === "End") {
+      event.preventDefault();
+      goToRoom(rooms.length - 1, { pushHistory: true, focusHeading: true, resetScroll: true });
+      return;
+    }
+
+    const directRoom = Number(event.key) - 1;
+    if (directRoom >= 0 && directRoom < rooms.length) {
+      event.preventDefault();
+      goToRoom(directRoom, { pushHistory: true, focusHeading: true, resetScroll: true });
+    }
+  }
+
+  document.addEventListener("keydown", handleGlobalKeydown);
+  document.addEventListener("pointerdown", () => { state.keyboardNavigation = false; }, { passive: true });
+
+  function isGestureSurface(target) {
+    return target instanceof Element && !target.closest("button, a, video, [role='tab'], [data-no-swipe]");
+  }
+
+  function finishSwipe(start, endX, endY) {
+    if (!start) return;
+    const deltaX = endX - start.x;
+    const deltaY = endY - start.y;
+    const elapsed = performance.now() - start.time;
+    if (Math.abs(deltaX) < 56 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.35 || elapsed > 1100) return;
+    if (performance.now() - state.lastSwipeAt < 350) return;
+    state.lastSwipeAt = performance.now();
+    goToRoom(deltaX < 0 ? state.room + 1 : state.room - 1, { pushHistory: true, resetScroll: true });
+  }
+
+  stage.addEventListener("pointerdown", (event) => {
+    if (!isGestureSurface(event.target)) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    state.pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY, lastX: event.clientX, lastY: event.clientY, time: performance.now() };
+  }, { passive: true });
+
+  stage.addEventListener("pointermove", (event) => {
+    if (!state.pointerStart || state.pointerStart.id !== event.pointerId) return;
+    state.pointerStart.lastX = event.clientX;
+    state.pointerStart.lastY = event.clientY;
+  }, { passive: true });
+
+  stage.addEventListener("pointerup", (event) => {
+    if (!state.pointerStart || state.pointerStart.id !== event.pointerId) return;
+    const start = state.pointerStart;
+    state.pointerStart = null;
+    finishSwipe(start, event.clientX, event.clientY);
+  }, { passive: true });
+
+  stage.addEventListener("pointercancel", (event) => {
+    if (!state.pointerStart || state.pointerStart.id !== event.pointerId) return;
+    const start = state.pointerStart;
+    state.pointerStart = null;
+    finishSwipe(start, start.lastX, start.lastY);
+  }, { passive: true });
+
+  stage.addEventListener("touchstart", (event) => {
+    if (event.touches.length !== 1 || !isGestureSurface(event.target)) return;
+    const touch = event.touches[0];
+    state.touchStart = { id: touch.identifier, x: touch.clientX, y: touch.clientY, time: performance.now() };
+  }, { passive: true });
+
+  stage.addEventListener("touchend", (event) => {
+    if (!state.touchStart) return;
+    const touch = [...event.changedTouches].find((item) => item.identifier === state.touchStart.id);
+    if (!touch) return;
+    const start = state.touchStart;
+    state.touchStart = null;
+    finishSwipe(start, touch.clientX, touch.clientY);
+  }, { passive: true });
+
+  stage.addEventListener("touchcancel", () => { state.touchStart = null; }, { passive: true });
+
+  stage.addEventListener("wheel", (event) => {
+    const now = performance.now();
+    if (now < state.wheelLockUntil) return;
+    const mostlyHorizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY) * 1.2;
+    const shiftedVertical = event.shiftKey && Math.abs(event.deltaY) > 20;
+    const delta = mostlyHorizontal ? event.deltaX : shiftedVertical ? event.deltaY : 0;
+    if (Math.abs(delta) < 30) return;
+    event.preventDefault();
+    state.wheelLockUntil = now + 740;
+    goToRoom(delta > 0 ? state.room + 1 : state.room - 1, { pushHistory: true, resetScroll: true });
+  }, { passive: false });
+
+  function updateParallax() {
+    state.parallaxFrame = 0;
+    if (!hasFinePointer() || reduceMotion.matches) return;
+    const room = rooms[state.room];
+    if (!room) return;
+    const nx = (state.lastPointer.x - 0.5) * 2;
+    const ny = (state.lastPointer.y - 0.5) * 2;
+    room.querySelectorAll(".room__layer[data-depth]").forEach((layer) => {
+      const depth = Number(layer.dataset.depth) || 1;
+      layer.style.setProperty("--layer-x", `${(nx * depth * -3.8).toFixed(2)}px`);
+      layer.style.setProperty("--layer-y", `${(ny * depth * -2.5).toFixed(2)}px`);
+    });
+  }
+
+  stage.addEventListener("pointermove", (event) => {
+    if (!hasFinePointer()) return;
+    state.lastPointer = { x: clamp(event.clientX / window.innerWidth, 0, 1), y: clamp(event.clientY / window.innerHeight, 0, 1) };
+    if (!state.parallaxFrame) state.parallaxFrame = window.requestAnimationFrame(updateParallax);
+  }, { passive: true });
+
+  function resetParallax() {
+    rooms.forEach((room) => room.querySelectorAll(".room__layer").forEach((layer) => {
+      layer.style.setProperty("--layer-x", "0px");
+      layer.style.setProperty("--layer-y", "0px");
+    }));
+  }
+
+  stage.addEventListener("pointerleave", () => {
+    state.lastPointer = { x: 0.5, y: 0.5 };
+    resetParallax();
+  });
+
+  /* The thesis is literal: nearby glyphs evade a cursor and spring back into their line. */
+
+  const restlessThesis = document.querySelector("[data-restless-thesis]");
+  const restlessLetters = [];
+  let restlessFrame = 0;
+  let restlessPointer = null;
+
+  restlessThesis?.querySelectorAll(".restless-word").forEach((word, wordIndex) => {
+    const text = word.textContent || "";
+    const fragment = document.createDocumentFragment();
+    [...text].forEach((character, letterIndex) => {
+      const letter = document.createElement("span");
+      letter.className = character === " " ? "restless-letter restless-space" : "restless-letter";
+      letter.textContent = character;
+      letter.dataset.restlessIndex = String(restlessLetters.length);
+      letter.dataset.restlessWeight = word.classList.contains("moving-word") ? "1.38" : wordIndex >= 3 ? "1.08" : ".88";
+      fragment.append(letter);
+      restlessLetters.push(letter);
+    });
+    word.replaceChildren(fragment);
+  });
+
+  function resetRestlessThesis() {
+    restlessPointer = null;
+    restlessThesis?.classList.remove("is-restless");
+    restlessLetters.forEach((letter) => {
+      letter.style.setProperty("--restless-x", "0px");
+      letter.style.setProperty("--restless-y", "0px");
+      letter.style.setProperty("--restless-rotate", "0deg");
+    });
+  }
+
+  function renderRestlessThesis() {
+    restlessFrame = 0;
+    if (!restlessPointer || reduceMotion.matches) return;
+    const radius = Math.min(118, Math.max(78, window.innerWidth * .08));
+    restlessLetters.forEach((letter, index) => {
+      const bounds = letter.getBoundingClientRect();
+      const dx = bounds.left + bounds.width / 2 - restlessPointer.x;
+      const dy = bounds.top + bounds.height / 2 - restlessPointer.y;
+      const distance = Math.max(1, Math.hypot(dx, dy));
+      const strength = Math.max(0, 1 - distance / radius);
+      const weight = Number(letter.dataset.restlessWeight) || 1;
+      const push = strength * 13 * weight;
+      const x = (dx / distance) * push;
+      const y = (dy / distance) * push - strength * 2.5;
+      const rotation = strength * ((dx / radius) * 11 + Math.sin(index * 1.9) * 2.2) * weight;
+      letter.style.setProperty("--restless-x", `${x.toFixed(2)}px`);
+      letter.style.setProperty("--restless-y", `${y.toFixed(2)}px`);
+      letter.style.setProperty("--restless-rotate", `${rotation.toFixed(2)}deg`);
+    });
+  }
+
+  function moveRestlessThesis(event) {
+    if (reduceMotion.matches) return;
+    restlessPointer = { x: event.clientX, y: event.clientY };
+    restlessThesis?.classList.add("is-restless");
+    if (!restlessFrame) restlessFrame = window.requestAnimationFrame(renderRestlessThesis);
+  }
+
+  restlessThesis?.addEventListener("pointermove", moveRestlessThesis, { passive: true });
+  restlessThesis?.addEventListener("pointerleave", resetRestlessThesis);
+  restlessThesis?.addEventListener("pointerdown", (event) => {
+    moveRestlessThesis(event);
+    restlessThesis.classList.remove("is-pounced");
+    void restlessThesis.offsetWidth;
+    restlessThesis.classList.add("is-pounced");
+    window.setTimeout(() => restlessThesis.classList.remove("is-pounced"), 480);
+  }, { passive: true });
+
+  /* The museum kitten follows attention directly and reacts on touch. */
+
+  const guide = document.querySelector("[data-guide]");
+  const guideButton = document.querySelector("[data-guide-button]");
+  const guideSpeech = document.querySelector("[data-guide-speech]");
+  const guideLines = [
+    "The good rooms move. Follow me.",
+    "Did you know the shelves listen?",
+    "I tested the light keys. Thoroughly.",
+    "Everything here has a pulse.",
+  ];
+  guideButton?.setAttribute("aria-pressed", "false");
+
+  function resetGuideLook() {
+    shell.style.setProperty("--look-x", "0px");
+    shell.style.setProperty("--look-y", "0px");
+    shell.style.setProperty("--guide-tilt-x", "0deg");
+    shell.style.setProperty("--guide-tilt-y", "0deg");
+  }
+
+  guide?.addEventListener("pointermove", (event) => {
+    const bounds = guide.getBoundingClientRect();
+    const nx = clamp(((event.clientX - bounds.left) / bounds.width - 0.5) * 2, -1, 1);
+    const ny = clamp(((event.clientY - bounds.top) / bounds.height - 0.5) * 2, -1, 1);
+    shell.style.setProperty("--look-x", `${(nx * 8).toFixed(2)}px`);
+    shell.style.setProperty("--look-y", `${(ny * 6).toFixed(2)}px`);
+    if (!reduceMotion.matches) {
+      shell.style.setProperty("--guide-tilt-x", `${(nx * 2.5).toFixed(2)}deg`);
+      shell.style.setProperty("--guide-tilt-y", `${(ny * -1.8).toFixed(2)}deg`);
+    }
+  }, { passive: true });
+
+  guide?.addEventListener("pointerleave", resetGuideLook);
+
+  guideButton?.addEventListener("click", () => {
+    state.guideSpeech = (state.guideSpeech + 1) % guideLines.length;
+    if (guideSpeech) guideSpeech.lastChild.textContent = guideLines[state.guideSpeech];
+    guide?.classList.remove("is-greeting");
+    void guide?.offsetWidth;
+    guide?.classList.add("is-greeting");
+    guideButton.setAttribute("aria-pressed", "true");
+    announceReaction(guideLines[state.guideSpeech]);
+    window.setTimeout(() => {
+      guide?.classList.remove("is-greeting");
+      guideButton.setAttribute("aria-pressed", "false");
+    }, 1250);
+  });
+
+  /* Room-specific behaviors */
+
+  const disturbButton = document.querySelector("[data-disturb-books]");
+  const shelves = [...document.querySelectorAll(".edge-shelf")];
+  disturbButton?.setAttribute("aria-pressed", "false");
+  let shelfTimer = 0;
+  disturbButton?.addEventListener("click", () => {
+    const disturbed = !shelves.some((shelf) => shelf.classList.contains("is-disturbed"));
+    shelves.forEach((shelf) => shelf.classList.toggle("is-disturbed", disturbed));
+    disturbButton.firstChild.textContent = disturbed ? "Let the shelves settle " : "Disturb the shelves ";
+    disturbButton.setAttribute("aria-pressed", String(disturbed));
+    announceReaction(disturbed ? "The Alcove shelves are moving." : "The Alcove shelves have settled.");
+    window.clearTimeout(shelfTimer);
+    if (disturbed && !reduceMotion.matches) shelfTimer = window.setTimeout(() => {
+      shelves.forEach((shelf) => shelf.classList.remove("is-disturbed"));
+      disturbButton.firstChild.textContent = "Disturb the shelves ";
+      disturbButton.setAttribute("aria-pressed", "false");
+    }, 4000);
+  });
+
+  const petRoom = document.querySelector(".room--pet");
+  let petTimer = 0;
+  const callPetButton = document.querySelector("[data-call-pet]");
+  callPetButton?.setAttribute("aria-pressed", "false");
+  callPetButton?.addEventListener("click", () => {
+    window.clearTimeout(petTimer);
+    petRoom?.classList.remove("is-called");
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => petRoom?.classList.add("is-called")));
+    callPetButton.setAttribute("aria-pressed", "true");
+    announceReaction("The desktop pet comes running.");
+    petTimer = window.setTimeout(() => {
+      petRoom?.classList.remove("is-called");
+      callPetButton.setAttribute("aria-pressed", "false");
+    }, 1050);
+  });
+
+  const keyscapeRoom = document.querySelector(".room--keyscape");
+  const lightKeys = [...document.querySelectorAll("[data-light-key]")];
+  const keyboardKeys = ["a", "s", "d", "f"];
+  const keyboardLights = ["violet", "cyan", "gold", "coral"];
+  let lightTimer = 0;
+  lightKeys.forEach((button) => button.setAttribute("aria-pressed", "false"));
+
+  function playLight(light, button) {
+    if (!keyscapeRoom) return;
+    keyscapeRoom.dataset.light = light;
+    lightKeys.forEach((item) => item.classList.toggle("is-lit", item === button));
+    lightKeys.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+    announceReaction(`${light[0].toUpperCase()}${light.slice(1)} light activated.`);
+    window.clearTimeout(lightTimer);
+    lightTimer = window.setTimeout(() => {
+      keyscapeRoom.removeAttribute("data-light");
+      lightKeys.forEach((item) => item.classList.remove("is-lit"));
+      lightKeys.forEach((item) => item.setAttribute("aria-pressed", "false"));
+    }, reduceMotion.matches ? 220 : 850);
+  }
+
+  lightKeys.forEach((button) => button.addEventListener("click", () => playLight(button.dataset.lightKey, button)));
+
+  document.addEventListener("keydown", (event) => {
+    if (state.room !== 3 || event.repeat || shouldIgnoreGlobalKey(event)) return;
+    const index = keyboardKeys.indexOf(event.key.toLowerCase());
+    if (index === -1) return;
+    event.preventDefault();
+    playLight(keyboardLights[index], lightKeys[index]);
+  });
+
+  /* Archive: one real README-derived film at a time. */
+
+  const archiveTabs = [...document.querySelectorAll(".archive-project-tab")];
+  const archiveRoom = document.querySelector(".room--archive");
+  const archiveVideo = document.querySelector("[data-archive-video]");
+  const archivePlay = document.querySelector("[data-archive-play]");
+  const archiveTitle = document.querySelector("[data-archive-title]");
+  const archiveKicker = document.querySelector("[data-archive-kicker]");
+  const archiveDescription = document.querySelector("[data-archive-description]");
+  const archiveLink = document.querySelector("[data-archive-link]");
+  const archiveCounter = document.querySelector("[data-archive-counter]");
+  const archivePanel = document.querySelector("#archive-panel");
+
+  function syncArchivePlayButton(video = archiveVideo) {
+    if (!(video instanceof HTMLVideoElement) || !archivePlay) return;
+    const playing = !video.paused && !video.ended;
+    archivePlay.classList.toggle("is-playing", playing);
+    archivePlay.setAttribute("aria-label", playing ? "Pause archive demo" : video.ended ? "Replay archive demo" : "Play archive demo");
+  }
+
+  function setArchiveProject(tab, focus = false) {
+    if (!(tab instanceof HTMLButtonElement) || !(archiveVideo instanceof HTMLVideoElement)) return;
+    const index = archiveTabs.indexOf(tab);
+    archiveTabs.forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-selected", String(active));
+      item.tabIndex = active ? 0 : -1;
+    });
+
+    if (archiveTitle) archiveTitle.textContent = tab.dataset.title || "";
+    if (archiveKicker) archiveKicker.textContent = tab.dataset.kicker || "";
+    if (archiveDescription) archiveDescription.textContent = tab.dataset.description || "";
+    if (archiveLink) archiveLink.href = tab.dataset.repo || "#";
+    if (archiveCounter) archiveCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(archiveTabs.length).padStart(2, "0")} · README FILM`;
+    if (archivePanel && tab.id) archivePanel.setAttribute("aria-labelledby", tab.id);
+    if (archiveRoom) archiveRoom.dataset.archiveProject = tab.dataset.archiveProject || "npc";
+    if (state.room === 4) syncFrameTheme(4);
+
+    archiveVideo.pause();
+    archiveVideo.poster = tab.dataset.poster || "";
+    archiveVideo.setAttribute("aria-label", tab.dataset.alt || `${tab.dataset.title || "Project"} demo`);
+    archiveVideo.replaceChildren();
+    if (tab.dataset.webm) {
+      const source = document.createElement("source");
+      source.src = tab.dataset.webm;
+      source.type = "video/webm";
+      archiveVideo.append(source);
+    }
+    if (tab.dataset.mp4) {
+      const source = document.createElement("source");
+      source.src = tab.dataset.mp4;
+      source.type = "video/mp4";
+      archiveVideo.append(source);
+    }
+    archiveVideo.load();
+    if (state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches) archiveVideo.play().catch(() => {});
+    syncArchivePlayButton();
+    if (focus) tab.focus();
+  }
+
+  archiveTabs.forEach((tab) => {
+    tab.addEventListener("click", () => setArchiveProject(tab));
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const direction = event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1;
+      const next = event.key === "Home"
+        ? archiveTabs[0]
+        : event.key === "End"
+          ? archiveTabs.at(-1)
+          : archiveTabs[(archiveTabs.indexOf(tab) + direction + archiveTabs.length) % archiveTabs.length];
+      setArchiveProject(next, true);
+    });
+  });
+
+  archivePlay?.addEventListener("click", () => {
+    if (!(archiveVideo instanceof HTMLVideoElement)) return;
+    if (archiveVideo.paused) {
+      delete archiveVideo.dataset.userPaused;
+      ensureVideoSources(archiveVideo);
+      if (archiveVideo.ended) archiveVideo.currentTime = 0;
+      archiveVideo.play().catch(() => {});
+    } else {
+      archiveVideo.dataset.userPaused = "true";
+      archiveVideo.pause();
+    }
+  });
+  archiveVideo?.addEventListener("play", () => syncArchivePlayButton());
+  archiveVideo?.addEventListener("pause", () => syncArchivePlayButton());
+  archiveVideo?.addEventListener("ended", () => syncArchivePlayButton());
+
+  /* Workbench: four separate drawers, one useful object at a time. */
+
+  const toolSelectors = [...document.querySelectorAll(".tool-selector")];
+  const workbenchRoom = document.querySelector(".room--workbench");
+  const toolFeature = document.querySelector(".workbench-feature__media");
+  const toolMedia = document.querySelector("[data-tool-media]");
+  const toolVideo = document.querySelector("[data-tool-video]");
+  const toolIndex = document.querySelector("[data-tool-index]");
+  const toolTitle = document.querySelector(".workbench-feature h3");
+  const toolDescription = document.querySelector("[data-tool-description]");
+  const toolLink = document.querySelector("[data-tool-link]");
+  const toolPlay = document.querySelector("[data-tool-play]");
+  const workbenchPanel = document.querySelector("#workbench-panel");
+
+  function setTool(selector, focus = false) {
+    if (!(selector instanceof HTMLButtonElement) || !(toolMedia instanceof HTMLImageElement) || !(toolVideo instanceof HTMLVideoElement)) return;
+    toolSelectors.forEach((item) => {
+      const active = item === selector;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-selected", String(active));
+      item.tabIndex = active ? 0 : -1;
+    });
+    toolFeature?.classList.add("is-changing");
+    if (workbenchRoom) workbenchRoom.dataset.tool = selector.dataset.tool || "email";
+    if (state.room === 5) syncFrameTheme(5);
+    window.setTimeout(() => {
+      const isVideo = selector.dataset.type === "video";
+      toolVideo.pause();
+      toolVideo.hidden = !isVideo;
+      toolMedia.hidden = isVideo;
+      if (toolPlay) toolPlay.hidden = !isVideo;
+
+      if (isVideo) {
+        toolVideo.poster = selector.dataset.poster || "";
+        toolVideo.setAttribute("aria-label", selector.dataset.alt || `${selector.dataset.title || "Utility"} demo`);
+        toolVideo.replaceChildren();
+        if (selector.dataset.webm) {
+          const source = document.createElement("source");
+          source.src = selector.dataset.webm;
+          source.type = "video/webm";
+          toolVideo.append(source);
+        }
+        if (selector.dataset.mp4) {
+          const source = document.createElement("source");
+          source.src = selector.dataset.mp4;
+          source.type = "video/mp4";
+          toolVideo.append(source);
+        }
+        toolVideo.load();
+        if (state.room === 5 && toolVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden) toolVideo.play().catch(() => {});
+      } else {
+        toolMedia.src = selector.dataset.media || selector.dataset.poster || "";
+        toolMedia.alt = selector.dataset.alt || `${selector.dataset.title || "Utility"} demo`;
+      }
+      if (toolIndex) toolIndex.textContent = selector.dataset.index || "";
+      if (toolTitle) toolTitle.textContent = selector.dataset.title || "";
+      if (toolDescription) toolDescription.textContent = selector.dataset.description || "";
+      if (toolLink) toolLink.href = selector.dataset.repo || "#";
+      if (workbenchPanel && selector.id) workbenchPanel.setAttribute("aria-labelledby", selector.id);
+      toolFeature?.classList.remove("is-changing");
+      syncVideoPlayback();
+    }, reduceMotion.matches ? 0 : 130);
+    if (focus) selector.focus();
+  }
+
+  toolSelectors.forEach((selector) => {
+    selector.addEventListener("click", () => setTool(selector));
+    selector.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const direction = event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1;
+      const next = event.key === "Home"
+        ? toolSelectors[0]
+        : event.key === "End"
+          ? toolSelectors.at(-1)
+          : toolSelectors[(toolSelectors.indexOf(selector) + direction + toolSelectors.length) % toolSelectors.length];
+      setTool(next, true);
+    });
+  });
+
+  document.querySelectorAll("[data-video-toggle]").forEach((button) => {
+    const video = button.parentElement?.querySelector("video");
+    if (!(button instanceof HTMLButtonElement) || !(video instanceof HTMLVideoElement)) return;
+    button.addEventListener("click", () => {
+      if (video.paused) {
+        delete video.dataset.userPaused;
+        ensureVideoSources(video);
+        video.play().catch(() => {});
+      } else {
+        video.dataset.userPaused = "true";
+        video.pause();
+      }
+      syncFeaturePlayButton(video);
+    });
+    video.addEventListener("play", () => syncFeaturePlayButton(video));
+    video.addEventListener("pause", () => syncFeaturePlayButton(video));
+    video.addEventListener("ended", () => syncFeaturePlayButton(video));
+    syncFeaturePlayButton(video);
+  });
+
+  /* Reduced motion uses honest stills instead of freezing animated files mid-frame. */
+
+  function syncMotionPreference() {
+    document.querySelectorAll("img[data-motion-src][data-still-src]").forEach((image) => {
+      image.src = reduceMotion.matches ? image.dataset.stillSrc : image.dataset.motionSrc;
+    });
+    if (reduceMotion.matches) shell.classList.remove("is-intro");
+    syncVideoPlayback();
+  }
+
+  reduceMotion.addEventListener?.("change", syncMotionPreference);
+
+  /* Ambient hand-drawn dust; direct interactions remain available when it is disabled. */
+
+  class AmbientField {
+    constructor(element) {
+      this.canvas = element;
+      this.context = element?.getContext("2d", { alpha: true });
+      this.particles = [];
+      this.frame = 0;
+      this.width = 0;
+      this.height = 0;
+      this.dpr = 1;
+      this.lastTime = 0;
+      this.seed = 7319;
+      this.palette = ["#172326", "#c54234", "#46776a"];
+      this.resize = this.resize.bind(this);
+      this.draw = this.draw.bind(this);
+      if (!this.context) return;
+      this.resize();
+      window.addEventListener("resize", this.resize, { passive: true });
+      document.addEventListener("visibilitychange", () => this.sync());
+      window.addEventListener("museum:roomchange", (event) => this.changeRoom(event.detail.room));
+      reduceMotion.addEventListener?.("change", () => this.sync());
+      this.sync();
+    }
+
+    random() {
+      this.seed = (this.seed * 16807) % 2147483647;
+      return (this.seed - 1) / 2147483646;
+    }
+
+    makeParticle(index) {
+      const shapes = ["dot", "dash", "curl", "cross"];
+      return { x: this.random() * this.width, y: this.random() * this.height, size: .7 + this.random() * 2.1, vx: (-.5 + this.random()) * .052, vy: -.025 - this.random() * .07, phase: this.random() * Math.PI * 2, angle: this.random() * Math.PI * 2, spin: (-.5 + this.random()) * .003, alpha: .07 + this.random() * .18, color: this.palette[index % this.palette.length], shape: shapes[Math.floor(this.random() * shapes.length)] };
+    }
+
+    resize() {
+      if (!this.context) return;
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      const pixelBudgetDpr = Math.sqrt(5_000_000 / Math.max(1, this.width * this.height));
+      this.dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2, pixelBudgetDpr));
+      this.canvas.width = Math.round(this.width * this.dpr);
+      this.canvas.height = Math.round(this.height * this.dpr);
+      this.canvas.style.width = `${this.width}px`;
+      this.canvas.style.height = `${this.height}px`;
+      this.context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      const count = clamp(Math.round((this.width * this.height) / 34000), 16, 46);
+      this.particles = Array.from({ length: count }, (_, index) => this.makeParticle(index));
+    }
+
+    changeRoom(room) {
+      const palettes = [
+        ["#172326", "#c54234", "#e5b845"], ["#1f4c45", "#c54234", "#8c79ff"],
+        ["#172326", "#c54234", "#46776a"], ["#8dd9e2", "#8c79ff", "#d9ee72"],
+        ["#172326", "#c54234", "#46776a"], ["#172326", "#e5b845", "#c54234"],
+      ];
+      this.palette = palettes[room] || palettes[0];
+      this.particles.forEach((particle, index) => { particle.color = this.palette[index % this.palette.length]; });
+    }
+
+    sync() {
+      const run = !reduceMotion.matches && !document.hidden;
+      if (run && !this.frame) {
+        this.lastTime = performance.now();
+        this.frame = window.requestAnimationFrame(this.draw);
+      } else if (!run && this.frame) {
+        window.cancelAnimationFrame(this.frame);
+        this.frame = 0;
+        this.context?.clearRect(0, 0, this.width, this.height);
+      }
+    }
+
+    drawParticle(particle, time) {
+      const ctx = this.context;
+      const wave = Math.sin(time * .0006 + particle.phase) * 2.5;
+      ctx.save();
+      ctx.translate(particle.x + wave, particle.y);
+      ctx.rotate(particle.angle);
+      ctx.strokeStyle = particle.color;
+      ctx.fillStyle = particle.color;
+      ctx.globalAlpha = particle.alpha;
+      ctx.lineWidth = .8;
+      ctx.lineCap = "round";
+      if (particle.shape === "dot") {
+        ctx.beginPath(); ctx.arc(0, 0, particle.size, 0, Math.PI * 2); ctx.fill();
+      } else if (particle.shape === "dash") {
+        ctx.beginPath(); ctx.moveTo(-particle.size * 2.1, 0); ctx.quadraticCurveTo(0, particle.size * .7, particle.size * 2.1, 0); ctx.stroke();
+      } else if (particle.shape === "cross") {
+        ctx.beginPath(); ctx.moveTo(-particle.size, 0); ctx.lineTo(particle.size, 0); ctx.moveTo(0, -particle.size); ctx.lineTo(0, particle.size); ctx.stroke();
+      } else {
+        ctx.beginPath(); ctx.arc(0, 0, particle.size * 1.5, .4, Math.PI * 1.8); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    draw(time) {
+      this.frame = 0;
+      if (reduceMotion.matches || document.hidden) return;
+      if (time - this.lastTime < 30) {
+        this.frame = window.requestAnimationFrame(this.draw);
+        return;
+      }
+      const delta = clamp(time - this.lastTime, 0, 34);
+      this.lastTime = time;
+      this.context.clearRect(0, 0, this.width, this.height);
+      this.particles.forEach((particle) => {
+        particle.x += particle.vx * delta;
+        particle.y += particle.vy * delta;
+        particle.angle += particle.spin * delta;
+        if (particle.y < -12) { particle.y = this.height + 12; particle.x = this.random() * this.width; }
+        if (particle.x < -12) particle.x = this.width + 12;
+        if (particle.x > this.width + 12) particle.x = -12;
+        this.drawParticle(particle, time);
+      });
+      this.frame = window.requestAnimationFrame(this.draw);
+    }
+  }
+
+  const ambientField = canvas ? new AmbientField(canvas) : null;
+
+  let resizeFrame = 0;
+  window.addEventListener("resize", () => {
+    if (resizeFrame) return;
+    resizeFrame = window.requestAnimationFrame(() => {
+      resizeFrame = 0;
+      setSpatialVariables(state.room);
+      resetParallax();
+      syncMobileScrollHint();
+    });
+  }, { passive: true });
+
+  document.addEventListener("visibilitychange", syncVideoPlayback);
+  window.addEventListener("popstate", () => goToRoom(getRoomFromHash(), { updateHash: false, forceAnnounce: true, focusHeading: true }));
+
+  document.querySelectorAll("img").forEach((image) => {
+    image.addEventListener("load", () => image.classList.add("is-loaded"), { once: true });
+    if (image.complete) image.classList.add("is-loaded");
+  });
+
+  state.introTimer = window.setTimeout(() => shell.classList.remove("is-intro"), reduceMotion.matches ? 0 : 4700);
+  syncMotionPreference();
+  goToRoom(getRoomFromHash(), { updateHash: true, forceAnnounce: false });
+  ambientField?.changeRoom(state.room);
+  window.addEventListener("load", () => {
+    stage.scrollLeft = 0;
+    syncMobileScrollHint();
+  }, { once: true });
+})();
