@@ -3,14 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="Akshit Ireddy's Museum of Behaviors — open-source software with movement, character, and beautifully considered utility." />
+    <meta name="description" content="Software in Motion — Akshit Ireddy's open-source projects in characterful interfaces, AI companions, creative tools, and thoughtful desktop software." />
     <meta name="theme-color" content="#f4ead4" />
-    <meta property="og:title" content="Akshit Ireddy — Museum of Behaviors" />
+    <meta property="og:title" content="Akshit Ireddy — Software in Motion" />
     <meta property="og:description" content="I make software that refuses to sit still. Walk through selected open-source projects by Akshit Ireddy." />
     <meta property="og:type" content="website" />
-    <title>Akshit Ireddy — Museum of Behaviors</title>
-    <link rel="canonical" href="/" />
-    <link rel="icon" href="public/favicon-museum-kitten.svg" type="image/svg+xml" sizes="any" />
+    <meta property="og:url" content="https://akshitireddy.github.io/" />
+    <meta property="og:image" content="https://akshitireddy.github.io/public/social-preview.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Akshit Ireddy's Software in Motion portfolio, with the line I make software that refuses to sit still and an animated studio kitten." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Akshit Ireddy — Software in Motion" />
+    <meta name="twitter:description" content="I make software that refuses to sit still. Explore selected open-source projects in motion." />
+    <meta name="twitter:image" content="https://akshitireddy.github.io/public/social-preview.png" />
+    <title>Akshit Ireddy — Software in Motion</title>
+    <link rel="canonical" href="https://akshitireddy.github.io/" />
+    <link rel="icon" href="public/favicon-kitten.svg" type="image/svg+xml" sizes="any" />
     <link rel="preload" href="public/fonts/fraunces-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="public/fonts/dm-sans-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="public/media/akshit-avatar.webp" as="image" type="image/webp" />
@@ -18,13 +27,13 @@
   </head>
 
   <body>
-    <a class="skip-link" href="#museum-stage">Skip to the exhibits</a>
+    <a class="skip-link" href="#museum-stage">Skip to the projects</a>
 
     <div class="museum-shell is-intro" data-current-room="0" data-frame="foyer">
       <canvas class="ambient-canvas" aria-hidden="true"></canvas>
 
       <header class="museum-masthead">
-        <a class="maker-mark" href="#foyer" data-room-target="0" aria-label="Akshit Ireddy, return to the foyer">
+        <a class="maker-mark" href="#foyer" data-room-target="0" aria-label="Akshit Ireddy, return to the beginning">
           <span class="maker-mark__portrait" aria-hidden="true">
             <img class="maker-mark__avatar" src="public/media/akshit-avatar.webp" alt="" width="128" height="128" />
             <i></i>
@@ -33,7 +42,7 @@
         </a>
 
         <div class="masthead-exhibit">
-          <span>Museum of Behaviors</span><b data-room-reading>00 — Foyer</b>
+          <span>Software in Motion</span><b data-room-reading>00 — Start</b>
         </div>
 
         <nav class="masthead-links" aria-label="Akshit online">
@@ -49,32 +58,31 @@
             <div class="ceiling-lights ceiling-lights--foyer" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="room-canvas room-canvas--foyer">
               <div class="foyer-copy room__layer" data-depth="1.1">
-                <p class="eyebrow"><span>Open-source exhibition</span> · selected work, 2023—2026</p>
+                <p class="eyebrow"><span>Open-source, in motion</span> · selected work, 2023—2026</p>
                 <h1 id="foyer-title" tabindex="-1" data-restless-thesis aria-label="I make software that refuses to sit still.">
-                  <span class="thesis-line"><span class="restless-word">I</span> <span class="restless-word">make</span> <span class="restless-word">software</span></span>
-                  <span class="thesis-line"><span class="restless-word">that</span> <span class="restless-word">refuses</span> <span class="restless-word">to</span></span>
-                  <span class="thesis-line thesis-line--last"><span class="restless-word moving-word">sit still</span><em>.</em></span>
+                  <span class="thesis-line">I make software</span>
+                  <span class="thesis-line">that refuses to</span>
+                  <span class="thesis-line thesis-line--last"><span class="moving-word">sit still</span><em>.</em></span>
                 </h1>
-                <p class="thesis-touch-note"><i aria-hidden="true"></i><span>Run your cursor through the sentence.</span></p>
                 <p class="foyer-copy__intro">
-                  <strong>So I make software move.</strong> Books breathe. Companions wander. Keys bend light.
-                  Useful tools stay practical <em>and</em> still have a point of view.
+                  <strong>I like making software move.</strong> Books breathe, companions wander, and keys bend light.
+                  The practical tools stay practical—but every project still gets a point of view.
                 </p>
                 <div class="foyer-actions">
                   <button class="ticket-button" type="button" data-room-target="1"><span>Enter the living library</span><b aria-hidden="true">→</b></button>
                   <p class="interaction-cue interaction-cue--entry"><i aria-hidden="true"></i> Click, swipe, or use ← →</p>
                 </div>
                 <div class="foyer-index" aria-hidden="true">
-                  <span><i>01—03</i><b>new habitats</b><small>books · companions · light</small></span>
-                  <span><i>04</i><b>early signals</b><small>three experiments worth keeping</small></span>
+                  <span><i>01—03</i><b>recent work</b><small>books · companions · light</small></span>
+                  <span><i>04</i><b>earlier experiments</b><small>three ideas that still matter</small></span>
                   <span><i>05</i><b>useful objects</b><small>tools with a point of view</small></span>
                 </div>
               </div>
 
               <div class="guide-plinth room__layer" data-depth="1.85" data-guide>
                 <div class="guide-signal" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-                <button class="kinetic-guide" type="button" aria-label="Greet the museum kitten" data-guide-button>
-                  <svg viewBox="0 0 300 260" role="img" aria-label="A curious orange museum kitten with bright eyes, a violet collar, and a waving tail">
+                <button class="kinetic-guide" type="button" aria-label="Greet the studio kitten" data-guide-button>
+                  <svg viewBox="0 0 300 260" role="img" aria-label="A curious orange studio kitten with bright eyes, a violet collar, and a waving tail">
                     <defs>
                       <linearGradient id="guide-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9f67" /><stop offset=".54" stop-color="#f06449" /><stop offset="1" stop-color="#bd3a50" /></linearGradient>
                       <linearGradient id="guide-tail-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8c79ff" stop-opacity="0" /><stop offset=".45" stop-color="#8c79ff" /><stop offset="1" stop-color="#f06449" /></linearGradient>
@@ -92,8 +100,8 @@
                     <g class="guide-sparks" fill="#d9ee72" stroke="#172326" stroke-width="2.5"><path d="M65 105 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" /><circle cx="241" cy="88" r="5" /><circle cx="77" cy="188" r="4" /></g>
                   </svg>
                 </button>
-                <p class="guide-speech" data-guide-speech><span>resident curator</span>Psst—this museum purrs back.</p>
-                <p class="guide-label">specimen 00 · <b>museum kitten</b></p>
+                <p class="guide-speech" data-guide-speech><span>studio companion</span>Psst—almost everything here reacts.</p>
+                <p class="guide-label">companion 00 · <b>resident kitten</b></p>
               </div>
             </div>
             <button class="doorway doorway--right" type="button" data-room-target="1"><span><b>01</b> Living library</span><i aria-hidden="true">→</i></button>
@@ -106,19 +114,19 @@
             <div class="room-canvas room-canvas--alcove">
               <header class="exhibit-copy exhibit-copy--alcove room__layer" data-depth=".7">
                 <p class="eyebrow"><span>01 · recent habitat</span> / 2026</p><h2 id="alcove-title" tabindex="-1">Alcove</h2>
-                <p>A local-first storybook notebook that lives on a bookshelf. Everything stays on your machine.</p>
-                <ul class="project-facts" aria-label="Alcove details"><li>local-first</li><li>Tauri</li><li>tactile UI</li></ul>
+                <p class="project-story">A local-first notebook built like a shelf of storybooks—not a stack of files. Pages turn, covers become places, and your writing stays entirely on your machine.</p>
+                <ul class="project-facts" aria-label="Alcove details"><li>local-first</li><li>Rust + Tauri</li><li>page physics</li><li>private by default</li></ul>
               </header>
               <figure class="media-exhibit alcove-specimen room__layer" data-depth="1.35">
-                <div class="museum-window museum-window--alcove specimen-window--alcove"><video muted loop playsinline preload="none" poster="public/media/features/alcove-poster.webp" aria-label="Alcove's storybook notebook and bookshelf interface, shown without cropping" data-room-video><source data-src="public/media/features/alcove.webm" type="video/webm" /><source data-src="public/media/features/alcove.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play Alcove demo"><span aria-hidden="true">▶</span></button><span class="window-label"><i></i> live specimen · pages turn</span></div>
-                <figcaption><span><b>Observe:</b> shelves respond, pages turn, covers become places.</span><a class="repo-link" href="https://github.com/AkshitIreddy/Alcove" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
+                <div class="museum-window museum-window--alcove specimen-window--alcove"><img data-motion-src="public/media/features/alcove-full.webp" data-still-src="public/media/features/alcove-poster.webp" alt="Alcove's full storybook notebook and bookshelf demo, shown without cropping" width="900" height="562" /><span class="window-label"><i></i> complete README demo · continuous loop</span></div>
+                <figcaption><span><b>In motion:</b> the complete README recording—shelves respond, pages turn, and notebooks become little worlds.</span><a class="repo-link" href="https://github.com/AkshitIreddy/Alcove" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
               <aside class="alcove-notes room__layer" data-depth="1.55" aria-label="Alcove field notes">
                 <p class="scribble-card">made to feel<br /><b>kept, not stored</b></p><p class="scribble-card">interaction as<br /><b>bookbinding</b></p>
                 <div class="interactive-action"><button type="button" class="exhibit-button" data-disturb-books>Disturb the shelves <span aria-hidden="true">↝</span></button><p class="interaction-cue"><i aria-hidden="true"></i> Try the room</p></div>
               </aside>
             </div>
-            <button class="doorway doorway--left" type="button" data-room-target="0"><i aria-hidden="true">←</i><span>Foyer</span></button>
+            <button class="doorway doorway--left" type="button" data-room-target="0"><i aria-hidden="true">←</i><span>Start</span></button>
             <button class="doorway doorway--right" type="button" data-room-target="2"><span><b>02</b> Desktop companion</span><i aria-hidden="true">→</i></button>
           </section>
 
@@ -126,12 +134,12 @@
             <div class="room-texture room-texture--pet" aria-hidden="true"></div><div class="ceiling-lights ceiling-lights--pet" aria-hidden="true"><i></i><i></i><i></i></div><div class="pet-track" aria-hidden="true"><i></i><i></i><i></i><span></span></div>
             <div class="room-canvas room-canvas--pet">
               <header class="exhibit-copy exhibit-copy--pet room__layer" data-depth=".7">
-                <p class="eyebrow"><span>02 · companion study</span> / 2026</p><h2 id="pet-title" tabindex="-1">Convai<br />desktop pet</h2><p>An AI character that steps outside the chat box and shares your screen-space.</p><blockquote>“Software can have body language.”</blockquote>
+                <p class="eyebrow"><span>02 · companion study</span> / 2026</p><h2 id="pet-title" tabindex="-1">AI Desktop Pet</h2><p class="project-story">A conversational desktop character with window awareness, screen vision, and long-term memory. It wanders, climbs windows, chases the cursor, joins other pets, and turns spoken Convai conversations into body language of its own.</p><ul class="project-facts" aria-label="AI Desktop Pet details"><li>Convai voice</li><li>screen vision</li><li>long-term memory</li><li>multi-pet</li><li>window physics</li></ul><blockquote>“Software can have body language.”</blockquote>
                 <div class="interactive-action"><button class="exhibit-button exhibit-button--dark" type="button" data-call-pet>Call the creature <span aria-hidden="true">◌</span></button><p class="interaction-cue"><i aria-hidden="true"></i> Click to call</p></div>
               </header>
               <figure class="media-exhibit pet-specimen room__layer" data-depth="1.4">
-                <div class="museum-window museum-window--pet"><video muted loop playsinline preload="none" poster="public/media/features/pet-poster.webp" aria-label="Convai desktop pet walking and reacting on a computer desktop" data-room-video><source data-src="public/media/features/pet.webm" type="video/webm" /><source data-src="public/media/features/pet.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play Convai desktop pet demo"><span aria-hidden="true">▶</span></button><span class="glass-glint" aria-hidden="true"></span><span class="window-label"><i></i> habitat · your desktop</span></div>
-                <figcaption><span><b>Behavior:</b> wanders · listens · responds · lingers</span><a class="repo-link" href="https://github.com/AkshitIreddy/convai-desktop-pet" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
+                <div class="museum-window museum-window--pet"><video muted loop playsinline preload="none" data-poster="public/media/features/pet-poster.webp" aria-label="AI Desktop Pet walking and reacting on a computer desktop" data-room-video><source data-src="public/media/features/pet.webm" type="video/webm" /><source data-src="public/media/features/pet.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play AI Desktop Pet demo"><span aria-hidden="true">▶</span></button><span class="glass-glint" aria-hidden="true"></span><span class="window-label"><i></i> habitat · your desktop</span></div>
+                <figcaption><span><b>Behavior:</b> climbs windows, chases the cursor, remembers, converses, and coexists with other pets.</span><a class="repo-link" href="https://github.com/AkshitIreddy/convai-desktop-pet" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
             </div>
             <button class="doorway doorway--left" type="button" data-room-target="1"><i aria-hidden="true">←</i><span>Living library</span></button><button class="doorway doorway--right doorway--night" type="button" data-room-target="3"><span><b>03</b> Light instrument</span><i aria-hidden="true">→</i></button>
@@ -141,30 +149,30 @@
             <div class="keyscape-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="keyscape-beam keyscape-beam--a" aria-hidden="true"></div><div class="keyscape-beam keyscape-beam--b" aria-hidden="true"></div>
             <div class="room-canvas room-canvas--keyscape">
               <header class="exhibit-copy exhibit-copy--keyscape room__layer" data-depth=".7">
-                <p class="eyebrow"><span>03 · playable light</span> / recent work</p><h2 id="keyscape-title" tabindex="-1">Keyscape</h2><p>A Rust/Tauri per-key RGB engine for ASUS ROG laptops, with 50 hand-built effects.</p>
+                <p class="eyebrow"><span>03 · playable light</span> / recent work</p><h2 id="keyscape-title" tabindex="-1">Keyscape</h2><p class="project-story">A Rust/Tauri per-key RGB engine for ASUS ROG laptops. Fifty hand-built effects turn the keyboard into a programmable landscape of ripples, weather, particles, and color.</p><ul class="project-facts" aria-label="Keyscape details"><li>Rust + Tauri</li><li>50 effects</li><li>per-key RGB</li></ul>
                 <div class="light-console"><div class="light-console__label"><b>Touch the light</b><span>or press A S D F</span></div><div class="light-keys" role="group" aria-label="Interactive light colors"><button type="button" data-light-key="violet" aria-label="Violet light"><i></i></button><button type="button" data-light-key="cyan" aria-label="Cyan light"><i></i></button><button type="button" data-light-key="gold" aria-label="Gold light"><i></i></button><button type="button" data-light-key="coral" aria-label="Coral light"><i></i></button></div><p class="interaction-cue interaction-cue--night"><i aria-hidden="true"></i> Try the keys</p></div>
               </header>
               <figure class="media-exhibit keyscape-specimen room__layer" data-depth="1.45">
-                <div class="museum-window museum-window--keyscape"><video muted loop playsinline preload="none" poster="public/media/features/keyscape-poster.webp" aria-label="Keyscape's atmospheric keyboard landscape glowing with colored light" data-room-video><source data-src="public/media/features/keyscape.webm" type="video/webm" /><source data-src="public/media/features/keyscape.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play Keyscape demo"><span aria-hidden="true">▶</span></button><span class="keyscape-spectrum" aria-hidden="true"></span><span class="window-label"><i></i> 50 lighting behaviors</span></div>
+                <div class="museum-window museum-window--keyscape"><video muted loop playsinline preload="none" data-poster="public/media/features/keyscape-poster.webp" aria-label="Keyscape's atmospheric keyboard landscape glowing with colored light" data-room-video><source data-src="public/media/features/keyscape.webm" type="video/webm" /><source data-src="public/media/features/keyscape.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play Keyscape demo"><span aria-hidden="true">▶</span></button><span class="keyscape-spectrum" aria-hidden="true"></span><span class="window-label"><i></i> 50 lighting behaviors</span></div>
                 <figcaption><span>Each tap lights this room. In Keyscape, effects animate the hardware.</span><a class="repo-link repo-link--night" href="https://github.com/AkshitIreddy/keyscape" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
             </div>
-            <button class="doorway doorway--left doorway--night" type="button" data-room-target="2"><i aria-hidden="true">←</i><span>Companion</span></button><button class="doorway doorway--right doorway--night" type="button" data-room-target="4"><span><b>04</b> Early signals</span><i aria-hidden="true">→</i></button>
+            <button class="doorway doorway--left doorway--night" type="button" data-room-target="2"><i aria-hidden="true">←</i><span>Companion</span></button><button class="doorway doorway--right doorway--night" type="button" data-room-target="4"><span><b>04</b> Earlier experiments</span><i aria-hidden="true">→</i></button>
           </section>
 
           <section class="room room--archive" id="archive" aria-labelledby="archive-title" data-archive-project="npc">
             <div class="room-texture room-texture--archive" aria-hidden="true"></div><div class="archive-cable archive-cable--one" aria-hidden="true"></div><div class="archive-cable archive-cable--two" aria-hidden="true"></div>
             <div class="room-canvas room-canvas--archive">
-              <header class="exhibit-copy exhibit-copy--archive room__layer" data-depth=".65"><p class="eyebrow"><span>04 · selected 2023 experiments</span> / the good shelf, not the attic</p><h2 id="archive-title" tabindex="-1">Early<br />signals</h2><p>A few older experiments still here because people found them—and because they explain where the instincts began.</p><p class="curator-note"><span>curator’s note</span>Resonance, not a résumé dump.</p></header>
+              <header class="exhibit-copy exhibit-copy--archive room__layer" data-depth=".65"><p class="eyebrow"><span>04 · selected 2023 work</span> / ideas that travelled</p><h2 id="archive-title" tabindex="-1">Earlier<br />experiments</h2><p>These are older, but not filler. Each found an audience and established an instinct that still shapes the newer work: characters with presence, explanations with motion, and AI interfaces with personality.</p><p class="curator-note"><span>why they are here</span>Three useful origins, not a complete history.</p></header>
               <div class="archive-exhibit room__layer" data-depth="1.25">
                 <div class="archive-project-stage" id="archive-panel" role="tabpanel" aria-labelledby="archive-tab-npc" aria-live="polite">
-                  <div class="archive-project-stage__screen"><video data-archive-video muted loop playsinline preload="none" poster="public/media/archive/interactive-llm-npcs-poster.webp" aria-label="Interactive LLM-powered NPCs demo"><source data-src="public/media/archive/interactive-llm-npcs.webm" type="video/webm" /><source data-src="public/media/archive/interactive-llm-npcs.mp4" type="video/mp4" /></video><button class="media-play" type="button" data-archive-play aria-label="Play archive demo"><span aria-hidden="true">▶</span></button><span class="film-counter" data-archive-counter>01 / 03 · README FILM</span></div>
-                  <div class="archive-project-stage__caption"><div><p data-archive-kicker>Characters with presence</p><h3 data-archive-title>Interactive LLM-powered NPCs</h3></div><p data-archive-description>Context, voice, and memory turned non-player characters into someone you could actually meet.</p><a class="repo-link" data-archive-link href="https://github.com/AkshitIreddy/Interactive-LLM-Powered-NPCs" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div>
+                  <div class="archive-project-stage__screen"><video data-archive-video muted loop playsinline preload="none" data-poster="public/media/archive/interactive-llm-npcs-poster.webp" aria-label="Interactive LLM-powered NPCs demo"><source data-src="public/media/archive/interactive-llm-npcs.webm" type="video/webm" /><source data-src="public/media/archive/interactive-llm-npcs.mp4" type="video/mp4" /></video><button class="media-play" type="button" data-archive-play aria-label="Play archive demo"><span aria-hidden="true">▶</span></button><span class="film-counter" data-archive-counter>01 / 03 · README FILM</span></div>
+                  <div class="archive-project-stage__caption"><div><p data-archive-kicker>Characters with presence</p><h3 data-archive-title>Interactive LLM-powered NPCs</h3></div><p data-archive-description>Context, voice, and memory let game characters hold grounded conversations inside a shared world. The demo begins in the club—not in the editor—and moves from environmental interaction to the Rogue and Johnny conversation.</p><a class="repo-link" data-archive-link href="https://github.com/AkshitIreddy/Interactive-LLM-Powered-NPCs" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div>
                 </div>
                 <div class="archive-project-tabs" role="tablist" aria-label="Selected early projects">
-                  <button class="archive-project-tab is-active" id="archive-tab-npc" type="button" role="tab" aria-selected="true" aria-controls="archive-panel" data-archive-project="npc" data-title="Interactive LLM-powered NPCs" data-kicker="Characters with presence" data-description="Context, voice, and memory turned non-player characters into someone you could actually meet." data-repo="https://github.com/AkshitIreddy/Interactive-LLM-Powered-NPCs" data-webm="public/media/archive/interactive-llm-npcs.webm" data-mp4="public/media/archive/interactive-llm-npcs.mp4" data-poster="public/media/archive/interactive-llm-npcs-poster.webp" data-alt="Interactive LLM-powered NPCs demo"><span>A—01</span><b>LLM NPCs</b><em aria-label="719 GitHub stars">★ 719</em></button>
-                  <button class="archive-project-tab" id="archive-tab-tutorial" type="button" role="tab" aria-selected="false" aria-controls="archive-panel" tabindex="-1" data-archive-project="tutorial" data-title="Video tutorial generator" data-kicker="Explanation becomes a sequence" data-description="A generative pipeline that turns a topic into animated, narrated steps people can follow." data-repo="https://github.com/AkshitIreddy/AI-Powered-Video-Tutorial-Generator" data-webm="public/media/archive/video-tutorial.webm" data-mp4="public/media/archive/video-tutorial.mp4" data-poster="public/media/archive/video-tutorial-poster.webp" data-alt="AI-powered video tutorial generator demo"><span>A—02</span><b>Video tutorials</b><em aria-label="310 GitHub stars">★ 310</em></button>
-                  <button class="archive-project-tab" id="archive-tab-cupcake" type="button" role="tab" aria-selected="false" aria-controls="archive-panel" tabindex="-1" data-archive-project="cupcake" data-title="CupcakeAGI" data-kicker="A playful multisensory agent" data-description="An early AI agent with tools, memory, emotions, random thoughts, dreams—and a refusal to look like an admin panel." data-repo="https://github.com/AkshitIreddy/CUPCAKEAGI" data-webm="public/media/archive/cupcakeagi.webm" data-mp4="public/media/archive/cupcakeagi.mp4" data-poster="public/media/archive/cupcakeagi-poster.webp" data-alt="CupcakeAGI demo"><span>A—03</span><b>CupcakeAGI</b><em aria-label="127 GitHub stars">★ 127</em></button>
+                  <button class="archive-project-tab is-active" id="archive-tab-npc" type="button" role="tab" aria-selected="true" aria-controls="archive-panel" data-archive-project="npc" data-title="Interactive LLM-powered NPCs" data-kicker="Characters with presence" data-description="Context, voice, and memory let game characters hold grounded conversations inside a shared world. The demo begins in the club—not in the editor—and moves from environmental interaction to the Rogue and Johnny conversation." data-repo="https://github.com/AkshitIreddy/Interactive-LLM-Powered-NPCs" data-webm="public/media/archive/interactive-llm-npcs.webm" data-mp4="public/media/archive/interactive-llm-npcs.mp4" data-poster="public/media/archive/interactive-llm-npcs-poster.webp" data-alt="Interactive LLM-powered NPCs demo"><span>A—01</span><b>LLM NPCs</b><em aria-label="719 GitHub stars">★ 719</em></button>
+                  <button class="archive-project-tab" id="archive-tab-tutorial" type="button" role="tab" aria-selected="false" aria-controls="archive-panel" tabindex="-1" data-archive-project="tutorial" data-title="AI Video Tutorial Generator" data-kicker="Explanation becomes a sequence" data-description="A generative pipeline that turns one topic into a planned, narrated visual lesson. It designs the sequence, produces the presenter and slides, and assembles them into a tutorial people can follow from question to explanation." data-repo="https://github.com/AkshitIreddy/AI-Powered-Video-Tutorial-Generator" data-webm="public/media/archive/video-tutorial.webm" data-mp4="public/media/archive/video-tutorial.mp4" data-poster="public/media/archive/video-tutorial-poster.webp" data-alt="AI Video Tutorial Generator demo"><span>A—02</span><b>AI Video Tutorial Generator</b><em aria-label="310 GitHub stars">★ 310</em></button>
+                  <button class="archive-project-tab" id="archive-tab-cupcake" type="button" role="tab" aria-selected="false" aria-controls="archive-panel" tabindex="-1" data-archive-project="cupcake" data-title="CupcakeAGI" data-kicker="A playful multisensory agent" data-description="An early autonomous AI experiment with tools, memory, emotions, spontaneous thoughts, and dreams. It explored how an agent could expose its internal state without collapsing into another sterile administration panel." data-repo="https://github.com/AkshitIreddy/CUPCAKEAGI" data-webm="public/media/archive/cupcakeagi.webm" data-mp4="public/media/archive/cupcakeagi.mp4" data-poster="public/media/archive/cupcakeagi-poster.webp" data-alt="CupcakeAGI demo"><span>A—03</span><b>CupcakeAGI</b><em aria-label="127 GitHub stars">★ 127</em></button>
                 </div>
               </div>
             </div>
@@ -174,26 +182,26 @@
           <section class="room room--workbench" id="workbench" aria-labelledby="workbench-title" data-tool="email">
             <div class="room-texture room-texture--workbench" aria-hidden="true"></div><div class="workbench-desk" aria-hidden="true"><i></i><i></i><i></i></div>
             <div class="room-canvas room-canvas--workbench">
-              <header class="exhibit-copy exhibit-copy--workbench room__layer" data-depth=".6"><p class="eyebrow"><span>05 · useful objects</span> / selected tools</p><h2 id="workbench-title" tabindex="-1">Utility<br />workbench</h2><p>Not every idea needs a personality. Some should simply remove friction beautifully.</p><a class="all-work-link" href="https://github.com/AkshitIreddy?tab=repositories" target="_blank" rel="noreferrer">All public repositories <span aria-hidden="true">↗</span></a></header>
+              <header class="exhibit-copy exhibit-copy--workbench room__layer" data-depth=".6"><p class="eyebrow"><span>05 · practical tools</span> / one drawer at a time</p><h2 id="workbench-title" tabindex="-1">Useful<br />things</h2><p>Not every project needs a personality. These remove specific kinds of friction: inbox overload, product-demo capture, scattered technical knowledge, and rigid multi-monitor controls. Choose a drawer to see each tool on its own.</p><a class="all-work-link" href="https://github.com/AkshitIreddy?tab=repositories" target="_blank" rel="noreferrer">All public repositories <span aria-hidden="true">↗</span></a></header>
               <div class="workbench-gallery room__layer" data-depth="1.2">
                 <div class="tool-drawers" role="tablist" aria-label="Utility project drawers">
-                  <button class="tool-selector is-active" id="tool-tab-email" type="button" role="tab" aria-selected="true" aria-controls="workbench-panel" data-tool="email" data-title="Email Briefing" data-index="U—01" data-description="A calmer way to meet the inbox: the messages that matter, distilled into one useful briefing." data-repo="https://github.com/AkshitIreddy/Email-Briefing" data-webm="public/media/features/email.webm" data-mp4="public/media/features/email.mp4" data-poster="public/media/features/email-poster.webp" data-alt="Email Briefing condensing an inbox into a concise daily summary" data-type="video"><span>U—01</span><b>Email Briefing</b><i aria-hidden="true">→</i></button>
-                  <button class="tool-selector" id="tool-tab-gifsmith" type="button" role="tab" aria-selected="false" aria-controls="workbench-panel" tabindex="-1" data-tool="gifsmith" data-title="Gifsmith" data-index="U—02" data-description="A declarative forge for product demos: define the capture, run the pipeline, and turn a real interface into a polished loop." data-repo="https://github.com/AkshitIreddy/gifsmith" data-webm="public/media/features/gifsmith.webm" data-mp4="public/media/features/gifsmith.mp4" data-poster="public/media/features/gifsmith-poster.webp" data-alt="Gifsmith turning a declarative capture pipeline into a polished product loop" data-type="video"><span>U—02</span><b>Gifsmith</b><i aria-hidden="true">→</i></button>
-                  <button class="tool-selector" id="tool-tab-compendium" type="button" role="tab" aria-selected="false" aria-controls="workbench-panel" tabindex="-1" data-tool="compendium" data-title="Compendium" data-index="U—03" data-description="Describe the problem in plain English; get the best-fit techniques from curated knowledge packs with cited sources." data-repo="https://github.com/AkshitIreddy/compendium" data-webm="public/media/features/compendium.webm" data-mp4="public/media/features/compendium.mp4" data-poster="public/media/features/compendium-poster.webp" data-alt="Compendium matching a problem to curated techniques and cited sources" data-type="video"><span>U—03</span><b>Compendium</b><i aria-hidden="true">→</i></button>
-                  <button class="tool-selector" id="tool-tab-transparency" type="button" role="tab" aria-selected="false" aria-controls="workbench-panel" tabindex="-1" data-tool="transparency" data-title="Transparency App" data-index="U—04" data-description="Per-monitor dimming and transparency controls for a desktop that behaves the way you need." data-repo="https://github.com/AkshitIreddy/Transparency-App" data-media="public/media/features/transparency.webp" data-poster="public/media/features/transparency.webp" data-alt="Transparency App controlling per-monitor desktop dimming" data-type="image"><span>U—04</span><b>Transparency App</b><i aria-hidden="true">→</i></button>
+                  <button class="tool-selector is-active" id="tool-tab-email" type="button" role="tab" aria-selected="true" aria-controls="workbench-panel" data-tool="email" data-title="Email Briefing" data-index="U—01" data-description="Email newsletters become a browsable briefing instead of a pile of messages. It clusters and deduplicates stories into topic dashboards, then enriches them with live web context and imagery so one inbox becomes a readable daily map." data-repo="https://github.com/AkshitIreddy/Email-Briefing" data-webm="public/media/features/email.webm" data-mp4="public/media/features/email.mp4" data-poster="public/media/features/email-poster.webp" data-alt="Email Briefing condensing an inbox into a concise daily summary" data-type="video"><span>U—01</span><b>Email Briefing</b><i aria-hidden="true">→</i></button>
+                  <button class="tool-selector" id="tool-tab-gifsmith" type="button" role="tab" aria-selected="false" aria-controls="workbench-panel" tabindex="-1" data-tool="gifsmith" data-title="Gifsmith" data-index="U—02" data-description="A declarative forge for honest product demos. Describe the browser actions, timing, cursor, and loop anchor; Gifsmith captures the real interface and renders a polished GIF, WebP, or video." data-repo="https://github.com/AkshitIreddy/gifsmith" data-webm="public/media/features/gifsmith.webm" data-mp4="public/media/features/gifsmith.mp4" data-poster="public/media/features/gifsmith-poster.webp" data-alt="Gifsmith turning a declarative capture pipeline into a polished product loop" data-type="video"><span>U—02</span><b>Gifsmith</b><i aria-hidden="true">→</i></button>
+                  <button class="tool-selector" id="tool-tab-compendium" type="button" role="tab" aria-selected="false" aria-controls="workbench-panel" tabindex="-1" data-tool="compendium" data-title="Compendium" data-index="U—03" data-description="Describe a technical problem in plain English and search curated knowledge packs for the best-fit techniques. Compendium connects the recommendation back to cited source material so the answer stays inspectable." data-repo="https://github.com/AkshitIreddy/compendium" data-webm="public/media/features/compendium.webm" data-mp4="public/media/features/compendium.mp4" data-poster="public/media/features/compendium-poster.webp" data-alt="Compendium matching a problem to curated techniques and cited sources" data-type="video"><span>U—03</span><b>Compendium</b><i aria-hidden="true">→</i></button>
+                  <button class="tool-selector" id="tool-tab-transparency" type="button" role="tab" aria-selected="false" aria-controls="workbench-panel" tabindex="-1" data-tool="transparency" data-title="Transparency App" data-index="U—04" data-description="A native Windows utility with two precise controls: per-monitor screen dimming for mixed-display setups, and per-app/window transparency rules. Each display remembers its dimmer setting, while window rules follow the applications they target." data-repo="https://github.com/AkshitIreddy/Transparency-App" data-media="public/media/features/transparency.webp" data-poster="public/media/features/transparency.webp" data-alt="Transparency App controlling per-monitor desktop dimming" data-type="image"><span>U—04</span><b>Transparency App</b><i aria-hidden="true">→</i></button>
                 </div>
-                <article class="workbench-feature" id="workbench-panel" role="tabpanel" aria-labelledby="tool-tab-email" aria-live="polite"><div class="workbench-feature__media"><video data-tool-video data-room-video muted loop playsinline preload="none" poster="public/media/features/email-poster.webp" aria-label="Email Briefing condensing an inbox into a concise daily summary"><source data-src="public/media/features/email.webm" type="video/webm" /><source data-src="public/media/features/email.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle data-tool-play aria-label="Play selected utility demo"><span aria-hidden="true">▶</span></button><img data-tool-media src="public/media/features/transparency.webp" alt="" hidden /><span class="tool-tape" aria-hidden="true"></span><span class="window-label"><i></i> selected utility · live demo</span></div><div class="workbench-feature__copy"><span data-tool-index>U—01</span><div><h3>Email Briefing</h3><p data-tool-description>A calmer way to meet the inbox: the messages that matter, distilled into one useful briefing.</p></div><a class="repo-link" data-tool-link href="https://github.com/AkshitIreddy/Email-Briefing" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div></article>
+                <article class="workbench-feature" id="workbench-panel" role="tabpanel" aria-labelledby="tool-tab-email" aria-live="polite"><div class="workbench-feature__media"><video data-tool-video data-room-video muted loop playsinline preload="none" data-poster="public/media/features/email-poster.webp" aria-label="Email Briefing condensing an inbox into a concise daily summary"><source data-src="public/media/features/email.webm" type="video/webm" /><source data-src="public/media/features/email.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle data-tool-play aria-label="Play selected utility demo"><span aria-hidden="true">▶</span></button><img data-tool-media alt="" hidden /><span class="tool-tape" aria-hidden="true"></span><span class="window-label"><i></i> selected utility · live demo</span></div><div class="workbench-feature__copy"><span data-tool-index>U—01</span><div><h3>Email Briefing</h3><p data-tool-description>Email newsletters become a browsable briefing instead of a pile of messages. It clusters and deduplicates stories into topic dashboards, then enriches them with live web context and imagery so one inbox becomes a readable daily map.</p></div><a class="repo-link" data-tool-link href="https://github.com/AkshitIreddy/Email-Briefing" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></div></article>
               </div>
             </div>
-            <button class="doorway doorway--left" type="button" data-room-target="4"><i aria-hidden="true">←</i><span>Early signals</span></button><button class="doorway doorway--right doorway--return" type="button" data-room-target="0"><span><b>↺</b> Return to foyer</span></button>
+            <button class="doorway doorway--left" type="button" data-room-target="4"><i aria-hidden="true">←</i><span>Earlier experiments</span></button><button class="doorway doorway--right doorway--return" type="button" data-room-target="0"><span><b>↺</b> Return to start</span></button>
           </section>
         </div>
       </main>
 
-      <nav class="museum-map" aria-label="Museum rooms">
+      <nav class="museum-map" aria-label="Project chapters">
         <div class="museum-map__you" aria-hidden="true"><span>you are here</span><i></i></div>
         <ol>
-          <li><button type="button" data-room-target="0" aria-current="step"><span>00</span><b>Foyer</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="1"><span>01</span><b>Alcove</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="2"><span>02</span><b>Pet</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="3"><span>03</span><b>Keyscape</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="4"><span>04</span><b>Archive</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="5"><span>05</span><b>Tools</b><i aria-hidden="true"></i></button></li>
+          <li><button type="button" data-room-target="0" aria-current="step"><span>00</span><b>Start</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="1"><span>01</span><b>Alcove</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="2"><span>02</span><b>AI Desktop Pet</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="3"><span>03</span><b>Keyscape</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="4"><span>04</span><b>Earlier</b><i aria-hidden="true"></i></button></li><li><button type="button" data-room-target="5"><span>05</span><b>Tools</b><i aria-hidden="true"></i></button></li>
         </ol>
         <span class="museum-map__progress" aria-hidden="true"><i></i></span>
       </nav>
@@ -206,11 +214,11 @@
         <span class="visitor__scarf"></span><span class="visitor__charm"></span><span class="visitor__paw visitor__paw--a"></span><span class="visitor__paw visitor__paw--b"></span><span class="visitor__shadow"></span>
       </div>
       <div class="first-visit-note" aria-hidden="true"><i></i><span>Anything marked like this reacts.</span></div>
-      <div class="mobile-scroll-hint" aria-hidden="true"><span>Scroll exhibit</span><i>↓</i></div>
+      <div class="mobile-scroll-hint" aria-hidden="true"><span>Scroll chapter</span><i>↓</i></div>
       <p class="room-announcer" aria-live="polite" aria-atomic="true"></p>
     </div>
 
-    <noscript><div class="no-script-note">This museum needs JavaScript to walk between rooms. Every project link remains in the page source.</div></noscript>
+    <noscript><div class="no-script-note">This interactive portfolio needs JavaScript to move between chapters. Every project link remains in the page source.</div></noscript>
     <script src="scripts/museum.js"></script>
   </body>
 </html>

@@ -109,14 +109,15 @@ button,
 [tabindex] { -webkit-tap-highlight-color: transparent; }
 
 :focus-visible {
-  outline: 3px solid var(--violet);
-  outline-offset: 4px;
+  outline: 3px solid var(--paper-light);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--ink);
 }
 
 /* Room headings receive programmatic focus so screen readers announce arrivals;
    unlike controls, they should not look like clickable violet boxes. */
 h1[tabindex="-1"]:focus,
-h2[tabindex="-1"]:focus { outline: none; }
+h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 ::selection { color: var(--paper-light); background: var(--coral-deep); }
 
@@ -1038,7 +1039,7 @@ h2[tabindex="-1"]:focus { outline: none; }
 .restless-word+.restless-word{margin-left:-.04em}
 .restless-letter{display:inline-block;transform:translate3d(var(--restless-x,0),var(--restless-y,0),0) rotate(var(--restless-rotate,0deg));transform-origin:50% 80%;transition:transform 360ms cubic-bezier(.16,.78,.2,1);will-change:transform}
 .restless-space{width:.27em}
-[data-restless-thesis]{cursor:crosshair;touch-action:pan-y}
+[data-restless-thesis]{touch-action:pan-y}
 [data-restless-thesis].is-restless .restless-letter{transition-duration:72ms}
 [data-restless-thesis].is-pounced .restless-letter{animation:thesis-pounce 460ms cubic-bezier(.2,.85,.2,1)}
 @keyframes thesis-pounce{45%{transform:translate3d(calc(var(--restless-x,0) * 1.8),calc(var(--restless-y,0) - 7px),0) rotate(calc(var(--restless-rotate,0deg) * 1.6))}}
@@ -1306,4 +1307,313 @@ h2[tabindex="-1"]:focus { outline: none; }
 
 @media print {
   body{overflow:visible}.museum-shell{height:auto;overflow:visible}.museum-masthead,.museum-map,.visitor,.visitor-rail,.doorway,.ambient-canvas,.first-visit-note,.mobile-scroll-hint{display:none!important}.museum-stage{position:static;overflow:visible}.museum-world{display:block;transform:none}.room{min-height:760px;overflow:hidden;break-after:page}.room-canvas{padding:50px}
+}
+
+/* 2026-08 refinement: steadier motion, generous rhythm, and a warmer Alcove. */
+
+.masthead-exhibit {
+  width: min(100%, 440px);
+  min-height: 54px;
+  padding: 7px 24px 6px;
+  overflow: visible;
+}
+
+.masthead-exhibit::before {
+  inset: 0 4px;
+  background:
+    linear-gradient(105deg, transparent 0 4%, color-mix(in srgb,var(--frame-accent) 21%,var(--frame-surface)) 4.5% 95%, transparent 95.5%),
+    color-mix(in srgb,var(--frame-accent) 8%,transparent);
+  border: 1.5px solid color-mix(in srgb,var(--frame-accent) 64%,var(--frame-ink));
+  border-radius: 4px 13px 5px 11px;
+  box-shadow: 3px 3px 0 color-mix(in srgb,var(--frame-accent) 30%,transparent);
+  transform: rotate(-.55deg);
+}
+
+.masthead-exhibit > span { letter-spacing: .17em; }
+.masthead-exhibit > b { margin-top: 6px; }
+
+.room-canvas--foyer {
+  grid-template-columns: minmax(560px, 1.4fr) minmax(280px, .6fr);
+  gap: clamp(24px, 3vw, 58px);
+}
+
+.foyer-copy { max-width: 1040px; }
+.foyer-copy h1 {
+  max-width: 10.8em;
+  font-size: clamp(3.8rem, 6vw, 7.7rem);
+  line-height: .88;
+  cursor: default;
+}
+
+.thesis-line { padding-block: .025em; }
+.thesis-line--last { padding-top: .13em; }
+
+.moving-word {
+  padding: .08em .17em .15em .13em;
+  transform: translate3d(var(--thesis-x, 0), var(--thesis-y, 0), 0) rotate(var(--thesis-r, -1.5deg));
+  transform-origin: 50% 65%;
+  transition: transform 190ms cubic-bezier(.2,.8,.2,1), filter 190ms ease;
+  will-change: transform;
+}
+
+[data-restless-thesis].is-restless .moving-word { filter: saturate(1.12) brightness(1.03); }
+
+.foyer-copy__intro {
+  max-width: 68ch;
+  margin-top: clamp(27px, 4vh, 44px);
+  font-size: clamp(.79rem, .92vw, 1rem);
+  line-height: 1.72;
+}
+
+.foyer-copy__intro strong { margin-bottom: 9px; font-size: clamp(1.08rem,1.45vw,1.48rem); }
+
+.exhibit-copy h2 { margin-bottom: 0; }
+.exhibit-copy > p:not(.eyebrow):not(.curator-note) {
+  max-width: 47ch;
+  margin-top: clamp(24px, 3vh, 34px);
+  font-size: clamp(.72rem, .83vw, .9rem);
+  line-height: 1.68;
+}
+
+.project-facts { gap: 8px; margin-top: 21px; }
+.project-facts li { padding: 8px 11px; font-size: .57rem; }
+.exhibit-copy--pet blockquote { margin-top: 25px; padding: 15px 19px; }
+.exhibit-copy--pet h2 { line-height: .82; text-transform: none; }
+.exhibit-copy--pet .interactive-action { margin-top: 27px; }
+.exhibit-copy--keyscape h2 { padding-bottom: .06em; }
+#keyscape .exhibit-copy--keyscape > p:not(.eyebrow) { margin-top: clamp(25px,3.3vh,38px); }
+
+.archive-project-stage__caption {
+  grid-template-columns: minmax(190px,.72fr) minmax(290px,1.28fr) auto;
+  gap: 22px;
+  padding: 18px 20px 20px;
+}
+
+.exhibit-copy--archive h2 { font-size: clamp(3.2rem,4.4vw,5.2rem); line-height: .8; }
+
+.archive-project-stage__caption > div > p { margin-bottom: 7px; }
+.archive-project-stage__caption h3 { line-height: 1.03; }
+.archive-project-stage__caption > p {
+  color: color-mix(in srgb,var(--ink-soft) 92%,transparent);
+  font-size: clamp(.65rem,.76vw,.77rem);
+  line-height: 1.55;
+}
+
+.archive-project-tab { padding: 13px 12px; }
+.archive-project-tab > b { line-height: 1.15; }
+.workbench-feature__copy { gap: 17px; padding: 17px 18px 19px; }
+.workbench-feature__copy h3 { margin-bottom: 7px; line-height: 1.04; }
+.workbench-feature__copy p { max-width: 64ch; font-size: clamp(.65rem,.74vw,.75rem); line-height: 1.55; }
+.tool-selector { padding: 12px 11px; }
+
+.room--alcove {
+  background: #f1cbd5;
+}
+
+.room-texture--alcove {
+  background:
+    radial-gradient(circle at 67% 8%, rgba(255,247,242,.78), transparent 30%),
+    repeating-linear-gradient(90deg, rgba(144,31,66,.11) 0 1px, transparent 1px 54px),
+    linear-gradient(100deg, rgba(144,31,66,.13), transparent 15%, transparent 85%, rgba(195,51,82,.13));
+}
+
+.exhibit-copy--alcove h2 {
+  color: #7f1737;
+  text-shadow: 4px 5px 0 rgba(255,245,239,.72);
+}
+
+.museum-window--alcove {
+  background: #d76a86;
+  box-shadow: 9px 11px 0 rgba(153,35,69,.44), 13px 15px 0 var(--ink);
+}
+
+.museum-shell[data-frame="alcove"] {
+  --frame-surface: #f4d6dd;
+  --frame-ink: #351923;
+  --frame-accent: #d94668;
+  --frame-secondary: #f28aa2;
+  --frame-pattern: repeating-linear-gradient(112deg,transparent 0 26px,rgba(126,23,54,.075) 27px 28px);
+}
+
+.scribble-card { padding: 18px 17px; }
+
+/* The travelling kitten is one connected silhouette; the collar sits under the
+   chin instead of becoming a detached neck and dangling charm. */
+.visitor {
+  width: 70px;
+  height: 57px;
+}
+
+.visitor::before { display: none; }
+.visitor__tail {
+  top: 22px;
+  left: 1px;
+  width: 34px;
+  height: 22px;
+  border-width: 3px;
+  border-radius: 85% 20% 25% 78%;
+  transform: rotate(-19deg);
+}
+
+.visitor__body {
+  top: 20px;
+  left: 19px;
+  width: 40px;
+  height: 29px;
+  border-radius: 62% 43% 51% 48%;
+}
+
+.visitor__body::before {
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  content: "";
+  background: #ffd7b6;
+  border-radius: 50% 62% 48% 58%;
+  opacity: .88;
+}
+
+.visitor__body::after { right: 6px; bottom: 4px; width: 15px; height: 10px; }
+.visitor__stripe--a { top: 25px; left: 25px; }
+.visitor__stripe--b { top: 32px; left: 23px; }
+.visitor__head {
+  top: 8px;
+  left: 42px;
+  width: 27px;
+  height: 28px;
+  border-radius: 49% 52% 48% 54%;
+}
+
+.visitor__ear { top: 0; width: 14px; height: 17px; }
+.visitor__ear--a { left: 43px; }
+.visitor__ear--b { left: 56px; }
+.visitor__eye { top: 16px; }
+.visitor__eye--a { left: 47px; }
+.visitor__eye--b { left: 58px; }
+.visitor__muzzle { top: 25px; left: 49px; width: 15px; }
+.visitor__scarf {
+  top: 33px;
+  left: 41px;
+  width: 24px;
+  height: 6px;
+  border-radius: 45% 55% 48% 52%;
+  transform: rotate(-2deg);
+}
+
+.visitor__charm { display: none; }
+.visitor__paw { bottom: 5px; width: 14px; height: 8px; }
+.visitor__paw--a { left: 23px; }
+.visitor__paw--b { left: 47px; }
+.visitor__shadow { right: 0; left: 8px; }
+
+@media (max-width: 1180px) and (min-width: 901px) {
+  .room-canvas--foyer { grid-template-columns: minmax(480px,1.3fr) minmax(270px,.7fr); gap: 24px; }
+  .foyer-copy h1 { font-size: clamp(3.6rem,5.7vw,5.3rem); line-height: .9; }
+  .room-canvas--alcove,.room-canvas--pet,.room-canvas--keyscape { grid-template-columns: minmax(300px,.78fr) minmax(410px,1.22fr); }
+}
+
+@media (max-width: 900px) and (min-width: 761px) {
+  .masthead-exhibit { width: auto; max-width: 190px; min-height: 0; }
+  .masthead-exhibit > b { min-width: 120px; padding-inline: 14px; }
+  .room-canvas--foyer { grid-template-columns: minmax(410px,1.22fr) minmax(240px,.78fr); gap: 16px; }
+  .foyer-copy h1 { font-size: clamp(3.05rem,5.55vw,3.8rem); line-height: .91; }
+  .foyer-copy__intro { font-size: .72rem; }
+  .room-canvas--archive { grid-template-columns: 260px minmax(0,1fr); }
+  .archive-project-stage__caption > p,.workbench-feature__copy p { display: block; }
+  .archive-project-stage__caption { grid-template-columns: minmax(170px,.8fr) minmax(210px,1.2fr); }
+  .archive-project-stage__caption .repo-link { grid-column: 2; }
+}
+
+@media (max-width: 760px) {
+  .masthead-exhibit { width: auto; max-width: 180px; min-height: 0; padding: 0 2px; }
+  .masthead-exhibit > b { min-width: 118px; padding-inline: 13px; }
+  .foyer-copy h1 { font-size: clamp(2.75rem,10.4vw,4.25rem); line-height: .93; }
+  .thesis-line { padding-block: .035em; }
+  .thesis-line--last { padding-top: .14em; }
+  .moving-word { padding-block: .1em .17em; }
+  .foyer-copy__intro { margin-top: 28px; font-size: .73rem; line-height: 1.68; }
+  .exhibit-copy h2,.exhibit-copy--pet h2,.exhibit-copy--archive h2,.exhibit-copy--workbench h2 { line-height: .84; }
+  .exhibit-copy > p:not(.eyebrow):not(.curator-note) { margin-top: 22px; font-size: .7rem; line-height: 1.65; }
+  .project-facts { margin-top: 18px; }
+  .project-facts li { padding: 7px 9px; }
+  .archive-project-stage__caption { grid-template-columns: 1fr; padding: 17px 16px 19px; }
+  .archive-project-stage__caption .repo-link { grid-column: auto; justify-self: start; }
+  .archive-project-stage__caption > p { display: block; font-size: .67rem; line-height: 1.55; }
+  .workbench-feature__copy { padding: 16px; }
+  .workbench-feature__copy p { display: block; font-size: .65rem; line-height: 1.55; }
+  .museum-map [data-room-target="2"] b { line-height: 1.05; text-align: center; white-space: normal; }
+  .visitor { transform: scale(.68); }
+  .museum-shell[data-walk-direction=backward] .visitor { transform: scale(-.68,.68); }
+}
+
+@media (max-width: 430px) {
+  .foyer-copy h1 { font-size: clamp(2.45rem,11.8vw,3.25rem); }
+  .foyer-copy__intro { font-size: .69rem; }
+  .archive-project-tab { min-height: 94px; }
+}
+
+@media (max-width: 340px) {
+  .maker-mark__words { display: none; }
+  .ceiling-lights--foyer { display: none; }
+  .guide-plinth { height: 108px; }
+  .guide-signal { width: 118px; height: 118px; }
+  .kinetic-guide { width: 116px; height: 102px; }
+  .guide-plinth::after { width: 108px; }
+}
+
+@media (min-width: 1900px) {
+  .room-canvas--foyer { grid-template-columns: minmax(760px,1.42fr) minmax(390px,.58fr); }
+  .foyer-copy h1 { max-width: 10.5em; font-size: 8.5rem; }
+}
+
+@media (max-height: 700px) and (min-width: 761px) {
+  .foyer-copy h1 { font-size: clamp(3rem,4.8vw,5.05rem); line-height: .9; }
+  .foyer-copy__intro { margin-top: 22px; }
+  .foyer-index { display: none; }
+  .exhibit-copy > p:not(.eyebrow):not(.curator-note) { margin-top: 19px; line-height: 1.52; }
+  .project-facts { margin-top: 15px; }
+}
+
+/* Short and split-screen windows remain complete exhibits rather than clipped
+   snapshots. The room itself scrolls while the masthead and map stay anchored. */
+@media (max-height: 780px) and (min-width: 761px) {
+  .room { overflow-x: clip; overflow-y: auto; overscroll-behavior: contain; }
+  .room-canvas { height: auto; min-height: 680px; padding-bottom: 105px; }
+  .room .doorway { display: none; }
+  .mobile-scroll-hint { display: flex; }
+  .museum-shell.is-intro .mobile-scroll-hint.is-visible { opacity: 1; }
+}
+
+/* Give the long archive title an honest column through the tablet and compact
+   laptop range. It no longer paints underneath the project stage. */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .room-canvas--archive { grid-template-columns: 275px minmax(0,1fr); }
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .exhibit-copy--archive h2 { font-size: clamp(2.72rem,4.15vw,3.18rem); }
+}
+
+/* Component shadows are decorative; the keyboard ring must remain consistent
+   over every palette and must not be replaced by those shadows in the cascade. */
+:where(a,button,[role="tab"]):focus-visible {
+  outline: 3px solid var(--paper-light);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--ink) !important;
+}
+
+@media (max-width: 760px) {
+  .masthead-links a,
+  .repo-link,
+  .interactive-action,
+  .media-play,
+  .archive-project-tab,
+  .tool-selector,
+  .museum-map button { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moving-word { transform: rotate(-1.5deg) !important; filter: none !important; }
 }

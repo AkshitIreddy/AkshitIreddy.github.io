@@ -46,7 +46,7 @@
 
   const frameColors = {
     foyer: "#f4ead4",
-    alcove: "#dce1ca",
+    alcove: "#f4d6dd",
     pet: "#efd8cc",
     keyscape: "#111722",
     "archive-npc": "#ded9ef",
@@ -70,12 +70,12 @@
     if (themeColor) themeColor.content = frameColors[frame] || frameColors.foyer;
 
     if (room.id === "foyer") {
-      document.title = "Akshit Ireddy — Museum of Behaviors";
+      document.title = "Akshit Ireddy — Software in Motion";
       return;
     }
     const selectedArtifact = room.querySelector(".archive-project-tab.is-active, .tool-selector.is-active")?.dataset.title;
-    const label = selectedArtifact || roomData[index]?.shortName || "Museum of Behaviors";
-    document.title = `${label} — Akshit Ireddy's Museum`;
+    const label = selectedArtifact || roomData[index]?.shortName || "Software in Motion";
+    document.title = `${label} — Akshit Ireddy`;
   }
 
   function getRoomFromHash() {
@@ -88,7 +88,9 @@
     const compact = isMobile();
     const visitorStart = compact ? 2 : 4.5;
     const visitorStep = compact ? 18.2 : 17.2;
-    const visitorMax = compact ? 83 : 84;
+    // Leave enough room for the kitten's ears and the easing overshoot on
+    // narrow screens; the final chapter should never push its face off-canvas.
+    const visitorMax = compact ? 79 : 84;
 
     shell.style.setProperty("--room-index", String(index));
     shell.style.setProperty("--world-offset", `${index * -100}vw`);
@@ -119,7 +121,7 @@
     if (!announcer) return;
     window.clearTimeout(announceRoom.timer);
     announceRoom.timer = window.setTimeout(() => {
-      announcer.textContent = `Entered ${roomData[index].name}. Room ${index + 1} of ${rooms.length}.`;
+      announcer.textContent = `Entered ${roomData[index].name}. Chapter ${index + 1} of ${rooms.length}.`;
     }, reduceMotion.matches ? 20 : 440);
   }
 
@@ -165,6 +167,9 @@
 
   function ensureVideoSources(video) {
     if (!(video instanceof HTMLVideoElement)) return;
+    video.defaultPlaybackRate = 1;
+    video.playbackRate = 1;
+    if (video.dataset.poster && !video.getAttribute("poster")) video.poster = video.dataset.poster;
     let changed = false;
     video.querySelectorAll("source[data-src]").forEach((source) => {
       if (!source.getAttribute("src")) {
@@ -186,7 +191,20 @@
     button.setAttribute("aria-label", `${playing ? "Pause" : "Play"} ${label}`);
   }
 
+  function syncMotionImages() {
+    document.querySelectorAll("img[data-motion-src][data-still-src]").forEach((image) => {
+      const active = image.closest(".room")?.classList.contains("is-current");
+      if (!active) {
+        image.removeAttribute("src");
+        return;
+      }
+      const source = reduceMotion.matches ? image.dataset.stillSrc : image.dataset.motionSrc;
+      if (source && image.getAttribute("src") !== source) image.setAttribute("src", source);
+    });
+  }
+
   function syncVideoPlayback() {
+    syncMotionImages();
     document.querySelectorAll("[data-room-video]").forEach((video) => {
       if (!(video instanceof HTMLVideoElement)) return;
       const room = video.closest(".room");
@@ -215,7 +233,7 @@
     if (!mobileScrollHint) return;
     const room = rooms[state.room];
     const hasMoreBelow = Boolean(
-      (isMobile() || (window.innerWidth > 760 && window.innerHeight <= 620))
+      (isMobile() || (window.innerWidth > 760 && window.innerHeight <= 780))
       && room
       && room.scrollHeight > room.clientHeight + 18
       && room.scrollTop < 56
@@ -410,83 +428,62 @@
     resetParallax();
   });
 
-  /* The thesis is literal: nearby glyphs evade a cursor and spring back into their line. */
+  /* One stable phrase follows the cursor. The title remains intact in normal
+     document flow, so the interaction cannot tear words or change spacing. */
 
   const restlessThesis = document.querySelector("[data-restless-thesis]");
-  const restlessLetters = [];
+  const movingWord = restlessThesis?.querySelector(".moving-word");
   let restlessFrame = 0;
-  let restlessPointer = null;
-
-  restlessThesis?.querySelectorAll(".restless-word").forEach((word, wordIndex) => {
-    const text = word.textContent || "";
-    const fragment = document.createDocumentFragment();
-    [...text].forEach((character, letterIndex) => {
-      const letter = document.createElement("span");
-      letter.className = character === " " ? "restless-letter restless-space" : "restless-letter";
-      letter.textContent = character;
-      letter.dataset.restlessIndex = String(restlessLetters.length);
-      letter.dataset.restlessWeight = word.classList.contains("moving-word") ? "1.38" : wordIndex >= 3 ? "1.08" : ".88";
-      fragment.append(letter);
-      restlessLetters.push(letter);
-    });
-    word.replaceChildren(fragment);
-  });
-
-  function resetRestlessThesis() {
-    restlessPointer = null;
-    restlessThesis?.classList.remove("is-restless");
-    restlessLetters.forEach((letter) => {
-      letter.style.setProperty("--restless-x", "0px");
-      letter.style.setProperty("--restless-y", "0px");
-      letter.style.setProperty("--restless-rotate", "0deg");
-    });
-  }
+  const restlessCurrent = { x: 0, y: 0, r: -1.5 };
+  const restlessTarget = { x: 0, y: 0, r: -1.5 };
 
   function renderRestlessThesis() {
     restlessFrame = 0;
-    if (!restlessPointer || reduceMotion.matches) return;
-    const radius = Math.min(118, Math.max(78, window.innerWidth * .08));
-    restlessLetters.forEach((letter, index) => {
-      const bounds = letter.getBoundingClientRect();
-      const dx = bounds.left + bounds.width / 2 - restlessPointer.x;
-      const dy = bounds.top + bounds.height / 2 - restlessPointer.y;
-      const distance = Math.max(1, Math.hypot(dx, dy));
-      const strength = Math.max(0, 1 - distance / radius);
-      const weight = Number(letter.dataset.restlessWeight) || 1;
-      const push = strength * 13 * weight;
-      const x = (dx / distance) * push;
-      const y = (dy / distance) * push - strength * 2.5;
-      const rotation = strength * ((dx / radius) * 11 + Math.sin(index * 1.9) * 2.2) * weight;
-      letter.style.setProperty("--restless-x", `${x.toFixed(2)}px`);
-      letter.style.setProperty("--restless-y", `${y.toFixed(2)}px`);
-      letter.style.setProperty("--restless-rotate", `${rotation.toFixed(2)}deg`);
-    });
+    if (!movingWord || reduceMotion.matches) return;
+    const ease = .18;
+    restlessCurrent.x += (restlessTarget.x - restlessCurrent.x) * ease;
+    restlessCurrent.y += (restlessTarget.y - restlessCurrent.y) * ease;
+    restlessCurrent.r += (restlessTarget.r - restlessCurrent.r) * ease;
+    movingWord.style.setProperty("--thesis-x", `${restlessCurrent.x.toFixed(2)}px`);
+    movingWord.style.setProperty("--thesis-y", `${restlessCurrent.y.toFixed(2)}px`);
+    movingWord.style.setProperty("--thesis-r", `${restlessCurrent.r.toFixed(2)}deg`);
+    const unsettled = Math.abs(restlessTarget.x - restlessCurrent.x) > .04
+      || Math.abs(restlessTarget.y - restlessCurrent.y) > .04
+      || Math.abs(restlessTarget.r - restlessCurrent.r) > .02;
+    if (unsettled) restlessFrame = window.requestAnimationFrame(renderRestlessThesis);
+    else if (restlessTarget.x === 0 && restlessTarget.y === 0) restlessThesis?.classList.remove("is-restless");
   }
 
-  function moveRestlessThesis(event) {
-    if (reduceMotion.matches) return;
-    restlessPointer = { x: event.clientX, y: event.clientY };
-    restlessThesis?.classList.add("is-restless");
+  function queueRestlessFrame() {
     if (!restlessFrame) restlessFrame = window.requestAnimationFrame(renderRestlessThesis);
   }
 
-  restlessThesis?.addEventListener("pointermove", moveRestlessThesis, { passive: true });
-  restlessThesis?.addEventListener("pointerleave", resetRestlessThesis);
-  restlessThesis?.addEventListener("pointerdown", (event) => {
-    moveRestlessThesis(event);
-    restlessThesis.classList.remove("is-pounced");
-    void restlessThesis.offsetWidth;
-    restlessThesis.classList.add("is-pounced");
-    window.setTimeout(() => restlessThesis.classList.remove("is-pounced"), 480);
+  restlessThesis?.addEventListener("pointermove", (event) => {
+    if (reduceMotion.matches) return;
+    const bounds = restlessThesis.getBoundingClientRect();
+    const nx = clamp(((event.clientX - bounds.left) / bounds.width - .5) * 2, -1, 1);
+    const ny = clamp(((event.clientY - bounds.top) / bounds.height - .5) * 2, -1, 1);
+    restlessTarget.x = nx * 7;
+    restlessTarget.y = ny * 3.5;
+    restlessTarget.r = -1.5 + nx * .8;
+    restlessThesis.classList.add("is-restless");
+    queueRestlessFrame();
   }, { passive: true });
 
-  /* The museum kitten follows attention directly and reacts on touch. */
+  restlessThesis?.addEventListener("pointerleave", () => {
+    restlessTarget.x = 0;
+    restlessTarget.y = 0;
+    restlessTarget.r = -1.5;
+    queueRestlessFrame();
+  });
+
+  /* The studio kitten follows attention directly and reacts on touch. */
 
   const guide = document.querySelector("[data-guide]");
   const guideButton = document.querySelector("[data-guide-button]");
   const guideSpeech = document.querySelector("[data-guide-speech]");
   const guideLines = [
-    "The good rooms move. Follow me.",
+    "The good chapters move. Follow me.",
     "Did you know the shelves listen?",
     "I tested the light keys. Thoroughly.",
     "Everything here has a pulse.",
@@ -635,6 +632,8 @@
     if (state.room === 4) syncFrameTheme(4);
 
     archiveVideo.pause();
+    archiveVideo.defaultPlaybackRate = 1;
+    archiveVideo.playbackRate = 1;
     archiveVideo.poster = tab.dataset.poster || "";
     archiveVideo.setAttribute("aria-label", tab.dataset.alt || `${tab.dataset.title || "Project"} demo`);
     archiveVideo.replaceChildren();
@@ -715,6 +714,8 @@
     window.setTimeout(() => {
       const isVideo = selector.dataset.type === "video";
       toolVideo.pause();
+      toolVideo.defaultPlaybackRate = 1;
+      toolVideo.playbackRate = 1;
       toolVideo.hidden = !isVideo;
       toolMedia.hidden = isVideo;
       if (toolPlay) toolPlay.hidden = !isVideo;
@@ -790,9 +791,7 @@
   /* Reduced motion uses honest stills instead of freezing animated files mid-frame. */
 
   function syncMotionPreference() {
-    document.querySelectorAll("img[data-motion-src][data-still-src]").forEach((image) => {
-      image.src = reduceMotion.matches ? image.dataset.stillSrc : image.dataset.motionSrc;
-    });
+    syncMotionImages();
     if (reduceMotion.matches) shell.classList.remove("is-intro");
     syncVideoPlayback();
   }
@@ -940,7 +939,11 @@
 
   state.introTimer = window.setTimeout(() => shell.classList.remove("is-intro"), reduceMotion.matches ? 0 : 4700);
   syncMotionPreference();
-  goToRoom(getRoomFromHash(), { updateHash: true, forceAnnounce: false });
+  const initialRoom = getRoomFromHash();
+  // Keep the canonical foyer URL fragment-free. Writing #foyer during startup
+  // makes browsers begin sequential keyboard focus after the room fragment,
+  // skipping the skip link and masthead controls.
+  goToRoom(initialRoom, { updateHash: Boolean(window.location.hash), forceAnnounce: false });
   ambientField?.changeRoom(state.room);
   window.addEventListener("load", () => {
     stage.scrollLeft = 0;
