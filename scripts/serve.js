@@ -48,10 +48,51 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    res.writeHead(200, {
-      'Content-Type': types[path.extname(filename).toLowerCase()] || 'application/octet-stream',
+    const contentType = types[path.extname(filename).toLowerCase()] || 'application/octet-stream';
+    const baseHeaders = {
+      'Content-Type': contentType,
       'Cache-Control': 'no-cache',
       'X-Content-Type-Options': 'nosniff',
+      'Accept-Ranges': 'bytes',
+    };
+    const range = req.headers.range?.match(/^bytes=(\d*)-(\d*)$/);
+    if (req.headers.range && !range) {
+      res.writeHead(416, { ...baseHeaders, 'Content-Range': `bytes */${stats.size}` });
+      res.end();
+      return;
+    }
+
+    if (range) {
+      const requestedStart = range[1] === '' ? null : Number(range[1]);
+      const requestedEnd = range[2] === '' ? null : Number(range[2]);
+      const suffixLength = requestedStart === null ? requestedEnd : null;
+      const start = suffixLength !== null
+        ? Math.max(0, stats.size - suffixLength)
+        : requestedStart;
+      const end = suffixLength !== null
+        ? stats.size - 1
+        : Math.min(requestedEnd ?? stats.size - 1, stats.size - 1);
+      if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || start > end || start >= stats.size) {
+        res.writeHead(416, { ...baseHeaders, 'Content-Range': `bytes */${stats.size}` });
+        res.end();
+        return;
+      }
+      res.writeHead(206, {
+        ...baseHeaders,
+        'Content-Length': end - start + 1,
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+      });
+      if (req.method === 'HEAD') {
+        res.end();
+        return;
+      }
+      fs.createReadStream(filename, { start, end }).on('error', () => res.destroy()).pipe(res);
+      return;
+    }
+
+    res.writeHead(200, {
+      ...baseHeaders,
+      'Content-Length': stats.size,
     });
     if (req.method === 'HEAD') {
       res.end();
@@ -62,5 +103,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Museum of Behaviors: http://${host}:${port}`);
+  console.log(`Software in Motion: http://${host}:${port}`);
 });

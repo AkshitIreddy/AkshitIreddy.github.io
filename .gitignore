@@ -3,6 +3,7 @@ node_modules/
 test-results/
 playwright-report/
 qa/
+dist/
 
 # Source clones, original downloads, and local deployment state
 source-repos/

@@ -1,19 +1,21 @@
-# Museum of Behaviors
+# Software in Motion
 
-Akshit Ireddy's personal open-source portfolio, built around one thesis:
+Akshit Ireddy's personal open-source portfolio, built around one idea:
 
 > I make software that refuses to sit still.
 
-The site is a six-room, keyboard- and touch-navigable museum. Recent design-led work gets the largest rooms; three older projects appear only as a compact, evidence-backed archive; practical tools live in a one-at-a-time utility gallery.
+The site moves through six interactive chapters. Alcove, AI Desktop Pet, and
+Keyscape receive full feature spaces; three earlier AI experiments are kept for
+the ideas and audiences they found; practical projects each get their own
+drawer rather than being compressed into one generic tools card.
 
-## Rooms
+## Selected projects
 
-1. **Foyer** — identity, thesis, and the animated museum kitten guide.
-2. **Alcove** — a local-first storybook notebook.
-3. **Convai Desktop Pet** — an AI character that inhabits the desktop.
-4. **Keyscape** — a playable per-key light instrument.
-5. **Early Signals** — Interactive LLM NPCs (719★), Video Tutorial Generator (310★), and CupcakeAGI (127★).
-6. **Utility Workbench** — Email Briefing, Gifsmith, Compendium, and Transparency App as separate drawers.
+1. **Alcove** — a local-first storybook notebook, shown with its complete README demo.
+2. **AI Desktop Pet** — an embodied conversational character that lives on the desktop.
+3. **Keyscape** — a Rust/Tauri per-key RGB engine with 50 hand-built effects.
+4. **Earlier experiments** — Interactive LLM-powered NPCs (719★), AI Video Tutorial Generator (310★), and CupcakeAGI (127★).
+5. **Useful things** — Email Briefing, Gifsmith, Compendium, and Transparency App as individual, selectable projects.
 
 Star counts are a GitHub snapshot from 2026-08-27 and will naturally drift.
 
@@ -26,44 +28,57 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:49173`. The site is framework-free HTML, CSS, and JavaScript; there is no production build step.
+Open `http://127.0.0.1:49173`. The site is framework-free HTML, CSS, and
+JavaScript, with no compilation step. `npm run build` assembles the exact,
+allow-listed GitHub Pages artifact in the ignored `dist/` directory.
 
 ## Verification
 
 ```bash
 npm run qa:production
 npm run capture
-npm run capture:closeups -- foyer 1440 900 foyer-desktop
+npm run capture:closeups -- foyer 1440 900 start-desktop
 ```
 
-The production suite currently contains 62 passing desktop/mobile checks across the seven required viewport widths (320, 390, 768, 1024, 1440, 1920, and 2560 pixels). It covers room isolation, overflow, Alcove overlap, real video decoding, archive stars and switching, utility switching, keyboard navigation, touch swipe, reduced motion, mobile scroll affordance, and page errors.
-
-The production capture renders every room at every required width, mobile detail states, and the important interactive reactions into the ignored local `qa/production-final/` folder for human inspection. The close-up capture writes one full frame plus six overlapping crops to `qa/closeup-review/`; every final room and selected Archive/Workbench state was inspected this way at desktop and phone sizes. Append a project key such as `cupcake` or `gifsmith` after the label to audit a selected state yourself.
+The QA suite covers seven viewport widths from 320 to 2560 pixels, chapter
+isolation, overflow, media decoding and timing, selected-project switching,
+keyboard navigation, touch swipes, reduced motion, and page errors. The
+close-up capture creates six overlapping crops first and the full frame
+afterward, so every visual sign-off is based on rendered evidence rather than
+DOM measurements.
 
 ## Media
 
-Only optimized shipping derivatives are committed:
+- Project demos are self-hosted and presented full-frame with `object-fit: contain`.
+- Videos use VP9 WebM with H.264 MP4 fallback, loop continuously, and are fixed to normal 1× playback.
+- Alcove uses the complete animated README recording rather than a short excerpt.
+- Reduced-motion mode swaps Alcove to a still and pauses every video.
+- Source clones, downloads, and visual QA evidence stay in ignored local folders.
 
-- VP9 WebM first, H.264 MP4 fallback, and WebP posters.
-- Full-frame `object-fit: contain` presentation—no UI crop disguised as a cinematic treatment.
-- One room's media plays at a time; every demo is an intentional seamless loop, and reduced-motion mode pauses all video.
-- Self-hosted fonts and no runtime analytics, trackers, frameworks, or third-party media requests.
+Font copyright and license details are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+The separate treatment of project demo media is explained in
+[MEDIA_NOTICE.md](MEDIA_NOTICE.md).
+Media provenance and encoding notes are in [research/feature-media.md](research/feature-media.md),
+[research/archive-media.md](research/archive-media.md), and
+[research/revision-2026-08-27.md](research/revision-2026-08-27.md).
 
-Font copyright and license details are collected in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+## Deployment
 
-Exact source commits, README links, clip decisions, encoding commands, dimensions, and visual checks are recorded in [`research/feature-media.md`](research/feature-media.md) and [`research/archive-media.md`](research/archive-media.md). The large source downloads and cloned repositories remain local under ignored folders.
+The site is prepared for **GitHub Pages** and is intended to live in the
+`AkshitIreddy.github.io` repository. Once publishing is explicitly requested,
+a push to `main` can run the Pages workflow, which packages only the runtime
+HTML, CSS, JavaScript, fonts, media, notices, and `.nojekyll` file. Tests,
+research notes, source clones, and local evidence stay out of the website
+artifact.
 
-## Deployment: Vercel
+GitHub Pages is the deliberate choice here: this is a static personal site,
+the source and hosting stay together, and maintenance is simply pushing to
+`main`—there is no separate Vercel project or build configuration to keep in
+sync.
 
-Vercel is the selected host. It fits this visual site better than GitHub Pages because every branch and pull request can receive a reviewable preview deployment, while `main` remains the production source and can be rolled back quickly.
+## License
 
-1. Create the GitHub repository and push this local `main` branch.
-2. Import the repository in Vercel.
-3. Keep the detected framework as **Other**.
-4. Leave the build command empty; `index.html` is already the deployable root.
-
-The small `vercel.json` deliberately pins the output directory to `.`. This is necessary because Vercel's **Other** preset otherwise prefers a directory named `public` when one exists, while this site's `index.html` correctly lives at the repository root. `.vercelignore` keeps tests, research, local evidence, and source material out of the public deployment. The site remains ordinary static output and can be moved to GitHub Pages later without a rewrite.
-
-## Repository status
-
-The local repository is prepared without a remote. Repository name, visibility, and code-license choice should be decided before creating the GitHub remote or pushing. Ignored prototype/source/QA files are retained locally and have not been deleted.
+Code in this repository is released under the [MIT License](LICENSE). Bundled
+fonts retain their upstream licenses as described in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); demo media is governed by
+[MEDIA_NOTICE.md](MEDIA_NOTICE.md).
