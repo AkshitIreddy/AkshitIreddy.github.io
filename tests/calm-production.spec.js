@@ -8,7 +8,6 @@ const expectedStylesheets = [
   'styles/premium/alcove.css',
   'styles/premium/pet.css',
   'styles/premium/archive.css',
-  'styles/premium/tools.css',
   'styles/calm.css',
 ];
 const expectedScripts = [

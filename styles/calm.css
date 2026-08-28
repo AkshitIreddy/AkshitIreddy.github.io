@@ -397,11 +397,12 @@
 .exhibit-copy--workbench h2 { margin-top:17px;font-size:clamp(4.4rem,5.4vw,6.2rem);line-height:.82; }
 .exhibit-copy--workbench>p:not(.eyebrow) { max-width:38ch;margin-top:24px;font-size:.9rem;line-height:1.58; }
 .all-work-link { margin-top:25px;padding:0 0 4px;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--tool-accent);box-shadow:none;font-size:.75rem; }
-.workbench-gallery.precision-cabinet { grid-template-columns:240px minmax(0,1fr);gap:25px;padding:0;color:var(--ink);background:none;border:0;border-radius:0;box-shadow:none; }
+.workbench-gallery.precision-cabinet { position:relative;display:grid;grid-template-columns:240px minmax(0,1fr);gap:25px;min-width:0;padding:0;color:var(--ink);background:none;border:0;border-radius:0;box-shadow:none; }
 .workbench-gallery .precision-cabinet__rail { display:grid;grid-template-columns:1fr;grid-template-rows:repeat(4,auto);gap:0;padding:0;background:none;border:0;box-shadow:none; }
-.instrument-tab,.tool-selector.instrument-tab { display:block;min-height:0;padding:0;color:var(--ink);background:none;border:0;border-bottom:1px solid rgba(23,35,38,.18);border-radius:0;box-shadow:none;transform:none; }
+.instrument-tab,.tool-selector.instrument-tab { position:relative;display:block;width:100%;min-height:0;padding:0;color:var(--ink);background:none;border:0;border-bottom:1px solid rgba(23,35,38,.18);border-radius:0;box-shadow:none;transform:none;text-align:left;cursor:pointer; }
 .instrument-tab__label { display:grid;gap:4px;padding:15px 11px;text-align:left; }
-.instrument-tab__label small { color:color-mix(in srgb,var(--ink) 72%,transparent);font-size:.75rem;line-height:1.35; }.instrument-tab__label b { color:var(--ink);font-size:1.06rem; }
+.instrument-tab__label small { color:color-mix(in srgb,var(--ink) 72%,transparent);font:600 .75rem/1.35 "IBM Plex Mono",monospace;letter-spacing:.04em;text-transform:uppercase; }
+.instrument-tab__label b { color:var(--ink);font:700 1.06rem/1.1 "Fraunces",Georgia,serif; }
 .room--workbench .tool-selector.instrument-tab.is-active {
   color:var(--ink);
   background:color-mix(in srgb,var(--drawer-accent) 11%,transparent);
@@ -414,6 +415,7 @@
 .instrument-tab::after { display:none; }
 .instrument-tab:hover { transform:none; }.instrument-tab:focus-visible { outline:2px solid var(--drawer-accent);outline-offset:2px; }
 .workbench-gallery.precision-cabinet .workbench-feature { border:1px solid rgba(23,35,38,.38);box-shadow:0 18px 45px rgba(23,35,38,.16); }
+.precision-cabinet__panels { position:relative;min-width:0;min-height:0; }
 .workbench-feature__media { padding:8px; }.workbench-feature__copy { padding:16px 18px 18px; }
 .workbench-feature__copy,.workbench-feature__media::after { animation:none!important; }
 .workbench-feature__media::after { display:none!important; }
