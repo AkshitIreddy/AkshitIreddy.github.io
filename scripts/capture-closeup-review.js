@@ -44,9 +44,6 @@ function closeupClips(viewportWidth, viewportHeight) {
   }, hash, { timeout: 5_000 });
   if (selection && hash === 'archive') await page.locator(`.archive-project-tab[data-archive-project="${selection}"]`).click();
   if (selection && hash === 'workbench') await page.locator(`.tool-selector[data-tool="${selection}"]`).click();
-  if (selection === 'annotated' && hash === 'alcove') await page.locator('[data-alcove-notes]').click();
-  if (selection === 'called' && hash === 'pet') await page.locator('[data-call-pet]').click();
-  if (selection && hash === 'keyscape') await page.locator(`[data-light-key="${selection}"]`).click();
   if (selection === 'restless' && hash === 'foyer') {
     const thesis = page.locator('[data-restless-thesis]');
     const bounds = await thesis.boundingBox();

@@ -13,8 +13,6 @@
   const canvas = document.querySelector(".ambient-canvas");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  const motionToggle = document.querySelector("[data-motion-toggle]");
-  const motionLabel = document.querySelector("[data-motion-label]");
 
   if (!shell || !stage || !world || !rooms.length) return;
 
@@ -37,7 +35,6 @@
     keyboardNavigation: false,
     lastPointer: { x: 0.5, y: 0.5 },
     guideSpeech: 0,
-    motionPaused: false,
     introTimer: 0,
     touchStart: null,
     lastSwipeAt: 0,
@@ -73,7 +70,7 @@
     if (themeColor) themeColor.content = frameColors[frame] || frameColors.foyer;
 
     if (room.id === "foyer") {
-      document.title = "Akshit — Built to Move";
+      document.title = "Akshit Ireddy";
       return;
     }
     const label = room.id === "archive"
@@ -81,7 +78,7 @@
       : room.id === "workbench"
         ? "Tools"
         : roomData[index]?.shortName || "Projects";
-    document.title = `${label} · Built to Move`;
+    document.title = `${label} · Akshit`;
   }
 
   function getRoomFromHash() {
@@ -209,7 +206,7 @@
         image.removeAttribute("src");
         return;
       }
-      const source = reduceMotion.matches || state.motionPaused ? image.dataset.stillSrc : image.dataset.motionSrc;
+      const source = reduceMotion.matches ? image.dataset.stillSrc : image.dataset.motionSrc;
       if (source && image.getAttribute("src") !== source) image.setAttribute("src", source);
     });
   }
@@ -221,7 +218,7 @@
       const room = video.closest(".room");
       const active = room?.classList.contains("is-current") && !video.hidden;
       if (active) ensureVideoPoster(video);
-      const canPlay = active && video.dataset.userPaused !== "true" && !reduceMotion.matches && !state.motionPaused && !document.hidden;
+      const canPlay = active && video.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
       if (canPlay) {
         ensureVideoSources(video);
         video.play().catch(() => {});
@@ -233,7 +230,7 @@
     const archiveVideo = document.querySelector("[data-archive-video]");
     if (!(archiveVideo instanceof HTMLVideoElement)) return;
     if (state.room === 4) ensureVideoPoster(archiveVideo);
-    const canPlay = state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !state.motionPaused && !document.hidden;
+    const canPlay = state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden;
     if (canPlay) {
       ensureVideoSources(archiveVideo);
       archiveVideo.play().catch(() => {});
@@ -485,16 +482,12 @@
   const guide = document.querySelector("[data-guide]");
   const guideButton = document.querySelector("[data-guide-button]");
   const guideSpeech = document.querySelector("[data-guide-speech]");
-  const guideSpeechButton = document.querySelector("[data-guide-speech-button]");
-  const guideMessage = document.querySelector("[data-guide-message]");
   const guideTrackingSurface = document.querySelector("#foyer");
   const guideLines = [
-    "Psst—almost everything here reacts.",
-    "The shelves are the file browser. I checked.",
-    "Press A, S, D, F in Keyscape—the room answers.",
-    "The little traveller remembers where you have been.",
-    "Every demo is the real project, not a decorative mockup.",
-    "Click this note whenever you want another studio secret.",
+    "The good chapters move. Follow me.",
+    "Did you know the shelves listen?",
+    "I tested the light keys. Thoroughly.",
+    "Everything here has a pulse.",
   ];
   let guideReactionTimer = 0;
 
@@ -520,10 +513,10 @@
 
   guideTrackingSurface?.addEventListener("pointerleave", resetGuideLook);
 
-  function advanceGuideSpeech() {
+  guideButton?.addEventListener("click", () => {
     window.clearTimeout(guideReactionTimer);
     state.guideSpeech = (state.guideSpeech + 1) % guideLines.length;
-    if (guideMessage) guideMessage.textContent = guideLines[state.guideSpeech];
+    if (guideSpeech) guideSpeech.lastChild.textContent = guideLines[state.guideSpeech];
     guide?.classList.remove("is-greeting");
     void guide?.offsetWidth;
     guide?.classList.add("is-greeting");
@@ -531,23 +524,26 @@
     guideReactionTimer = window.setTimeout(() => {
       guide?.classList.remove("is-greeting");
     }, 1250);
-  }
-
-  guideButton?.addEventListener("click", advanceGuideSpeech);
-  guideSpeechButton?.addEventListener("click", advanceGuideSpeech);
+  });
 
   /* Room-specific behaviors */
 
-  const alcoveNotesButton = document.querySelector("[data-alcove-notes]");
-  const alcoveRoom = document.querySelector(".room--alcove");
+  const disturbButton = document.querySelector("[data-disturb-books]");
   const shelves = [...document.querySelectorAll(".edge-shelf")];
-  alcoveNotesButton?.addEventListener("click", () => {
-    const annotated = !alcoveRoom?.classList.contains("is-annotated");
-    alcoveRoom?.classList.toggle("is-annotated", annotated);
-    shelves.forEach((shelf, index) => shelf.classList.toggle("is-consulting", annotated && index % 2 === 0));
-    alcoveNotesButton.setAttribute("aria-expanded", String(annotated));
-    alcoveNotesButton.firstChild.textContent = annotated ? "Hide demo notes " : "Annotate the demo ";
-    announceReaction(annotated ? "Three Alcove demo notes are visible." : "Alcove demo notes are hidden.");
+  disturbButton?.setAttribute("aria-pressed", "false");
+  let shelfTimer = 0;
+  disturbButton?.addEventListener("click", () => {
+    const disturbed = !shelves.some((shelf) => shelf.classList.contains("is-disturbed"));
+    shelves.forEach((shelf) => shelf.classList.toggle("is-disturbed", disturbed));
+    disturbButton.firstChild.textContent = disturbed ? "Let the shelves settle " : "Disturb the shelves ";
+    disturbButton.setAttribute("aria-pressed", String(disturbed));
+    announceReaction(disturbed ? "The Alcove shelves are moving." : "The Alcove shelves have settled.");
+    window.clearTimeout(shelfTimer);
+    if (disturbed && !reduceMotion.matches) shelfTimer = window.setTimeout(() => {
+      shelves.forEach((shelf) => shelf.classList.remove("is-disturbed"));
+      disturbButton.firstChild.textContent = "Disturb the shelves ";
+      disturbButton.setAttribute("aria-pressed", "false");
+    }, 4000);
   });
 
   const petRoom = document.querySelector(".room--pet");
@@ -566,7 +562,7 @@
   const keyscapeRoom = document.querySelector(".room--keyscape");
   const lightKeys = [...document.querySelectorAll("[data-light-key]")];
   const keyboardKeys = ["a", "s", "d", "f"];
-  const keyboardLights = ["organic", "physics", "typing", "music"];
+  const keyboardLights = ["violet", "cyan", "gold", "coral"];
   let lightTimer = 0;
   lightKeys.forEach((button) => button.setAttribute("aria-pressed", "false"));
 
@@ -577,6 +573,11 @@
     lightKeys.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
     announceReaction(`${light[0].toUpperCase()}${light.slice(1)} light activated.`);
     window.clearTimeout(lightTimer);
+    lightTimer = window.setTimeout(() => {
+      keyscapeRoom.removeAttribute("data-light");
+      lightKeys.forEach((item) => item.classList.remove("is-lit"));
+      lightKeys.forEach((item) => item.setAttribute("aria-pressed", "false"));
+    }, reduceMotion.matches ? 220 : 850);
   }
 
   lightKeys.forEach((button) => button.addEventListener("click", () => playLight(button.dataset.lightKey, button)));
@@ -598,7 +599,6 @@
   const archiveTitle = document.querySelector("[data-archive-title]");
   const archiveKicker = document.querySelector("[data-archive-kicker]");
   const archiveDescription = document.querySelector("[data-archive-description]");
-  const archiveTech = document.querySelector("[data-archive-tech]");
   const archiveLink = document.querySelector("[data-archive-link]");
   const archiveCounter = document.querySelector("[data-archive-counter]");
   const archivePanel = document.querySelector("#archive-panel");
@@ -607,8 +607,7 @@
     if (!(video instanceof HTMLVideoElement) || !archivePlay) return;
     const playing = !video.paused && !video.ended;
     archivePlay.classList.toggle("is-playing", playing);
-    const project = archiveTitle?.textContent?.trim() || "selected project";
-    archivePlay.setAttribute("aria-label", `${playing ? "Pause" : video.ended ? "Replay" : "Play"} ${project} demo`);
+    archivePlay.setAttribute("aria-label", playing ? "Pause archive demo" : video.ended ? "Replay archive demo" : "Play archive demo");
   }
 
   function setArchiveProject(tab, focus = false) {
@@ -624,9 +623,8 @@
     if (archiveTitle) archiveTitle.textContent = tab.dataset.title || "";
     if (archiveKicker) archiveKicker.textContent = tab.dataset.kicker || "";
     if (archiveDescription) archiveDescription.textContent = tab.dataset.description || "";
-    if (archiveTech) archiveTech.textContent = tab.dataset.stack || "";
     if (archiveLink) archiveLink.href = tab.dataset.repo || "#";
-    if (archiveCounter) archiveCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(archiveTabs.length).padStart(2, "0")} · ${tab.dataset.mediaLabel || "PROJECT DEMO"}`;
+    if (archiveCounter) archiveCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(archiveTabs.length).padStart(2, "0")} · README FILM`;
     if (archivePanel && tab.id) archivePanel.setAttribute("aria-labelledby", tab.id);
     if (archiveRoom) archiveRoom.dataset.archiveProject = tab.dataset.archiveProject || "npc";
     if (state.room === 4) syncFrameTheme(4);
@@ -650,7 +648,7 @@
       archiveVideo.append(source);
     }
     archiveVideo.load();
-    if (state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !state.motionPaused) archiveVideo.play().catch(() => {});
+    if (state.room === 4 && archiveVideo.dataset.userPaused !== "true" && !reduceMotion.matches) archiveVideo.play().catch(() => {});
     syncArchivePlayButton();
     if (focus) tab.focus();
   }
@@ -696,9 +694,6 @@
   const toolIndex = document.querySelector("[data-tool-index]");
   const toolTitle = document.querySelector(".workbench-feature h3");
   const toolDescription = document.querySelector("[data-tool-description]");
-  const toolPlatform = document.querySelector("[data-tool-platform]");
-  const toolSteps = [...document.querySelectorAll("[data-tool-step]")];
-  const toolMediaLabel = document.querySelector("[data-tool-media-label]");
   const toolLink = document.querySelector("[data-tool-link]");
   const toolPlay = document.querySelector("[data-tool-play]");
   const workbenchPanel = document.querySelector("#workbench-panel");
@@ -740,7 +735,7 @@
           toolVideo.append(source);
         }
         toolVideo.load();
-        if (state.room === 5 && toolVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !state.motionPaused && !document.hidden) toolVideo.play().catch(() => {});
+        if (state.room === 5 && toolVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !document.hidden) toolVideo.play().catch(() => {});
       } else {
         toolMedia.src = selector.dataset.media || selector.dataset.poster || "";
         toolMedia.alt = selector.dataset.alt || `${selector.dataset.title || "Utility"} demo`;
@@ -748,10 +743,6 @@
       if (toolIndex) toolIndex.textContent = selector.dataset.index || "";
       if (toolTitle) toolTitle.textContent = selector.dataset.title || "";
       if (toolDescription) toolDescription.textContent = selector.dataset.description || "";
-      if (toolPlatform) toolPlatform.textContent = selector.dataset.platform || "";
-      const process = (selector.dataset.process || "").split("|");
-      toolSteps.forEach((step, index) => { step.textContent = process[index] || ""; });
-      if (toolMediaLabel) toolMediaLabel.textContent = selector.dataset.mediaLabel || "PROJECT DEMO";
       if (toolLink) toolLink.href = selector.dataset.repo || "#";
       if (workbenchPanel && selector.id) workbenchPanel.setAttribute("aria-labelledby", selector.id);
       toolFeature?.classList.remove("is-changing");
@@ -797,33 +788,10 @@
 
   /* Reduced motion uses honest stills instead of freezing animated files mid-frame. */
 
-  function syncMotionControl() {
-    const paused = reduceMotion.matches || state.motionPaused;
-    shell.classList.toggle("is-motion-paused", paused);
-    motionToggle?.setAttribute("aria-pressed", String(paused));
-    if (motionLabel) motionLabel.textContent = reduceMotion.matches ? "Motion reduced" : paused ? "Resume motion" : "Pause motion";
-    document.querySelectorAll("svg").forEach((svg) => {
-      if (paused) svg.pauseAnimations?.();
-      else svg.unpauseAnimations?.();
-    });
-    syncMotionImages();
-    syncVideoPlayback();
-    ambientField?.sync();
-  }
-
-  motionToggle?.addEventListener("click", () => {
-    if (reduceMotion.matches) {
-      announceReaction("Motion is reduced by your system preference.");
-      return;
-    }
-    state.motionPaused = !state.motionPaused;
-    syncMotionControl();
-    announceReaction(state.motionPaused ? "Ambient motion paused." : "Ambient motion resumed.");
-  });
-
   function syncMotionPreference() {
+    syncMotionImages();
     if (reduceMotion.matches) shell.classList.remove("is-intro");
-    syncMotionControl();
+    syncVideoPlayback();
   }
 
   reduceMotion.addEventListener?.("change", syncMotionPreference);
@@ -889,7 +857,7 @@
     }
 
     sync() {
-      const run = !reduceMotion.matches && !state.motionPaused && !document.hidden;
+      const run = !reduceMotion.matches && !document.hidden;
       if (run && !this.frame) {
         this.lastTime = performance.now();
         this.frame = window.requestAnimationFrame(this.draw);
@@ -925,7 +893,7 @@
 
     draw(time) {
       this.frame = 0;
-      if (reduceMotion.matches || state.motionPaused || document.hidden) return;
+      if (reduceMotion.matches || document.hidden) return;
       if (time - this.lastTime < 30) {
         this.frame = window.requestAnimationFrame(this.draw);
         return;
