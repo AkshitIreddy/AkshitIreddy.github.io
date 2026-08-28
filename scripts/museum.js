@@ -10,7 +10,6 @@
   const roomReading = document.querySelector("[data-room-reading]");
   const announcer = document.querySelector(".room-announcer");
   const mobileScrollHint = document.querySelector(".mobile-scroll-hint");
-  const canvas = document.querySelector(".ambient-canvas");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const themeColor = document.querySelector('meta[name="theme-color"]');
 
@@ -31,9 +30,7 @@
     wheelLockUntil: 0,
     walkingTimer: 0,
     headingFocusTimer: 0,
-    parallaxFrame: 0,
     keyboardNavigation: false,
-    lastPointer: { x: 0.5, y: 0.5 },
     guideSpeech: 0,
     introTimer: 0,
     touchStart: null,
@@ -41,7 +38,6 @@
   };
 
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-  const hasFinePointer = () => window.matchMedia("(pointer: fine)").matches;
   const isMobile = () => window.matchMedia("(max-width: 760px)").matches;
 
   const frameColors = {
@@ -395,38 +391,6 @@
     state.wheelLockUntil = now + 740;
     goToRoom(delta > 0 ? state.room + 1 : state.room - 1, { pushHistory: true, resetScroll: true });
   }, { passive: false });
-
-  function updateParallax() {
-    state.parallaxFrame = 0;
-    if (!hasFinePointer() || reduceMotion.matches) return;
-    const room = rooms[state.room];
-    if (!room) return;
-    const nx = (state.lastPointer.x - 0.5) * 2;
-    const ny = (state.lastPointer.y - 0.5) * 2;
-    room.querySelectorAll(".room__layer[data-depth]").forEach((layer) => {
-      const depth = Number(layer.dataset.depth) || 1;
-      layer.style.setProperty("--layer-x", `${(nx * depth * -3.8).toFixed(2)}px`);
-      layer.style.setProperty("--layer-y", `${(ny * depth * -2.5).toFixed(2)}px`);
-    });
-  }
-
-  stage.addEventListener("pointermove", (event) => {
-    if (!hasFinePointer()) return;
-    state.lastPointer = { x: clamp(event.clientX / window.innerWidth, 0, 1), y: clamp(event.clientY / window.innerHeight, 0, 1) };
-    if (!state.parallaxFrame) state.parallaxFrame = window.requestAnimationFrame(updateParallax);
-  }, { passive: true });
-
-  function resetParallax() {
-    rooms.forEach((room) => room.querySelectorAll(".room__layer").forEach((layer) => {
-      layer.style.setProperty("--layer-x", "0px");
-      layer.style.setProperty("--layer-y", "0px");
-    }));
-  }
-
-  stage.addEventListener("pointerleave", () => {
-    state.lastPointer = { x: 0.5, y: 0.5 };
-    resetParallax();
-  });
 
   /* One stable phrase follows the cursor. The title remains intact in normal
      document flow, so the interaction cannot tear words or change spacing. */
@@ -796,133 +760,12 @@
 
   reduceMotion.addEventListener?.("change", syncMotionPreference);
 
-  /* Ambient hand-drawn dust; direct interactions remain available when it is disabled. */
-
-  class AmbientField {
-    constructor(element) {
-      this.canvas = element;
-      this.context = element?.getContext("2d", { alpha: true });
-      this.particles = [];
-      this.frame = 0;
-      this.width = 0;
-      this.height = 0;
-      this.dpr = 1;
-      this.lastTime = 0;
-      this.seed = 7319;
-      this.palette = ["#172326", "#c54234", "#46776a"];
-      this.resize = this.resize.bind(this);
-      this.draw = this.draw.bind(this);
-      if (!this.context) return;
-      this.resize();
-      window.addEventListener("resize", this.resize, { passive: true });
-      document.addEventListener("visibilitychange", () => this.sync());
-      window.addEventListener("museum:roomchange", (event) => this.changeRoom(event.detail.room));
-      reduceMotion.addEventListener?.("change", () => this.sync());
-      this.sync();
-    }
-
-    random() {
-      this.seed = (this.seed * 16807) % 2147483647;
-      return (this.seed - 1) / 2147483646;
-    }
-
-    makeParticle(index) {
-      const shapes = ["dot", "dash", "curl", "cross"];
-      return { x: this.random() * this.width, y: this.random() * this.height, size: .7 + this.random() * 2.1, vx: (-.5 + this.random()) * .052, vy: -.025 - this.random() * .07, phase: this.random() * Math.PI * 2, angle: this.random() * Math.PI * 2, spin: (-.5 + this.random()) * .003, alpha: .07 + this.random() * .18, color: this.palette[index % this.palette.length], shape: shapes[Math.floor(this.random() * shapes.length)] };
-    }
-
-    resize() {
-      if (!this.context) return;
-      this.width = window.innerWidth;
-      this.height = window.innerHeight;
-      const pixelBudgetDpr = Math.sqrt(5_000_000 / Math.max(1, this.width * this.height));
-      this.dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2, pixelBudgetDpr));
-      this.canvas.width = Math.round(this.width * this.dpr);
-      this.canvas.height = Math.round(this.height * this.dpr);
-      this.canvas.style.width = `${this.width}px`;
-      this.canvas.style.height = `${this.height}px`;
-      this.context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-      const count = clamp(Math.round((this.width * this.height) / 34000), 16, 46);
-      this.particles = Array.from({ length: count }, (_, index) => this.makeParticle(index));
-    }
-
-    changeRoom(room) {
-      const palettes = [
-        ["#172326", "#c54234", "#e5b845"], ["#1f4c45", "#c54234", "#8c79ff"],
-        ["#172326", "#c54234", "#46776a"], ["#8dd9e2", "#8c79ff", "#d9ee72"],
-        ["#172326", "#c54234", "#46776a"], ["#172326", "#e5b845", "#c54234"],
-      ];
-      this.palette = palettes[room] || palettes[0];
-      this.particles.forEach((particle, index) => { particle.color = this.palette[index % this.palette.length]; });
-    }
-
-    sync() {
-      const run = !reduceMotion.matches && !document.hidden;
-      if (run && !this.frame) {
-        this.lastTime = performance.now();
-        this.frame = window.requestAnimationFrame(this.draw);
-      } else if (!run && this.frame) {
-        window.cancelAnimationFrame(this.frame);
-        this.frame = 0;
-        this.context?.clearRect(0, 0, this.width, this.height);
-      }
-    }
-
-    drawParticle(particle, time) {
-      const ctx = this.context;
-      const wave = Math.sin(time * .0006 + particle.phase) * 2.5;
-      ctx.save();
-      ctx.translate(particle.x + wave, particle.y);
-      ctx.rotate(particle.angle);
-      ctx.strokeStyle = particle.color;
-      ctx.fillStyle = particle.color;
-      ctx.globalAlpha = particle.alpha;
-      ctx.lineWidth = .8;
-      ctx.lineCap = "round";
-      if (particle.shape === "dot") {
-        ctx.beginPath(); ctx.arc(0, 0, particle.size, 0, Math.PI * 2); ctx.fill();
-      } else if (particle.shape === "dash") {
-        ctx.beginPath(); ctx.moveTo(-particle.size * 2.1, 0); ctx.quadraticCurveTo(0, particle.size * .7, particle.size * 2.1, 0); ctx.stroke();
-      } else if (particle.shape === "cross") {
-        ctx.beginPath(); ctx.moveTo(-particle.size, 0); ctx.lineTo(particle.size, 0); ctx.moveTo(0, -particle.size); ctx.lineTo(0, particle.size); ctx.stroke();
-      } else {
-        ctx.beginPath(); ctx.arc(0, 0, particle.size * 1.5, .4, Math.PI * 1.8); ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    draw(time) {
-      this.frame = 0;
-      if (reduceMotion.matches || document.hidden) return;
-      if (time - this.lastTime < 30) {
-        this.frame = window.requestAnimationFrame(this.draw);
-        return;
-      }
-      const delta = clamp(time - this.lastTime, 0, 34);
-      this.lastTime = time;
-      this.context.clearRect(0, 0, this.width, this.height);
-      this.particles.forEach((particle) => {
-        particle.x += particle.vx * delta;
-        particle.y += particle.vy * delta;
-        particle.angle += particle.spin * delta;
-        if (particle.y < -12) { particle.y = this.height + 12; particle.x = this.random() * this.width; }
-        if (particle.x < -12) particle.x = this.width + 12;
-        if (particle.x > this.width + 12) particle.x = -12;
-        this.drawParticle(particle, time);
-      });
-      this.frame = window.requestAnimationFrame(this.draw);
-    }
-  }
-
-  const ambientField = canvas ? new AmbientField(canvas) : null;
-
   let resizeFrame = 0;
   window.addEventListener("resize", () => {
     if (resizeFrame) return;
     resizeFrame = window.requestAnimationFrame(() => {
       resizeFrame = 0;
       setSpatialVariables(state.room);
-      resetParallax();
       syncMobileScrollHint();
     });
   }, { passive: true });
@@ -942,7 +785,6 @@
   // makes browsers begin sequential keyboard focus after the room fragment,
   // skipping the skip link and masthead controls.
   goToRoom(initialRoom, { updateHash: Boolean(window.location.hash), forceAnnounce: false });
-  ambientField?.changeRoom(state.room);
   window.addEventListener("load", () => {
     stage.scrollLeft = 0;
     syncMobileScrollHint();

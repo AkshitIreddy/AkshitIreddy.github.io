@@ -165,17 +165,6 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   box-shadow: inset 0 0 80px rgba(23,35,38,.08);
 }
 
-.ambient-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: .36;
-  mix-blend-mode: multiply;
-}
-
 /* Top identity rail */
 
 .museum-masthead {
@@ -381,11 +370,6 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   height: 100%;
   margin-inline: auto;
   padding: clamp(28px, 4.5vh, 55px) clamp(76px, 7vw, 130px) clamp(36px, 5vh, 62px);
-}
-
-.room__layer {
-  transform: translate3d(var(--layer-x, 0), var(--layer-y, 0), 0);
-  transition: transform 260ms ease;
 }
 
 .room-texture {
@@ -1239,7 +1223,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 @media (max-width: 760px) {
   :root{--header-h:72px;--map-h:74px;--transition-time:660ms}
   .museum-masthead{padding:7px 10px}.maker-mark__portrait{flex-basis:43px;width:43px;height:43px;margin-right:9px}.maker-mark__words small{margin-top:4px;font-size:.46rem}.masthead-links{gap:5px}.masthead-links a{padding:7px;font-size:.5rem}.masthead-links a:nth-child(2){display:none}
-  .museum-stage{overflow:hidden}.room{overflow-x:clip;overflow-y:auto;overscroll-behavior:contain}.room::after{bottom:80px}.room-canvas{display:block;width:100%;height:auto;min-height:100%;padding:28px 18px 150px}.room__layer{transform:none!important}.edge-shelf,.pet-track,.ceiling-lights--pet,.archive-cable{display:none}
+  .museum-stage{overflow:hidden}.room{overflow-x:clip;overflow-y:auto;overscroll-behavior:contain}.room::after{bottom:80px}.room-canvas{display:block;width:100%;height:auto;min-height:100%;padding:28px 18px 150px}.edge-shelf,.pet-track,.ceiling-lights--pet,.archive-cable{display:none}
   .foyer-copy{max-width:none}.foyer-copy h1{font-size:clamp(3.75rem,18.5vw,6rem);line-height:.73}.foyer-copy__intro{max-width:48ch;margin-top:21px;font-size:.68rem}.foyer-actions{margin-top:23px}.guide-plinth{width:min(89vw,390px);margin:22px auto 0}.guide-speech{right:1%;font-size:.83rem}.room-canvas--foyer{padding-bottom:145px}
   .exhibit-copy{width:100%;max-width:620px}.exhibit-copy h2,.exhibit-copy--pet h2,.exhibit-copy--archive h2,.exhibit-copy--workbench h2{font-size:clamp(3.4rem,16vw,5.6rem);line-height:.78}.exhibit-copy>p:not(.eyebrow):not(.curator-note){max-width:50ch;margin-top:15px;font-size:.65rem}.project-facts{margin-top:13px}
   .media-exhibit{width:100%;margin:28px 0 0}.museum-window{padding:7px;box-shadow:6px 7px 0 rgba(23,35,38,.9)}.museum-window--alcove{box-shadow:6px 7px 0 rgba(31,76,69,.52),9px 10px 0 var(--ink)}.museum-window--pet{box-shadow:6px 7px 0 rgba(197,66,52,.48),9px 10px 0 var(--ink)}.museum-window--keyscape{box-shadow:6px 7px 0 var(--violet),9px 10px 0 rgba(216,238,114,.7);transform:rotate(.4deg)}.museum-window img{max-height:none}.media-exhibit figcaption{align-items:flex-start;flex-direction:column;width:96%;margin-top:22px}.alcove-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:24px}.scribble-card:nth-child(2){display:block}.alcove-notes .interactive-action{margin-top:8px}.exhibit-copy--pet .interactive-action{margin-top:18px}.pet-specimen{margin-bottom:10px}.light-console{margin-top:21px}.keyscape-specimen{margin-bottom:0}
@@ -1345,15 +1329,15 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root{--transition-time:1ms}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.ambient-canvas{display:none}.kinetic-guide{transform:none!important}.first-visit-note{display:none}.mobile-scroll-hint.is-visible{animation:none}
+  :root{--transition-time:1ms}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.kinetic-guide{transform:none!important}.first-visit-note{display:none}.mobile-scroll-hint.is-visible{animation:none}
 }
 
 @media (prefers-contrast: more) {
-  :root{--ink:#080d0e;--ink-soft:#172123}.ambient-canvas{display:none}.museum-masthead,.museum-map{background:var(--paper-light);backdrop-filter:none}
+  :root{--ink:#080d0e;--ink-soft:#172123}.museum-masthead,.museum-map{background:var(--paper-light);backdrop-filter:none}
 }
 
 @media print {
-  body{overflow:visible}.museum-shell{height:auto;overflow:visible}.museum-masthead,.museum-map,.visitor,.visitor-rail,.doorway,.ambient-canvas,.first-visit-note,.mobile-scroll-hint{display:none!important}.museum-stage{position:static;overflow:visible}.museum-world{display:block;transform:none}.room{min-height:760px;overflow:hidden;break-after:page}.room-canvas{padding:50px}
+  body{overflow:visible}.museum-shell{height:auto;overflow:visible}.museum-masthead,.museum-map,.visitor,.visitor-rail,.doorway,.first-visit-note,.mobile-scroll-hint{display:none!important}.museum-stage{position:static;overflow:visible}.museum-world{display:block;transform:none}.room{min-height:760px;overflow:hidden;break-after:page}.room-canvas{padding:50px}
 }
 
 /* 2026-08 refinement: steadier motion, generous rhythm, and a warmer Alcove. */
