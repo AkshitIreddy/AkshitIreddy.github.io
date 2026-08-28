@@ -7,7 +7,6 @@ const expectedStylesheets = [
   'styles/premium/base.css',
   'styles/premium/alcove.css',
   'styles/premium/pet.css',
-  'styles/premium/footer.css',
   'styles/premium/archive.css',
   'styles/premium/tools.css',
   'styles/calm.css',

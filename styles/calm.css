@@ -18,7 +18,7 @@
   background:var(--frame-surface);
   background-image:none;
   border-bottom:1px solid color-mix(in srgb,var(--frame-ink) 22%,transparent);
-  box-shadow:none;
+  box-shadow:none!important;
 }
 
 .maker-mark { gap:0; }
@@ -52,10 +52,10 @@
   color:var(--frame-ink);
   background:var(--frame-surface);
   background-image:none!important;
-  border:0;
-  border-top:1px solid color-mix(in srgb,var(--frame-ink) 22%,transparent);
+  border:0!important;
+  border-top:1px solid color-mix(in srgb,var(--frame-ink) 22%,transparent)!important;
   border-radius:0;
-  box-shadow:none;
+  box-shadow:none!important;
   backdrop-filter:none;
 }
 .museum-map::before,.museum-map__you,.museum-map__route,.museum-map__progress,.museum-map li::before { display:none!important; }
