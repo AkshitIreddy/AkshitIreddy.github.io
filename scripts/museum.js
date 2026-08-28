@@ -66,7 +66,7 @@
     if (themeColor) themeColor.content = frameColors[frame] || frameColors.foyer;
 
     if (room.id === "foyer") {
-      document.title = "Akshit Ireddy";
+      document.title = "Akshit Ireddy — this page refuses to sit still";
       return;
     }
     const label = room.id === "archive"
@@ -448,10 +448,14 @@
   const guideSpeech = document.querySelector("[data-guide-speech]");
   const guideTrackingSurface = document.querySelector("#foyer");
   const guideLines = [
+    "Psst—almost everything here reacts.",
     "The good chapters move. Follow me.",
-    "Did you know the shelves listen?",
-    "I tested the light keys. Thoroughly.",
-    "Everything here has a pulse.",
+    "Room 01: the books breathe. Pages turn themselves.",
+    "The pet in 02 chases cursors. I taught it how.",
+    "I tested all fifty light keys in 03. Thoroughly.",
+    "04 is older work—the NPCs still hold a conversation.",
+    "The tools in 05 are practical. Mostly.",
+    "Sit still? We filed a formal refusal.",
   ];
   let guideReactionTimer = 0;
 
@@ -477,7 +481,7 @@
 
   guideTrackingSurface?.addEventListener("pointerleave", resetGuideLook);
 
-  guideButton?.addEventListener("click", () => {
+  function cycleGuideSpeech() {
     window.clearTimeout(guideReactionTimer);
     state.guideSpeech = (state.guideSpeech + 1) % guideLines.length;
     if (guideSpeech) guideSpeech.lastChild.textContent = guideLines[state.guideSpeech];
@@ -488,7 +492,10 @@
     guideReactionTimer = window.setTimeout(() => {
       guide?.classList.remove("is-greeting");
     }, 1250);
-  });
+  }
+
+  guideButton?.addEventListener("click", cycleGuideSpeech);
+  guideSpeech?.addEventListener("click", cycleGuideSpeech);
 
   /* Room-specific behaviors */
 
