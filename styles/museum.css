@@ -1618,6 +1618,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 .thesis-line { padding-block: .025em; }
 .thesis-line--last { padding-top: .13em; }
+.thesis-line--last > em { margin-left: .24em; }
 
 .moving-word {
   padding: .08em .17em .15em .13em;
