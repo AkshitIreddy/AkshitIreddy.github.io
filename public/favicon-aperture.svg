@@ -1,9 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
-  <title>Studio kitten peeking through a doorway</title>
-  <path fill="#f06449" stroke="#172326" stroke-width="3" stroke-linejoin="round" d="M7 57V29C7 14 17 5 32 5s25 9 25 24v28Z"/>
-  <path fill="#172326" d="M13 57V29c0-11 7-18 19-18s19 7 19 18v28Z"/>
-  <path fill="#fffaf0" stroke="#172326" stroke-width="2.5" stroke-linejoin="round" d="m17 29 4-14 11 8 11-8 4 14v12c0 11-6 17-15 17S17 52 17 41Z"/>
-  <path fill="#e5b845" stroke="#172326" stroke-width="2" stroke-linejoin="round" d="m24 52 8 5 8-5-2 9H26Z"/>
-  <path fill="none" stroke="#172326" stroke-width="3" stroke-linecap="round" d="M24 36h1m14 0h1M29 45q3 3 6 0"/>
-  <path fill="#f06449" d="m32 40-3 3h6Z"/>
+  <title>Folded studio creature</title>
+  <path fill="#66777a" d="M8 8h28l8 16 12 8-12 12 4 8H16l12-16L8 24Z"/>
+  <path fill="#f06449" d="m16 52 12-20 28 4-12 16Z"/>
+  <path fill="#8c79ff" d="m36 12 20 20-12 12-8-32Z"/>
+  <path fill="#fffaf0" d="m28 24 12 8-8 8-12-8Z"/>
 </svg>

@@ -96,10 +96,10 @@ async function waitForRoomSettled(page, index) {
   };
 
   await captureInteraction('guide-greeting', 'foyer', async () => page.locator('[data-guide-button]').click());
-  await captureInteraction('alcove-annotated', 'alcove', async () => page.locator('[data-alcove-notes]').click());
-  await captureInteraction('pet-called', 'pet', async () => page.locator('[data-call-pet]').click());
+  await captureInteraction('alcove-agent-volume', 'alcove', async () => page.locator('[data-alcove-volume="agent"]').click());
+  await captureInteraction('pet-company', 'pet', async () => page.locator('[data-companion-invite]').click());
   await captureInteraction('keyscape-physics', 'keyscape', async () => page.locator('[data-light-key="physics"]').click());
-  await captureInteraction('archive-cupcake', 'archive', async () => page.locator('[data-archive-project="cupcake"]').click());
+  await captureInteraction('archive-cupcake', 'archive', async () => page.locator('[data-project="cupcake"]').click());
   await captureInteraction('workbench-gifsmith', 'workbench', async () => page.locator('[data-tool="gifsmith"]').click());
   await captureInteraction('workbench-transparency', 'workbench', async () => page.locator('[data-tool="transparency"]').click());
 

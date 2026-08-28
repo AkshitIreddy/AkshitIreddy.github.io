@@ -33,9 +33,7 @@
     wheelLockUntil: 0,
     walkingTimer: 0,
     headingFocusTimer: 0,
-    parallaxFrame: 0,
     keyboardNavigation: false,
-    lastPointer: { x: 0.5, y: 0.5 },
     guideSpeech: 0,
     motionPaused: false,
     introTimer: 0,
@@ -399,86 +397,9 @@
     goToRoom(delta > 0 ? state.room + 1 : state.room - 1, { pushHistory: true, resetScroll: true });
   }, { passive: false });
 
-  function updateParallax() {
-    state.parallaxFrame = 0;
-    if (!hasFinePointer() || reduceMotion.matches) return;
-    const room = rooms[state.room];
-    if (!room) return;
-    const nx = (state.lastPointer.x - 0.5) * 2;
-    const ny = (state.lastPointer.y - 0.5) * 2;
-    room.querySelectorAll(".room__layer[data-depth]").forEach((layer) => {
-      const depth = Number(layer.dataset.depth) || 1;
-      layer.style.setProperty("--layer-x", `${(nx * depth * -3.8).toFixed(2)}px`);
-      layer.style.setProperty("--layer-y", `${(ny * depth * -2.5).toFixed(2)}px`);
-    });
-  }
-
-  stage.addEventListener("pointermove", (event) => {
-    if (!hasFinePointer()) return;
-    state.lastPointer = { x: clamp(event.clientX / window.innerWidth, 0, 1), y: clamp(event.clientY / window.innerHeight, 0, 1) };
-    if (!state.parallaxFrame) state.parallaxFrame = window.requestAnimationFrame(updateParallax);
-  }, { passive: true });
-
-  function resetParallax() {
-    rooms.forEach((room) => room.querySelectorAll(".room__layer").forEach((layer) => {
-      layer.style.setProperty("--layer-x", "0px");
-      layer.style.setProperty("--layer-y", "0px");
-    }));
-  }
-
-  stage.addEventListener("pointerleave", () => {
-    state.lastPointer = { x: 0.5, y: 0.5 };
-    resetParallax();
-  });
-
-  /* One stable phrase follows the cursor. The title remains intact in normal
-     document flow, so the interaction cannot tear words or change spacing. */
-
-  const restlessThesis = document.querySelector("[data-restless-thesis]");
-  const movingWord = restlessThesis?.querySelector(".moving-word");
-  let restlessFrame = 0;
-  const restlessCurrent = { x: 0, y: 0, r: -1.5 };
-  const restlessTarget = { x: 0, y: 0, r: -1.5 };
-
-  function renderRestlessThesis() {
-    restlessFrame = 0;
-    if (!movingWord || reduceMotion.matches) return;
-    const ease = .18;
-    restlessCurrent.x += (restlessTarget.x - restlessCurrent.x) * ease;
-    restlessCurrent.y += (restlessTarget.y - restlessCurrent.y) * ease;
-    restlessCurrent.r += (restlessTarget.r - restlessCurrent.r) * ease;
-    movingWord.style.setProperty("--thesis-x", `${restlessCurrent.x.toFixed(2)}px`);
-    movingWord.style.setProperty("--thesis-y", `${restlessCurrent.y.toFixed(2)}px`);
-    movingWord.style.setProperty("--thesis-r", `${restlessCurrent.r.toFixed(2)}deg`);
-    const unsettled = Math.abs(restlessTarget.x - restlessCurrent.x) > .04
-      || Math.abs(restlessTarget.y - restlessCurrent.y) > .04
-      || Math.abs(restlessTarget.r - restlessCurrent.r) > .02;
-    if (unsettled) restlessFrame = window.requestAnimationFrame(renderRestlessThesis);
-    else if (restlessTarget.x === 0 && restlessTarget.y === 0) restlessThesis?.classList.remove("is-restless");
-  }
-
-  function queueRestlessFrame() {
-    if (!restlessFrame) restlessFrame = window.requestAnimationFrame(renderRestlessThesis);
-  }
-
-  restlessThesis?.addEventListener("pointermove", (event) => {
-    if (reduceMotion.matches) return;
-    const bounds = restlessThesis.getBoundingClientRect();
-    const nx = clamp(((event.clientX - bounds.left) / bounds.width - .5) * 2, -1, 1);
-    const ny = clamp(((event.clientY - bounds.top) / bounds.height - .5) * 2, -1, 1);
-    restlessTarget.x = nx * 7;
-    restlessTarget.y = ny * 3.5;
-    restlessTarget.r = -1.5 + nx * .8;
-    restlessThesis.classList.add("is-restless");
-    queueRestlessFrame();
-  }, { passive: true });
-
-  restlessThesis?.addEventListener("pointerleave", () => {
-    restlessTarget.x = 0;
-    restlessTarget.y = 0;
-    restlessTarget.r = -1.5;
-    queueRestlessFrame();
-  });
+  /* Pointer motion is deliberately component-owned. The premium motion kernel
+     registers only authored thesis lines and physical fixtures; room layers,
+     columns, media, and page chrome never receive pointer transforms. */
 
   /* The studio kitten follows attention directly and reacts on touch. */
 
@@ -487,14 +408,14 @@
   const guideSpeech = document.querySelector("[data-guide-speech]");
   const guideSpeechButton = document.querySelector("[data-guide-speech-button]");
   const guideMessage = document.querySelector("[data-guide-message]");
-  const guideTrackingSurface = document.querySelector("#foyer");
+  const guideTrackingSurface = document.querySelector("[data-guide]");
   const guideLines = [
-    "Psst—almost everything here reacts.",
-    "The shelves are the file browser. I checked.",
-    "Press A, S, D, F in Keyscape—the room answers.",
-    "The little traveller remembers where you have been.",
-    "Every demo is the real project, not a decorative mockup.",
-    "Click this note whenever you want another studio secret.",
+    "The lights remember how you passed.",
+    "In Alcove, the shelf really is the file browser.",
+    "Press A, S, D, F in Keyscape—the room answers in light.",
+    "The little traveller keeps your place between rooms.",
+    "Every moving demo here comes from the real project.",
+    "Ask again—I keep the odd details close.",
   ];
   let guideReactionTimer = 0;
 
@@ -954,7 +875,6 @@
     resizeFrame = window.requestAnimationFrame(() => {
       resizeFrame = 0;
       setSpatialVariables(state.room);
-      resetParallax();
       syncMobileScrollHint();
     });
   }, { passive: true });
