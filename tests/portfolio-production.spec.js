@@ -1,4 +1,7 @@
+const fs = require('fs');
+const path = require('path');
 const { test, expect } = require('@playwright/test');
+const { buildComponentBundle, normalizeText, replaceComponentScripts, sha256 } = require('../scripts/lib/build-components');
 
 const rooms = ['foyer', 'alcove', 'pet', 'keyscape', 'archive', 'workbench'];
 const roomIndex = Object.fromEntries(rooms.map((room, index) => [room, index]));
@@ -9,6 +12,9 @@ const expectedStylesheets = [
 const expectedScripts = [
   'scripts/museum.js',
   'scripts/lib/localized-motion.js',
+  'scripts/components.bundle.js',
+];
+const componentSources = [
   'scripts/components/alcove.js',
   'scripts/components/pet.js',
   'scripts/components/archive.js',
@@ -272,17 +278,59 @@ test.describe('portfolio production contract', () => {
     });
     expect(dependencies.stylesheets, 'production stylesheet ownership changed without updating the calm contract').toEqual(expectedStylesheets);
     expect(dependencies.scripts, 'production script ownership changed without updating the calm contract').toEqual(expectedScripts);
+    expect(dependencies.scripts, 'production must make exactly three script requests').toHaveLength(3);
+    const requestedScripts = await page.evaluate(() => performance.getEntriesByType('resource')
+      .filter((entry) => entry.initiatorType === 'script')
+      .map((entry) => new URL(entry.name).pathname.replace(/^\//, ''))
+      .sort());
+    expect(requestedScripts, 'the browser must request exactly the three deployed scripts').toEqual([...expectedScripts].sort());
     expect(dependencies.publicAssets, 'production public asset ownership changed without updating the calm contract').toEqual(expectedPublicAssets);
 
-    const ownersOf = (selector) => Object.entries(dependencies.scriptSources)
-      .filter(([, source]) => source.includes(selector))
-      .map(([script]) => script);
-    expect(ownersOf('.tool-selector'), 'Workbench selectors must have one component owner').toEqual(['scripts/components/workbench.js']);
-    expect(ownersOf('[data-keyscape-demo-toggle]'), 'Keyscape playback must have one component owner').toEqual(['scripts/components/keyscape.js']);
-    expect(ownersOf('window.LocalizedMotion.create'), 'localized phrase motion must have one initializer owner').toEqual(['scripts/components/motion.js']);
+    const bundleSource = dependencies.scriptSources['scripts/components.bundle.js'];
+    expect(bundleSource, 'the deployed component bundle must be requested').toBeTruthy();
+    let previousOffset = -1;
+    for (const componentSource of componentSources) {
+      const banner = `/* component-source: ${componentSource} */`;
+      const offset = bundleSource.indexOf(banner);
+      expect(offset, `${componentSource} must occur once in the deployed bundle`).toBeGreaterThan(previousOffset);
+      expect(bundleSource.split(banner)).toHaveLength(2);
+      previousOffset = offset;
+      expect(fs.existsSync(path.join(process.cwd(), componentSource)), `${componentSource} remains an authored source file`).toBe(true);
+      expect(fs.existsSync(path.join(process.cwd(), 'dist', componentSource)), `${componentSource} must not be copied to dist`).toBe(false);
+    }
+    expect(bundleSource, 'the bundle must own Workbench selectors').toContain('.tool-selector');
+    expect(bundleSource, 'the bundle must own Keyscape playback').toContain('[data-keyscape-demo-toggle]');
+    expect(bundleSource, 'the bundle must initialize localized phrase motion').toContain('window.LocalizedMotion.create');
     expect(dependencies.scriptSources['scripts/museum.js'], 'the museum shell must not own Workbench selectors').not.toContain('[data-tool-');
     expect(dependencies.scriptSources['scripts/museum.js'], 'the museum shell must not own Keyscape controls').not.toContain('data-keyscape-demo-toggle');
     expect(dependencies.scripts.some((script) => script.includes('bootstrap')), 'the obsolete global bootstrap must not ship').toBe(false);
+
+    const [sourceManifest, deploymentManifest] = await Promise.all([
+      page.evaluate(() => fetch('source-manifest.json').then((response) => response.json())),
+      page.evaluate(() => fetch('deployment-manifest.json').then((response) => response.json())),
+    ]);
+    expect(sourceManifest.componentSources).toEqual(componentSources);
+    expect(deploymentManifest.scripts).toEqual(expectedScripts);
+    expect(deploymentManifest.componentBundle.path).toBe('scripts/components.bundle.js');
+    expect(deploymentManifest.componentBundle.orderedSources).toEqual(componentSources);
+    expect(deploymentManifest.componentBundle.bytes).toBe(Buffer.byteLength(bundleSource));
+    expect(deploymentManifest.componentBundle.sha256).toBe(sha256(bundleSource));
+    expect(deploymentManifest.omittedSourceFiles).toEqual(componentSources);
+
+    const sourceText = Object.fromEntries(componentSources.map((relativePath) => [
+      relativePath,
+      fs.readFileSync(path.join(process.cwd(), relativePath), 'utf8'),
+    ]));
+    const expectedBundle = buildComponentBundle(componentSources, (relativePath) => sourceText[relativePath]);
+    const crlfBundle = buildComponentBundle(componentSources, (relativePath) => normalizeText(sourceText[relativePath]).replace(/\n/g, '\r\n'));
+    expect(bundleSource, 'the deployed bundle must be rebuilt exactly from authored component sources').toBe(expectedBundle);
+    expect(crlfBundle, 'CRLF and LF checkouts must produce identical bundle bytes').toBe(expectedBundle);
+    expect(sha256(crlfBundle), 'CRLF and LF checkouts must produce the same bundle hash').toBe(sha256(expectedBundle));
+
+    const sourceIndex = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf8');
+    const lfIndex = replaceComponentScripts(sourceIndex, componentSources, 'scripts/components.bundle.js');
+    const crlfIndex = replaceComponentScripts(normalizeText(sourceIndex).replace(/\n/g, '\r\n'), componentSources, 'scripts/components.bundle.js');
+    expect(crlfIndex, 'component script replacement must not depend on checkout line endings').toBe(lfIndex);
 
     const hero = page.locator('.calm-hero-art img');
     await expectImageReady(hero);

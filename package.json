@@ -5,7 +5,8 @@
   "description": "Akshit Ireddy's interactive open-source portfolio, Software in Motion.",
   "scripts": {
     "build": "node scripts/assemble-pages.js",
-    "dev": "node scripts/serve.js",
+    "dev": "npm run build && node scripts/serve.js",
+    "dev:source": "node scripts/serve.js --source",
     "qa": "playwright test",
     "qa:production": "playwright test tests/portfolio-production.spec.js",
     "capture": "node scripts/capture-museum-production.js",

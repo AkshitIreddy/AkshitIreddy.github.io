@@ -3,11 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 const repositoryRoot = path.resolve(__dirname, '..');
-// The authored horizontal site remains the default experience. The component
-// build is kept as an opt-in preview instead of silently replacing production.
-const siteMode = process.env.SITE_MODE === 'dist' ? 'dist' : 'legacy';
-const siteRoot = siteMode === 'dist' ? path.join(repositoryRoot, 'dist') : repositoryRoot;
-const port = Number(process.env.PORT || 49173);
+// Deployed output is the default so local QA exercises the exact production
+// dependency graph. SITE_MODE=source remains available for authored-file work.
+const siteMode = process.argv.includes('--source') || process.env.SITE_MODE === 'source' ? 'source' : 'dist';
+const siteRoot = siteMode === 'source' ? repositoryRoot : path.join(repositoryRoot, 'dist');
+const port = Number(process.env.PORTFOLIO_PORT || process.env.PORT || 49173);
 const host = process.env.HOST || '127.0.0.1';
 const types = {
   '.css': 'text/css; charset=utf-8',
