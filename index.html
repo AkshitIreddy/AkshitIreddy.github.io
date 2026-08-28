@@ -226,16 +226,62 @@
           </section>
 
           <section class="room room--pet" id="pet" aria-labelledby="pet-title">
-            <div class="room-texture room-texture--pet" aria-hidden="true"></div><div class="ceiling-lights ceiling-lights--pet" aria-hidden="true"><i></i><i></i><i></i></div><div class="pet-track" aria-hidden="true"><i></i><i></i><i></i><span></span></div>
+            <div class="room-texture room-texture--pet" aria-hidden="true"></div>
             <div class="room-canvas room-canvas--pet">
               <header class="exhibit-copy exhibit-copy--pet">
-                <p class="eyebrow"><span>02 · companion study</span> / 2026</p><h2 id="pet-title" tabindex="-1">AI Desktop Pet</h2><p class="project-story">A conversational desktop character with window awareness, screen vision, and long-term memory. It wanders, climbs windows, chases the cursor, joins other pets, and turns spoken Convai conversations into body language of its own.</p><ul class="project-facts" aria-label="AI Desktop Pet details"><li>Convai voice</li><li>screen vision</li><li>long-term memory</li><li>multi-pet</li><li>window physics</li></ul><blockquote>“Software can have body language.”</blockquote>
-                <div class="interactive-action"><button class="exhibit-button exhibit-button--dark" type="button" data-call-pet>Call the creature <span aria-hidden="true">◌</span></button><p class="interaction-cue"><i aria-hidden="true"></i> Click to call</p></div>
+                <p class="eyebrow"><span>02 · desktop companion</span> / 2026</p>
+                <h2 id="pet-title" tabindex="-1">AI Desktop Pet</h2>
               </header>
+              <aside class="pet-note" aria-label="Field note on the desktop habitat">
+                <p class="pet-note__label">field note · the desktop habitat</p>
+                <p class="pet-note__story">A conversational desktop character with window awareness, screen vision, and long-term memory. It wanders the screen, climbs window edges, chases the cursor, joins other pets, and turns spoken Convai conversations into body language of its own.</p>
+                <ul class="project-facts pet-note__facts" aria-label="AI Desktop Pet details"><li>Convai voice</li><li>screen vision</li><li>long-term memory</li><li>multi-pet</li><li>window physics</li></ul>
+                <div class="pet-note__summon">
+                  <p class="pet-note__summon-label">to summon it — ring once and watch the desk edge</p>
+                  <div class="interactive-action">
+                    <button class="exhibit-button exhibit-button--dark pet-bell" type="button" data-call-pet aria-pressed="false"><svg viewBox="0 0 18 16" aria-hidden="true" focusable="false"><path d="M9 4.4C5.7 4.4 3.7 6.7 3.7 9.5v1.3h10.6V9.5c0-2.8-2-5.1-5.3-5.1Z" /><path d="M9 4.4V2.7m-1.7 0h3.4" /><path d="M1.8 12.4h14.4" /><path d="M7.6 14.1c.3.7.8 1 1.4 1s1.1-.3 1.4-1" /></svg> Call the creature</button>
+                    <p class="interaction-cue"><i aria-hidden="true"></i> Ring to call</p>
+                  </div>
+                </div>
+              </aside>
               <figure class="media-exhibit pet-specimen">
-                <div class="museum-window museum-window--pet"><video muted loop playsinline preload="none" data-poster="public/media/features/pet-poster.webp" aria-label="AI Desktop Pet walking and reacting on a computer desktop" data-room-video><source data-src="public/media/features/pet.webm" type="video/webm" /><source data-src="public/media/features/pet.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play AI Desktop Pet demo"><span aria-hidden="true">▶</span></button><span class="glass-glint" aria-hidden="true"></span><span class="window-label"><i></i> habitat · your desktop</span></div>
+                <div class="museum-window museum-window--pet"><video muted loop playsinline preload="none" data-poster="public/media/features/pet-poster.webp" aria-label="AI Desktop Pet walking and reacting on a computer desktop" data-room-video><source data-src="public/media/features/pet.webm" type="video/webm" /><source data-src="public/media/features/pet.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play AI Desktop Pet demo"><span aria-hidden="true">▶</span></button><span class="glass-glint" aria-hidden="true"></span><i class="pet-power" aria-hidden="true"></i></div>
+                <span class="pet-stand" aria-hidden="true"><i></i></span>
+                <blockquote class="pet-sticky">“Software can have body language.”</blockquote>
+                <span class="pet-stars" aria-label="20 GitHub stars, as of August 2026">★ 20 · aug 2026</span>
                 <figcaption><span><b>Behavior:</b> climbs windows, chases the cursor, remembers, converses, and coexists with other pets.</span><a class="repo-link" href="https://github.com/AkshitIreddy/AI-Desktop-Pet" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
+              <div class="pet-slab" aria-hidden="true">
+                <div class="pet-creature">
+                  <svg viewBox="0 0 76 56" focusable="false">
+                    <ellipse class="pet-creature__shadow" cx="36" cy="51" rx="22" ry="2.6" />
+                    <g class="pet-creature__pose">
+                      <g class="pet-creature__tail">
+                        <path class="pet-creature__tail-outline" d="M19 39 C9 42 3 36 6 27 C8 20 14 18 17 23" />
+                        <path class="pet-creature__tail-fill" d="M19 39 C9 42 3 36 6 27 C8 20 14 18 17 23" />
+                      </g>
+                      <path class="pet-creature__leg pet-creature__leg--a" d="M22 40 Q19 46 22 49.5 L28 49.5 Q30 45 28 40 Z" />
+                      <path class="pet-creature__leg pet-creature__leg--b" d="M42 40 Q39 46 42 49.5 L48 49.5 Q50 45 48 40 Z" />
+                      <path class="pet-creature__body" d="M15 38 C15 28 25 21 37 21 C49 21 57 27 57 36 C57 44 49 48 37 48 C25 48 16 45 15 38 Z" />
+                      <g class="pet-creature__head-turn">
+                        <g class="pet-creature__head">
+                          <path class="pet-creature__ear" d="M44 10 L42 1 L52 7 Z" />
+                          <path class="pet-creature__ear" d="M60 6 L68 0 L68 11 Z" />
+                          <path class="pet-creature__face" d="M42 18 C42 9 50 3.5 58 4.5 C66 5.5 71 11.5 70 19.5 C69 27.5 62 32.5 54 31.5 C46.5 30.5 42 25.5 42 18 Z" />
+                          <g class="pet-creature__eyes">
+                            <ellipse class="pet-creature__eye" cx="53" cy="17" rx="4.4" ry="5" />
+                            <ellipse class="pet-creature__eye" cx="63.5" cy="17.8" rx="4.1" ry="4.7" />
+                            <circle class="pet-creature__pupil" cx="54.2" cy="18.4" r="2" />
+                            <circle class="pet-creature__pupil" cx="64.6" cy="19.1" r="1.85" />
+                          </g>
+                          <path class="pet-creature__nose" d="M58.4 23.4 l2.2 -1.1 2.2 1.1 -2.2 1.9 Z" />
+                        </g>
+                        <path class="pet-creature__collar" d="M47 30.5 Q55 35 64 31.5 L64.6 34.2 Q55 38.4 46.4 33.4 Z" />
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </div>
             </div>
             <button class="doorway doorway--left" type="button" data-room-target="1"><i aria-hidden="true">←</i><span>Living library</span></button><button class="doorway doorway--right doorway--night" type="button" data-room-target="3"><span><b>03</b> Light instrument</span><i aria-hidden="true">→</i></button>
           </section>

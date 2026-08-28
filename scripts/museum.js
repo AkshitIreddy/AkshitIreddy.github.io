@@ -43,7 +43,7 @@
   const frameColors = {
     foyer: "#f4ead4",
     alcove: "#ede1c6",
-    pet: "#efd8cc",
+    pet: "#cfd9e0",
     keyscape: "#111722",
     "archive-npc": "#ded9ef",
     "archive-tutorial": "#efe2bd",
@@ -510,17 +510,85 @@
       : "The Welcome book closes and slides back onto the shelf.");
   });
 
+  /* Pet room: one drawn creature answers the desk bell. It runs in along the
+     slab's top edge, settles by the monitor, tracks the cursor while it visits
+     (the real app chases cursors, so the gaze is on-theme), then wanders off. */
+
   const petRoom = document.querySelector(".room--pet");
-  let petTimer = 0;
+  const petCreature = petRoom?.querySelector(".pet-creature");
+  const petWindow = petRoom?.querySelector(".museum-window--pet");
+  const petSlab = petRoom?.querySelector(".pet-slab");
   const callPetButton = document.querySelector("[data-call-pet]");
+  let petTimers = [];
+
+  const clearPetTimers = () => {
+    petTimers.forEach((timer) => window.clearTimeout(timer));
+    petTimers = [];
+  };
+
+  function measurePetStop() {
+    if (!petRoom || !petWindow || !petSlab || !petCreature) return;
+    const slabBox = petSlab.getBoundingClientRect();
+    const windowBox = petWindow.getBoundingClientRect();
+    const stop = windowBox.left - slabBox.left + windowBox.width * 0.16 - petCreature.offsetWidth * 0.5;
+    petRoom.style.setProperty("--pet-stop-x", `${Math.max(12, stop).toFixed(1)}px`);
+  }
+
+  function resetPetLook() {
+    if (!petCreature) return;
+    ["--pet-look-x", "--pet-look-y", "--pet-look-r", "--pet-look-hx", "--pet-look-hy"].forEach((name) => petCreature.style.removeProperty(name));
+  }
+
+  petRoom?.addEventListener("pointermove", (event) => {
+    if (reduceMotion.matches || !petCreature || !petRoom.classList.contains("is-visiting")) return;
+    const box = petCreature.getBoundingClientRect();
+    const nx = Math.tanh((event.clientX - (box.left + box.width * 0.62)) / 170);
+    const ny = Math.tanh((event.clientY - (box.top + box.height * 0.3)) / 130);
+    petCreature.style.setProperty("--pet-look-x", `${(nx * 3.1).toFixed(2)}px`);
+    petCreature.style.setProperty("--pet-look-y", `${(ny * 2.1).toFixed(2)}px`);
+    petCreature.style.setProperty("--pet-look-r", `${(nx * 6.5).toFixed(2)}deg`);
+    petCreature.style.setProperty("--pet-look-hx", `${(nx * 1.4).toFixed(2)}px`);
+    petCreature.style.setProperty("--pet-look-hy", `${(ny * 1).toFixed(2)}px`);
+  }, { passive: true });
+
+  petRoom?.addEventListener("pointerleave", resetPetLook);
+
+  /* State changes follow the creature's actual animations (animationend), so a
+     late-starting or slow frame can never snap the run short mid-stride. */
+  petCreature?.addEventListener("animationend", (event) => {
+    if (event.target !== petCreature || !petRoom) return;
+    if (event.animationName === "pet-run-in" && petRoom.classList.contains("is-called")) {
+      petRoom.classList.remove("is-called");
+      petRoom.classList.add("is-visiting");
+      announceReaction("It settles by the screen and watches your cursor.");
+      petTimers.push(window.setTimeout(() => {
+        petRoom.classList.remove("is-visiting");
+        petRoom.classList.add("is-leaving");
+      }, reduceMotion.matches ? 2400 : 5200));
+    } else if (event.animationName === "pet-run-out" && petRoom.classList.contains("is-leaving")) {
+      petRoom.classList.remove("is-leaving");
+      callPetButton?.setAttribute("aria-pressed", "false");
+      resetPetLook();
+    }
+  });
+
   callPetButton?.addEventListener("click", () => {
-    window.clearTimeout(petTimer);
-    petRoom?.classList.remove("is-called");
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => petRoom?.classList.add("is-called")));
+    if (!petRoom) return;
+    const quick = reduceMotion.matches;
+    if (petRoom.classList.contains("is-called") || petRoom.classList.contains("is-leaving")) return;
+    if (petRoom.classList.contains("is-visiting")) {
+      petRoom.classList.remove("is-delighted");
+      void petRoom.offsetWidth;
+      petRoom.classList.add("is-delighted");
+      announceReaction("It is already here, watching your cursor.");
+      petTimers.push(window.setTimeout(() => petRoom.classList.remove("is-delighted"), quick ? 30 : 620));
+      return;
+    }
+    clearPetTimers();
+    measurePetStop();
+    callPetButton.setAttribute("aria-pressed", "true");
+    petRoom.classList.add("is-called");
     announceReaction("The desktop pet comes running.");
-    petTimer = window.setTimeout(() => {
-      petRoom?.classList.remove("is-called");
-    }, 1050);
   });
 
   const keyscapeRoom = document.querySelector(".room--keyscape");
@@ -767,6 +835,7 @@
       resizeFrame = 0;
       setSpatialVariables(state.room);
       syncMobileScrollHint();
+      if (petRoom?.classList.contains("is-called") || petRoom?.classList.contains("is-visiting")) measurePetStop();
     });
   }, { passive: true });
 

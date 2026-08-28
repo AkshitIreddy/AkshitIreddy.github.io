@@ -905,25 +905,123 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 .alcove-book__cover i { color: rgba(244,235,212,.82); font: .26rem "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
 .alcove-book__endpaper { background: repeating-linear-gradient(45deg, rgba(127,45,56,.09) 0 4px, transparent 4px 8px), #f1e7cc; border-radius: 5px 2px 2px 5px; transform: rotateY(180deg); }
 
-/* Desktop pet */
+/* Desktop pet: a desk against a cool daylight wall. The demo is a monitor
+   standing on a drawn slab; the copy is a field note propped beside it, and the
+   called creature runs the slab's top edge like a sill. */
 
-.room--pet { background: #f0d8c9; }
-.room-texture--pet { background: linear-gradient(115deg, rgba(255,255,255,.66), transparent 33%), radial-gradient(circle at 75% 18%, rgba(240,100,73,.2), transparent 25%); }
-.room-canvas--pet { display: grid; grid-template-columns: minmax(300px,.72fr) minmax(520px,1.38fr); align-items: center; gap: clamp(45px, 5vw, 90px); }
-.exhibit-copy--pet h2 { font-size: clamp(3.3rem, 5.8vw, 7rem); line-height: .78; text-transform: lowercase; }
-.exhibit-copy--pet blockquote { width: max-content; max-width: 100%; margin: 24px 0 0; padding: 13px 17px; background: var(--paper-light); border: 2px solid var(--ink); border-radius: 20px 16px 21px 8px; box-shadow: 3px 4px 0 var(--ink); font: clamp(.72rem,.85vw,.88rem)/1.28 "Fraunces", Georgia, serif; transform: rotate(-2deg); }
-.exhibit-copy--pet .interactive-action { margin-top: 24px; }
-.pet-specimen { width: 100%; }
-.museum-window--pet { border-radius: 48% 52% 5px 5px / 10% 10% 3px 3px; box-shadow: 10px 12px 0 rgba(197,66,52,.48), 14px 16px 0 var(--ink); transform: rotate(.5deg); }
+.room--pet { background: #cfd9e0; }
+.room-texture--pet { background: linear-gradient(118deg, rgba(255,255,255,.72), transparent 42%), radial-gradient(circle at 84% 10%, rgba(255,255,255,.5), transparent 28%), linear-gradient(90deg, rgba(29,44,49,.04) 1px, transparent 1px) 0 0 / 46px 46px, linear-gradient(rgba(29,44,49,.04) 1px, transparent 1px) 0 0 / 46px 46px; }
+.room-canvas--pet { display: grid; grid-template-columns: minmax(300px,.78fr) minmax(520px,1.5fr); grid-template-rows: auto minmax(0,1fr) auto; gap: clamp(16px,2.4vh,28px) clamp(40px,4.6vw,84px); }
+.exhibit-copy--pet { grid-column: 1; grid-row: 1; align-self: start; }
+.exhibit-copy--pet h2 { font-size: clamp(3.1rem, 5.4vw, 6.4rem); line-height: .82; }
+
+.pet-note { position: relative; z-index: 5; grid-column: 1; grid-row: 2; align-self: end; padding: 16px 18px 17px; background: linear-gradient(180deg, #fffdf4, #f7f1dd); border: 2px solid var(--ink); border-radius: 4px 9px 5px 8px; box-shadow: 6px 7px 0 rgba(23,35,38,.34); transform: rotate(-.9deg); }
+.pet-note::before { position: absolute; top: -11px; left: 34px; width: 58px; height: 16px; content: ""; background: rgba(216,228,234,.85); border: 1.5px solid rgba(23,35,38,.4); border-radius: 2px; transform: rotate(-2.5deg); }
+.pet-note__label { margin: 0 0 8px; color: #2c6e7c; font: 700 .5rem "IBM Plex Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+.pet-note__story { margin: 0; color: var(--ink-soft); font: clamp(.6rem,.72vw,.74rem)/1.62 "IBM Plex Mono", monospace; }
+.pet-note__facts { margin-top: 12px; }
+.pet-note__facts li { color: #28525c; background: rgba(255,255,255,.66); border-radius: 4px 9px 4px 8px; }
+.pet-note__summon { margin-top: 14px; padding-top: 12px; border-top: 2px dashed rgba(23,35,38,.3); }
+.pet-note__summon-label { margin: 0 0 9px; color: #2c6e7c; font: 600 .5rem "IBM Plex Mono", monospace; letter-spacing: .1em; text-transform: uppercase; }
+.pet-bell svg { width: 17px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transform-origin: 50% 0; }
+.room--pet.is-called .pet-bell svg { animation: pet-bell-ding .55s cubic-bezier(.3,1.6,.4,1); }
+@keyframes pet-bell-ding { 25% { transform: rotate(9deg); } 55% { transform: rotate(-7deg); } 80% { transform: rotate(3deg); } }
+
+.pet-specimen { position: relative; z-index: 4; grid-column: 2; grid-row: 1 / 3; align-self: end; width: 100%; }
+.museum-window--pet { padding: clamp(9px,1vw,14px); background: linear-gradient(155deg, #24363d, #172326 60%, #101b1f); border: 2px solid #0c1417; border-radius: 9px 7px 10px 8px; box-shadow: 8px 9px 0 rgba(23,35,38,.34); transform: rotate(-.4deg); }
 .museum-window--pet img,
-.museum-window--pet video { aspect-ratio: 2 / 1; object-fit: contain; background: #d6d4cf; border-radius: 46% 54% 2px 2px / 9% 9% 2px 2px; }
+.museum-window--pet video { aspect-ratio: 16 / 9; object-fit: cover; background: #0d1416; border: 1px solid rgba(255,250,240,.16); border-radius: 3px; }
+.pet-power { position: absolute; right: 15px; bottom: 7px; z-index: 3; width: 6px; height: 6px; background: var(--acid); border-radius: 50%; box-shadow: 0 0 4px rgba(217,238,114,.55); }
+.pet-stand { display: flex; flex-direction: column; align-items: center; margin-top: -2px; }
+.pet-stand::before { width: 30px; height: 26px; content: ""; background: #172326; clip-path: polygon(20% 0, 80% 0, 100% 100%, 0 100%); }
+.pet-stand i { width: 116px; height: 13px; margin-top: -2px; background: #172326; border: 2px solid #0c1417; border-radius: 50% 50% 6px 6px / 72% 72% 6px 6px; box-shadow: 4px 5px 0 rgba(23,35,38,.3); }
+.pet-sticky { position: absolute; top: -17px; left: -38px; z-index: 6; width: 182px; margin: 0; padding: 15px 15px 16px; background: linear-gradient(180deg, #f3e69b, #edda82); border: 2px solid var(--ink); border-radius: 3px 4px 5px 3px; box-shadow: 4px 5px 0 rgba(23,35,38,.4); font: italic 700 clamp(.78rem,.92vw,.96rem)/1.32 "Fraunces", Georgia, serif; transform: rotate(-2.6deg); }
+.pet-sticky::before { position: absolute; top: -10px; left: 50%; width: 52px; height: 15px; content: ""; background: rgba(255,250,240,.72); border: 1.5px solid rgba(23,35,38,.35); border-radius: 2px; transform: translateX(-50%) rotate(-1.5deg); }
+.pet-stars { position: absolute; top: -12px; right: 28px; z-index: 6; padding: 5px 8px; color: var(--ink-soft); background: var(--paper-light); border: 1.5px solid var(--ink); border-radius: 3px 6px 3px 5px; box-shadow: 2px 3px 0 rgba(23,35,38,.5); font: 700 .5rem "IBM Plex Mono", monospace; letter-spacing: .06em; transform: rotate(1.6deg); }
+.pet-specimen figcaption { position: absolute; right: 2%; bottom: -6px; left: 2%; z-index: 4; width: auto; margin: 0; color: #2e3f45; font-size: .55rem; }
+.pet-specimen figcaption > span { max-width: 46%; }
+.pet-specimen figcaption b { color: #1d5a66; }
+
+.pet-slab { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 3; height: clamp(72px, 11.5vh, 118px); margin-top: calc(-1 * clamp(16px, 2.4vh, 28px) - 4px); background: linear-gradient(180deg, #bccad3, #a7b9c3 72%, #9badb7); border: 2.5px solid var(--ink); border-radius: 7px 5px 9px 6px; box-shadow: 8px 9px 0 rgba(23,35,38,.26); transform: rotate(-.12deg); }
+.pet-slab::before { position: absolute; inset: 8px 12px auto; height: 2px; content: ""; background: rgba(23,35,38,.2); border-radius: 2px; }
+
 .glass-glint { position:absolute;top:-30%;left:-25%;z-index:3;width:12%;height:180%;pointer-events:none;background:rgba(255,255,255,.38);opacity:0;transform:translateX(0) rotate(18deg); }
 .room--pet.is-current .glass-glint { animation:glass-glint-arrive 1.35s .5s cubic-bezier(.22,.72,.22,1) both; }
 @keyframes glass-glint-arrive { 0%{opacity:0;transform:translateX(0) rotate(18deg)} 24%{opacity:.46} 100%{opacity:0;transform:translateX(1150%) rotate(18deg)} }
-.room--pet.is-called .museum-window--pet { animation: pet-answer .9s cubic-bezier(.3,1.7,.5,1); }
-@keyframes pet-answer { 35% { transform: translateY(-15px) rotate(-1.8deg); } 65% { transform: translateY(2px) rotate(1.2deg); } }
-.pet-track { position: absolute; top: 7%; right: 4%; left: 35%; z-index: 2; height: 3px; background: var(--ink); transform: rotate(-1deg); }
-.pet-track i { position: absolute; top:0; width:2px; height:45px; background:var(--ink); }.pet-track i::after{position:absolute;bottom:-11px;left:-9px;width:20px;height:12px;content:"";background:var(--coral);border:2px solid var(--ink);border-radius:50% 50% 4px 4px}.pet-track i:nth-child(1){left:4%;height:34px}.pet-track i:nth-child(2){left:51%;height:59px}.pet-track i:nth-child(3){right:3%;height:41px}.pet-track span{position:absolute;top:-7px;left:12%;width:31px;height:17px;background:var(--paper-light);border:2px solid var(--ink);border-radius:50%;animation:track-scout 7.5s ease-in-out infinite alternate}@keyframes track-scout{to{left:80%;transform:rotate(180deg)}}
+
+/* The called creature: runs in from off-frame, settles by the monitor, watches
+   the cursor while it visits, then wanders off. One prop, one honest trick. */
+.pet-creature { position: absolute; bottom: calc(100% - 6px); left: 0; z-index: 7; width: clamp(56px, 5.2vw, 76px); opacity: 0; pointer-events: none; transform: translateX(-50vw); transition: opacity .16s ease; }
+.pet-creature svg { display: block; width: 100%; height: auto; overflow: visible; }
+.room--pet:is(.is-called, .is-visiting, .is-leaving) .pet-creature { opacity: 1; }
+.room--pet.is-called .pet-creature { animation: pet-run-in 1.12s cubic-bezier(.25,.7,.25,1) both; }
+.room--pet.is-visiting .pet-creature { transform: translateX(var(--pet-stop-x, 30vw)); }
+.room--pet.is-leaving .pet-creature { animation: pet-run-out .95s cubic-bezier(.5,.05,.7,.4) both; }
+@keyframes pet-run-in { from { transform: translateX(-50vw); } to { transform: translateX(var(--pet-stop-x, 30vw)); } }
+@keyframes pet-run-out { from { transform: translateX(var(--pet-stop-x, 30vw)); } to { transform: translateX(100vw); } }
+
+.pet-creature__shadow { fill: rgba(23,35,38,.18); }
+.pet-creature__body, .pet-creature__face, .pet-creature__ear { fill: #23343c; stroke: #101b1f; stroke-width: 2.2; stroke-linejoin: round; }
+.pet-creature__leg { fill: #1c2b32; stroke: #101b1f; stroke-width: 1.8; transform-box: fill-box; transform-origin: 50% 0; }
+.pet-creature__tail-outline, .pet-creature__tail-fill { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.pet-creature__tail-outline { stroke: #101b1f; stroke-width: 6.6; }
+.pet-creature__tail-fill { stroke: #23343c; stroke-width: 3.4; }
+.pet-creature__tail { transform-box: fill-box; transform-origin: 92% 88%; transition: transform .3s ease; }
+.pet-creature__eye { fill: #fffaf0; stroke: #101b1f; stroke-width: 1.5; }
+.pet-creature__pupil { fill: #101b1f; transform-box: fill-box; transform: translate(var(--pet-look-x, 0px), var(--pet-look-y, 0px)); transition: transform .16s ease-out; }
+.pet-creature__nose { fill: #d9ee72; stroke: #101b1f; stroke-width: .8; }
+.pet-creature__collar { fill: #d9ee72; stroke: #101b1f; stroke-width: 1.4; stroke-linejoin: round; }
+.pet-creature__pose { transform-box: fill-box; transform-origin: 50% 92%; transition: transform .28s ease; }
+.pet-creature__head-turn { transform-box: fill-box; transform-origin: 50% 88%; }
+.pet-creature__head { transform-box: fill-box; transform-origin: 50% 85%; transform: rotate(var(--pet-look-r, 0deg)) translate(var(--pet-look-hx, 0px), var(--pet-look-hy, 0px)); transition: transform .16s ease-out; }
+.pet-creature__eyes { transform-box: fill-box; transform-origin: center; }
+
+.room--pet:is(.is-called, .is-leaving) .pet-creature__pose { animation: pet-run-bob .22s ease-in-out infinite alternate; }
+.room--pet:is(.is-called, .is-leaving) .pet-creature__leg--a { animation: pet-step .22s ease-in-out infinite alternate; }
+.room--pet:is(.is-called, .is-leaving) .pet-creature__leg--b { animation: pet-step .22s ease-in-out infinite alternate-reverse; }
+.room--pet:is(.is-called, .is-leaving) .pet-creature__tail { transform: rotate(-13deg) translateY(-1px); }
+@keyframes pet-run-bob { to { transform: translateY(-1.7px); } }
+@keyframes pet-step { to { transform: translateY(-2.6px) rotate(7deg); } }
+
+.room--pet.is-visiting .pet-creature__pose { transform: rotate(-3deg) translateY(-1px); animation: pet-settle .5s cubic-bezier(.3,1.4,.4,1) 1; }
+.room--pet.is-visiting .pet-creature__head-turn { animation: pet-look-around 1.5s cubic-bezier(.3,.6,.3,1) .05s 1; }
+.room--pet.is-visiting .pet-creature__eyes { animation: pet-blink 5.6s step-end 1.8s infinite; }
+.room--pet.is-visiting .pet-creature__tail { animation: pet-tail-curl 2.6s ease-in-out infinite alternate; }
+.room--pet.is-delighted .pet-creature__pose { animation: pet-delight .6s cubic-bezier(.3,1.5,.4,1); }
+@keyframes pet-settle { 0% { transform: rotate(-3deg) translateY(-4px) scaleY(1.02); } 60% { transform: rotate(-2.2deg) translateY(.8px) scaleY(.985); } 100% { transform: rotate(-3deg) translateY(-1px) scaleY(1); } }
+@keyframes pet-look-around { 0% { transform: rotate(0deg); } 25% { transform: rotate(-7deg) translateY(-1px); } 55% { transform: rotate(4deg); } 80% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
+@keyframes pet-blink { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.1); } }
+@keyframes pet-tail-curl { to { transform: rotate(7deg); } }
+@keyframes pet-delight { 30% { transform: translateY(-7px) rotate(-2deg); } 60% { transform: translateY(1px) rotate(1deg); } }
+
+.room .pet-note, .room .pet-slab { opacity: .22; transition: opacity 480ms ease, transform 640ms var(--ease-walk); }
+.room.is-current .pet-note, .room.is-current .pet-slab { opacity: 1; }
+
+@media (max-width: 900px) and (min-width: 761px) {
+  .exhibit-copy--pet { grid-column: 1 / -1; grid-row: 1; }
+  .pet-note { grid-column: 1; grid-row: 2; }
+  .pet-specimen { grid-column: 2; grid-row: 2; }
+  .pet-sticky { top: -15px; left: 20px; width: 164px; transform: rotate(-2.2deg); }
+  .pet-note__story { font-size: .58rem; }
+  .pet-slab { margin-top: -20px; }
+}
+
+@media (max-height: 780px) and (min-width: 761px) {
+  .room-canvas--pet { min-height: 700px; }
+  .pet-slab { height: 64px; }
+}
+
+@media (max-width: 760px) {
+  .pet-note { margin-top: 24px; }
+  .pet-specimen { z-index: 2; margin-top: 26px; }
+  .museum-window--pet { box-shadow: 6px 7px 0 rgba(23,35,38,.3); }
+  .pet-sticky { position: static; width: auto; max-width: 250px; margin-top: 16px; transform: rotate(1.6deg); }
+  .pet-stars { top: -11px; right: 14px; }
+  .pet-specimen figcaption { position: static; width: 96%; margin-top: 16px; }
+  .pet-specimen figcaption > span { max-width: none; }
+  .pet-slab { height: 52px; margin-top: -14px; }
+  .pet-creature { width: 54px; }
+}
 
 /* Keyscape */
 
@@ -1171,7 +1269,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 /* Shared museum chrome takes on the material of the room—or the selected artifact. */
 .museum-shell[data-frame="foyer"]{--frame-surface:#f4ead4;--frame-ink:#172326;--frame-accent:#f06449;--frame-secondary:#e5b845;--frame-pattern:repeating-linear-gradient(112deg,transparent 0 28px,rgba(23,35,38,.045) 29px 30px)}
 .museum-shell[data-frame="alcove"]{--frame-surface:#ede1c6;--frame-ink:#33200f;--frame-accent:#7f2d38;--frame-secondary:#b8863b;--frame-pattern:repeating-linear-gradient(90deg,transparent 0 22px,rgba(67,41,26,.07) 23px 24px)}
-.museum-shell[data-frame="pet"]{--frame-surface:#efd8cc;--frame-ink:#302321;--frame-accent:#f06449;--frame-secondary:#46776a;--frame-pattern:radial-gradient(circle at 12px 12px,rgba(197,66,52,.11) 0 2px,transparent 2.5px)}
+.museum-shell[data-frame="pet"]{--frame-surface:#cfd9e0;--frame-ink:#1d2c31;--frame-accent:#2c6e7c;--frame-secondary:#d9ee72;--frame-pattern:linear-gradient(90deg,rgba(29,44,49,.07) 1px,transparent 1px),linear-gradient(rgba(29,44,49,.07) 1px,transparent 1px)}
 .museum-shell[data-frame="keyscape"]{--frame-surface:#111722;--frame-ink:#fffaf0;--frame-accent:#8c79ff;--frame-secondary:#8dd9e2;--frame-pattern:radial-gradient(circle at 13px 10px,rgba(141,217,226,.18) 0 1.2px,transparent 1.8px)}
 .museum-shell[data-frame="archive-npc"]{--frame-surface:#ded9ef;--frame-ink:#172326;--frame-accent:#8c79ff;--frame-secondary:#8dd9e2;--frame-pattern:radial-gradient(circle at 13px 13px,rgba(140,121,255,.19) 0 2px,transparent 2.5px)}
 .museum-shell[data-frame="archive-tutorial"]{--frame-surface:#efe2bd;--frame-ink:#30291d;--frame-accent:#e5b845;--frame-secondary:#c54234;--frame-pattern:linear-gradient(90deg,transparent 0 27px,rgba(80,61,27,.08) 28px 29px)}
@@ -1235,12 +1333,12 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 @media (max-width: 1180px) {
   :root{--header-h:74px;--map-h:90px}
-  .museum-masthead{grid-template-columns:minmax(220px,.8fr) minmax(260px,1fr) auto;padding-inline:16px}.masthead-links a{padding:7px 8px}.room-canvas{padding-inline:72px}.room-canvas--foyer{grid-template-columns:minmax(380px,1.1fr) minmax(280px,.9fr);gap:30px}.foyer-copy h1{font-size:clamp(4.5rem,8vw,7.5rem)}.guide-speech{right:0}.room-canvas--alcove,.room-canvas--pet,.room-canvas--keyscape{grid-template-columns:minmax(255px,.66fr) minmax(420px,1.34fr);gap:36px}.room-canvas--archive,.room-canvas--workbench{grid-template-columns:minmax(220px,.48fr) minmax(560px,1.52fr);gap:34px}.archive-exhibit{grid-template-columns:minmax(0,1fr) 150px}.archive-project-stage__caption{grid-template-columns:minmax(150px,.8fr) minmax(180px,1fr);gap:10px}.archive-project-stage__caption .repo-link{grid-column:2;justify-self:end}.workbench-gallery{grid-template-columns:180px minmax(0,1fr);padding:14px}.workbench-feature__copy{grid-template-columns:auto minmax(0,1fr)}.workbench-feature__copy .repo-link{grid-column:2;justify-self:end}.doorway>span{font-size:.48rem}
+  .museum-masthead{grid-template-columns:minmax(220px,.8fr) minmax(260px,1fr) auto;padding-inline:16px}.masthead-links a{padding:7px 8px}.room-canvas{padding-inline:72px}.room-canvas--foyer{grid-template-columns:minmax(380px,1.1fr) minmax(280px,.9fr);gap:30px}.foyer-copy h1{font-size:clamp(4.5rem,8vw,7.5rem)}.guide-speech{right:0}.room-canvas--alcove,.room-canvas--keyscape{grid-template-columns:minmax(255px,.66fr) minmax(420px,1.34fr);gap:36px}.room-canvas--pet{grid-template-columns:minmax(280px,.74fr) minmax(430px,1.26fr);gap:20px 36px}.room-canvas--archive,.room-canvas--workbench{grid-template-columns:minmax(220px,.48fr) minmax(560px,1.52fr);gap:34px}.archive-exhibit{grid-template-columns:minmax(0,1fr) 150px}.archive-project-stage__caption{grid-template-columns:minmax(150px,.8fr) minmax(180px,1fr);gap:10px}.archive-project-stage__caption .repo-link{grid-column:2;justify-self:end}.workbench-gallery{grid-template-columns:180px minmax(0,1fr);padding:14px}.workbench-feature__copy{grid-template-columns:auto minmax(0,1fr)}.workbench-feature__copy .repo-link{grid-column:2;justify-self:end}.doorway>span{font-size:.48rem}
 }
 
 @media (max-width: 900px) {
   :root{--header-h:72px;--map-h:84px}
-  .museum-masthead{grid-template-columns:1fr auto}.maker-mark__portrait{flex-basis:45px;width:45px;height:45px}.maker-mark__words b{font-size:.95rem}.maker-mark__words small{font-size:.5rem}.room-canvas{padding-inline:64px}.room-canvas--foyer{grid-template-columns:minmax(360px,1.15fr) minmax(230px,.75fr);gap:18px}.guide-speech{top:3%;right:-6%;font-size:.8rem}.guide-label{display:none}.foyer-actions{align-items:flex-start;flex-direction:column;gap:12px}.room-canvas--alcove,.room-canvas--pet,.room-canvas--keyscape{grid-template-columns:minmax(220px,.62fr) minmax(390px,1.38fr);gap:27px}.exhibit-copy h2{font-size:clamp(3.1rem,7vw,5.5rem)}.exhibit-copy>p:not(.eyebrow):not(.curator-note){font-size:.63rem}.agent-card__body{font-size:.56rem}.room-canvas--alcove{grid-template-columns:minmax(205px,.55fr) minmax(400px,1.45fr)}.room-canvas--archive,.room-canvas--workbench{grid-template-columns:210px minmax(0,1fr);gap:25px}.archive-exhibit{grid-template-columns:1fr}.archive-project-tabs{grid-template-columns:repeat(3,1fr);grid-template-rows:auto}.archive-project-tab{grid-template-columns:auto 1fr;grid-template-rows:auto auto;padding:8px}.archive-project-tab>b{grid-column:2}.archive-project-tab>em{grid-column:1/-1}.archive-project-stage__caption>p{display:none}.archive-project-stage__caption{grid-template-columns:1fr auto}.workbench-gallery{grid-template-columns:150px minmax(0,1fr);gap:10px;padding:11px}.tool-selector{grid-template-columns:auto 1fr;padding:8px 7px}.tool-selector>i{display:none}.workbench-feature__copy p{display:none}.museum-map{grid-template-columns:70px 1fr}.museum-map__progress{left:92px}.museum-map button{gap:4px;padding-inline:5px}
+  .museum-masthead{grid-template-columns:1fr auto}.maker-mark__portrait{flex-basis:45px;width:45px;height:45px}.maker-mark__words b{font-size:.95rem}.maker-mark__words small{font-size:.5rem}.room-canvas{padding-inline:64px}.room-canvas--foyer{grid-template-columns:minmax(360px,1.15fr) minmax(230px,.75fr);gap:18px}.guide-speech{top:3%;right:-6%;font-size:.8rem}.guide-label{display:none}.foyer-actions{align-items:flex-start;flex-direction:column;gap:12px}.room-canvas--alcove,.room-canvas--keyscape{grid-template-columns:minmax(220px,.62fr) minmax(390px,1.38fr);gap:27px}.room-canvas--pet{grid-template-columns:minmax(200px,.62fr) minmax(360px,1.3fr);gap:16px 24px}.exhibit-copy h2{font-size:clamp(3.1rem,7vw,5.5rem)}.exhibit-copy>p:not(.eyebrow):not(.curator-note){font-size:.63rem}.agent-card__body{font-size:.56rem}.room-canvas--alcove{grid-template-columns:minmax(205px,.55fr) minmax(400px,1.45fr)}.room-canvas--archive,.room-canvas--workbench{grid-template-columns:210px minmax(0,1fr);gap:25px}.archive-exhibit{grid-template-columns:1fr}.archive-project-tabs{grid-template-columns:repeat(3,1fr);grid-template-rows:auto}.archive-project-tab{grid-template-columns:auto 1fr;grid-template-rows:auto auto;padding:8px}.archive-project-tab>b{grid-column:2}.archive-project-tab>em{grid-column:1/-1}.archive-project-stage__caption>p{display:none}.archive-project-stage__caption{grid-template-columns:1fr auto}.workbench-gallery{grid-template-columns:150px minmax(0,1fr);gap:10px;padding:11px}.tool-selector{grid-template-columns:auto 1fr;padding:8px 7px}.tool-selector>i{display:none}.workbench-feature__copy p{display:none}.museum-map{grid-template-columns:70px 1fr}.museum-map__progress{left:92px}.museum-map button{gap:4px;padding-inline:5px}
 }
 
 /* Phone and portrait tablet: each room becomes its own scrollable exhibit. */
@@ -1248,10 +1346,10 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 @media (max-width: 760px) {
   :root{--header-h:72px;--map-h:74px;--transition-time:660ms}
   .museum-masthead{padding:7px 10px}.maker-mark__portrait{flex-basis:43px;width:43px;height:43px;margin-right:9px}.maker-mark__words small{margin-top:4px;font-size:.46rem}.masthead-links{gap:5px}.masthead-links a{padding:7px;font-size:.5rem}.masthead-links a:nth-child(2){display:none}
-  .museum-stage{overflow:hidden}.room{overflow-x:clip;overflow-y:auto;overscroll-behavior:contain}.room::after{bottom:80px}.room-canvas{display:block;width:100%;height:auto;min-height:100%;padding:28px 18px 150px}.pet-track,.ceiling-lights--pet,.archive-cable{display:none}.room--alcove::before,.room-texture--alcove::after{display:none}
+  .museum-stage{overflow:hidden}.room{overflow-x:clip;overflow-y:auto;overscroll-behavior:contain}.room::after{bottom:80px}.room-canvas{display:block;width:100%;height:auto;min-height:100%;padding:28px 18px 150px}.archive-cable{display:none}.room--alcove::before,.room-texture--alcove::after{display:none}
   .foyer-copy{max-width:none}.foyer-copy h1{font-size:clamp(3.75rem,18.5vw,6rem);line-height:.73}.foyer-copy__intro{max-width:48ch;margin-top:21px;font-size:.68rem}.foyer-actions{margin-top:23px}.guide-plinth{width:min(89vw,390px);margin:22px auto 0}.guide-speech{right:1%;font-size:.83rem}.room-canvas--foyer{padding-bottom:145px}
   .exhibit-copy{width:100%;max-width:620px}.exhibit-copy h2,.exhibit-copy--pet h2,.exhibit-copy--archive h2,.exhibit-copy--workbench h2{font-size:clamp(3.4rem,16vw,5.6rem);line-height:.78}.exhibit-copy>p:not(.eyebrow):not(.curator-note){max-width:50ch;margin-top:15px;font-size:.65rem}.project-facts{margin-top:13px}
-  .media-exhibit{width:100%;margin:28px 0 0}.museum-window{padding:7px;box-shadow:6px 7px 0 rgba(23,35,38,.9)}.museum-window--alcove{box-shadow:6px 7px 0 rgba(67,41,26,.38),9px 10px 0 rgba(46,26,14,.88)}.museum-window--pet{box-shadow:6px 7px 0 rgba(197,66,52,.48),9px 10px 0 var(--ink)}.museum-window--keyscape{box-shadow:6px 7px 0 var(--violet),9px 10px 0 rgba(216,238,114,.7);transform:rotate(.4deg)}.museum-window img{max-height:none}.media-exhibit figcaption{align-items:flex-start;flex-direction:column;width:96%;margin-top:22px}.alcove-notes{margin-top:26px}.alcove-book.is-open .alcove-book__block,.alcove-book.is-open:hover .alcove-book__block,.alcove-book.is-open:focus-visible .alcove-book__block{transform:translate(20px,-58px) scale(2.1) rotate(-2.5deg)}.exhibit-copy--pet .interactive-action{margin-top:18px}.pet-specimen{margin-bottom:10px}.light-console{margin-top:21px}.keyscape-specimen{margin-bottom:0}
+  .media-exhibit{width:100%;margin:28px 0 0}.museum-window{padding:7px;box-shadow:6px 7px 0 rgba(23,35,38,.9)}.museum-window--alcove{box-shadow:6px 7px 0 rgba(67,41,26,.38),9px 10px 0 rgba(46,26,14,.88)}.museum-window--pet{box-shadow:6px 7px 0 rgba(23,35,38,.3)}.museum-window--keyscape{box-shadow:6px 7px 0 var(--violet),9px 10px 0 rgba(216,238,114,.7);transform:rotate(.4deg)}.museum-window img{max-height:none}.media-exhibit figcaption{align-items:flex-start;flex-direction:column;width:96%;margin-top:22px}.alcove-notes{margin-top:26px}.alcove-book.is-open .alcove-book__block,.alcove-book.is-open:hover .alcove-book__block,.alcove-book.is-open:focus-visible .alcove-book__block{transform:translate(20px,-58px) scale(2.1) rotate(-2.5deg)}.light-console{margin-top:21px}.keyscape-specimen{margin-bottom:0}
   .room-canvas--archive,.room-canvas--workbench{padding-bottom:165px}.curator-note{margin-top:17px}.archive-exhibit{display:grid;grid-template-columns:1fr;margin-top:27px}.archive-project-stage{order:1}.archive-project-tabs{order:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:2px}.archive-project-tab{min-height:82px;padding:7px 6px}.archive-project-tab>span{font-size:.43rem}.archive-project-tab>b{font-size:.72rem}.archive-project-tab>em{font-size:.45rem}.archive-project-stage__screen video{max-height:none}.archive-project-stage__caption{grid-template-columns:1fr;padding:12px}.archive-project-stage__caption .repo-link{grid-column:auto;justify-self:start}.archive-project-stage__caption>p{display:block}.media-play{width:38px;height:38px}
   .workbench-gallery{display:grid;grid-template-columns:1fr;margin-top:27px;padding:10px;transform:rotate(.2deg)}.tool-drawers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,auto)}.tool-selector{min-height:47px}.workbench-feature__media{min-height:190px}.workbench-feature__media img,.workbench-feature__media video{height:auto;max-height:none;aspect-ratio:auto}.workbench-feature__copy{grid-template-columns:auto 1fr;padding:10px}.workbench-feature__copy p{display:block}.workbench-feature__copy .repo-link{grid-column:2;justify-self:start}.workbench-desk{height:8%}
   .room .doorway{display:none}
@@ -1432,9 +1530,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 .project-facts { gap: 8px; margin-top: 21px; }
 .project-facts li { padding: 8px 11px; font-size: .57rem; }
-.exhibit-copy--pet blockquote { margin-top: 25px; padding: 15px 19px; }
 .exhibit-copy--pet h2 { line-height: .82; text-transform: none; }
-.exhibit-copy--pet .interactive-action { margin-top: 27px; }
 .exhibit-copy--keyscape h2 { padding-bottom: .06em; }
 #keyscape .exhibit-copy--keyscape > p:not(.eyebrow) { margin-top: clamp(25px,3.3vh,38px); }
 
@@ -1464,7 +1560,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 @media (max-width: 1180px) and (min-width: 901px) {
   .room-canvas--foyer { grid-template-columns: minmax(480px,1.3fr) minmax(270px,.7fr); gap: 24px; }
   .foyer-copy h1 { font-size: clamp(3.6rem,5.7vw,5.3rem); line-height: .9; }
-  .room-canvas--alcove,.room-canvas--pet,.room-canvas--keyscape { grid-template-columns: minmax(300px,.78fr) minmax(410px,1.22fr); }
+  .room-canvas--alcove,.room-canvas--keyscape { grid-template-columns: minmax(300px,.78fr) minmax(410px,1.22fr); }
 }
 
 @media (max-width: 900px) and (min-width: 761px) {
