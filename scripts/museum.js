@@ -516,7 +516,6 @@
 
   const petRoom = document.querySelector(".room--pet");
   const petCreature = petRoom?.querySelector(".pet-creature");
-  const petWindow = petRoom?.querySelector(".museum-window--pet");
   const petSlab = petRoom?.querySelector(".pet-slab");
   const callPetButton = document.querySelector("[data-call-pet]");
   let petTimers = [];

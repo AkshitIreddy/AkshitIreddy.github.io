@@ -942,7 +942,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 .pet-specimen figcaption > span { max-width: 46%; }
 .pet-specimen figcaption b { color: #1d5a66; }
 
-.pet-slab { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 3; height: clamp(72px, 11.5vh, 118px); margin-top: calc(-1 * clamp(16px, 2.4vh, 28px) - 4px); background: linear-gradient(180deg, #bccad3, #a7b9c3 72%, #9badb7); border: 2.5px solid var(--ink); border-radius: 7px 5px 9px 6px; box-shadow: 8px 9px 0 rgba(23,35,38,.26); transform: rotate(-.12deg); }
+.pet-slab { position: relative; z-index: 6; grid-column: 1 / -1; grid-row: 3; height: clamp(72px, 11.5vh, 118px); margin-top: calc(-1 * clamp(16px, 2.4vh, 28px) - 4px); overflow: visible; background: linear-gradient(180deg, #bccad3, #a7b9c3 72%, #9badb7); border: 2.5px solid var(--ink); border-radius: 7px 5px 9px 6px; box-shadow: 8px 9px 0 rgba(23,35,38,.26); transform: rotate(-.12deg); }
 .pet-slab::before { position: absolute; inset: 8px 12px auto; height: 2px; content: ""; background: rgba(23,35,38,.2); border-radius: 2px; }
 
 .glass-glint { position:absolute;top:-30%;left:-25%;z-index:3;width:12%;height:180%;pointer-events:none;background:rgba(255,255,255,.38);opacity:0;transform:translateX(0) rotate(18deg); }
@@ -951,7 +951,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 /* The called creature: runs in from off-frame, settles by the monitor, watches
    the cursor while it visits, then wanders off. One prop, one honest trick. */
-.pet-creature { position: absolute; bottom: calc(100% - 6px); left: 0; z-index: 7; width: clamp(56px, 5.2vw, 76px); opacity: 0; pointer-events: none; transform: translateX(-50vw); transition: opacity .16s ease; }
+.pet-creature { position: absolute; bottom: 10px; left: 0; z-index: 8; width: clamp(56px, 5.2vw, 76px); opacity: 0; pointer-events: none; transform: translateX(-50vw); transition: opacity .16s ease; }
 .pet-creature svg { display: block; width: 100%; height: auto; overflow: visible; }
 .room--pet:is(.is-called, .is-visiting, .is-leaving) .pet-creature { opacity: 1; }
 .room--pet.is-called .pet-creature { animation: pet-run-in 1.12s cubic-bezier(.25,.7,.25,1) both; }
