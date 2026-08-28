@@ -321,7 +321,7 @@
 #keyscape .light-console { margin-top:25px;padding:0;background:none;border:0;box-shadow:none;transform:none; }
 #keyscape .light-keys { display:block; }
 #keyscape .light-keys button { display:none; }
-#keyscape .light-keys button:nth-child(2) {
+#keyscape .light-keys [data-keyscape-demo-toggle] {
   display:inline-flex;
   width:auto;
   height:44px;
@@ -333,10 +333,10 @@
   box-shadow:none;
   backdrop-filter:blur(8px);
 }
-#keyscape .light-keys button:nth-child(2) i { display:grid;place-items:center;width:14px;height:14px;margin-right:9px;background:none;border:0;box-shadow:none; }
-#keyscape .light-keys button:nth-child(2) i::before { content:"▶";font:700 .62rem/1 "IBM Plex Mono",monospace; }
-#keyscape .light-keys button:nth-child(2)[aria-pressed="true"] i::before { content:"Ⅱ"; }
-#keyscape .light-keys button:nth-child(2) span { font-size:.75rem; }
+#keyscape .light-keys [data-keyscape-demo-toggle] i { display:grid;place-items:center;width:14px;height:14px;margin-right:9px;background:none;border:0;box-shadow:none; }
+#keyscape .light-keys [data-keyscape-demo-toggle] i::before { content:"▶";font:700 .62rem/1 "IBM Plex Mono",monospace; }
+#keyscape .light-keys [data-keyscape-demo-toggle][aria-pressed="true"] i::before { content:"Ⅱ"; }
+#keyscape .light-keys [data-keyscape-demo-toggle] span { font-size:.75rem; }
 #keyscape .keyscape-specimen { width:100%;margin:0; }
 #keyscape .museum-window--keyscape { padding:8px;background:#0a111b;border:1px solid rgba(255,255,255,.5);box-shadow:0 20px 50px rgba(0,0,0,.34);transform:none; }
 #keyscape .keyscape-spectrum { display:none; }

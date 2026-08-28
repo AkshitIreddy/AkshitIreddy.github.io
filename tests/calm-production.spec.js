@@ -2,6 +2,100 @@ const { test, expect } = require('@playwright/test');
 
 const rooms = ['foyer', 'alcove', 'pet', 'keyscape', 'archive', 'workbench'];
 const roomIndex = Object.fromEntries(rooms.map((room, index) => [room, index]));
+const expectedStylesheets = [
+  'styles/museum.css',
+  'styles/premium/base.css',
+  'styles/premium/foyer.css',
+  'styles/premium/alcove.css',
+  'styles/premium/pet.css',
+  'styles/premium/footer.css',
+  'styles/premium/archive.css',
+  'styles/premium/tools.css',
+  'styles/calm.css',
+];
+const expectedScripts = [
+  'scripts/museum.js',
+  'scripts/premium/localized-motion.js',
+  'scripts/premium/alcove.js',
+  'scripts/premium/pet.js',
+  'scripts/premium/archive.js',
+  'scripts/premium/bootstrap.js',
+];
+const expectedPublicAssets = [
+  'public/favicon-aperture-16.png',
+  'public/favicon-aperture-180.png',
+  'public/favicon-aperture-32.png',
+  'public/favicon-aperture-48.png',
+  'public/favicon-aperture-mask.svg',
+  'public/favicon-aperture.svg',
+  'public/fonts/dm-sans-latin-variable.woff2',
+  'public/fonts/fraunces-latin-variable.woff2',
+  'public/fonts/ibm-plex-mono-400.woff2',
+  'public/fonts/ibm-plex-mono-600.woff2',
+  'public/fonts/ibm-plex-mono-700.woff2',
+  'public/media/archive/cupcakeagi-poster.webp',
+  'public/media/archive/cupcakeagi.mp4',
+  'public/media/archive/cupcakeagi.webm',
+  'public/media/archive/interactive-llm-npcs-poster.webp',
+  'public/media/archive/interactive-llm-npcs.mp4',
+  'public/media/archive/interactive-llm-npcs.webm',
+  'public/media/archive/video-tutorial-poster.webp',
+  'public/media/archive/video-tutorial.mp4',
+  'public/media/archive/video-tutorial.webm',
+  'public/media/features/alcove-poster.webp',
+  'public/media/features/alcove.mp4',
+  'public/media/features/alcove.webm',
+  'public/media/features/compendium-poster.webp',
+  'public/media/features/compendium.mp4',
+  'public/media/features/compendium.webm',
+  'public/media/features/email-poster.webp',
+  'public/media/features/email.mp4',
+  'public/media/features/email.webm',
+  'public/media/features/gifsmith-poster.webp',
+  'public/media/features/gifsmith.mp4',
+  'public/media/features/gifsmith.webm',
+  'public/media/features/keyscape-poster.webp',
+  'public/media/features/keyscape.mp4',
+  'public/media/features/keyscape.webm',
+  'public/media/features/pet-poster.webp',
+  'public/media/features/pet.mp4',
+  'public/media/features/pet.webm',
+  'public/media/features/transparency.webp',
+  'public/media/generated/hero-studio-night-v1.webp',
+  'public/site.webmanifest',
+  'public/social-preview.png',
+];
+const deletedLegacySelectors = [
+  '.ambient-canvas',
+  '.visitor',
+  '.visitor-rail',
+  '.doorway',
+  '.foyer-luminaires',
+  '.foyer-luminaire',
+  '[data-motion-fixture]',
+  '[data-calm-fixture]',
+  '.guide-plinth',
+  '[data-guide]',
+  '[data-guide-button]',
+  '[data-guide-speech]',
+  '.room-atmosphere',
+  '.habitat-backdrop',
+  '.glass-pane',
+  '.desktop-companion',
+  '.behavior-console',
+  '.habitat-caption',
+  '.system-rail',
+  '.keyscape-stars',
+  '.keyscape-beam',
+  '.keyscape-signal-flow',
+  '.keyscape-keyboard',
+  '.keyscape-spectrum',
+  '.archive-atmosphere',
+  '.reliquary',
+  '.cabinet-object__niche',
+  '.instrument-tab__object',
+  '[class*="-miniature"]',
+];
 
 async function openRoom(page, room, options = {}) {
   await page.goto(`/#${room}`, { waitUntil: 'domcontentloaded', ...options });
@@ -139,25 +233,50 @@ test.describe('calm redesign production contract', () => {
     await expect(mapButtons).toHaveCount(6);
     for (let index = 0; index < rooms.length; index += 1) await expect(mapButtons.nth(index)).toBeVisible();
 
-    const legacyArt = page.locator([
-      '.ambient-canvas',
-      '.visitor',
-      '.visitor-rail',
-      '.foyer-luminaires',
-      '.foyer-luminaire',
-      '[data-motion-fixture]',
-      '.guide-plinth',
-      '.room-atmosphere',
-      '.keyscape-stars',
-      '.keyscape-beam',
-      '.archive-atmosphere',
-    ].join(','));
-    await expect(legacyArt).toHaveCount(await legacyArt.count());
-    expect(await legacyArt.evaluateAll((nodes) => nodes.filter((node) => {
-      const style = getComputedStyle(node);
-      const box = node.getBoundingClientRect();
-      return style.display !== 'none' && style.visibility !== 'hidden' && box.width > 0 && box.height > 0;
-    }).length), 'legacy fixture, lamp, visitor, or ambient art is visible').toBe(0);
+    await expect(
+      page.locator(deletedLegacySelectors.join(',')),
+      'deleted museum ornaments and fake project art must be absent from the production DOM, not hidden with CSS',
+    ).toHaveCount(0);
+
+    const dependencies = await page.evaluate(async () => {
+      const localPath = (value) => {
+        const url = new URL(value, location.href);
+        return url.origin === location.origin ? url.pathname.replace(/^\//, '') : value;
+      };
+      const stylesheets = [...document.querySelectorAll('link[rel="stylesheet"][href]')].map((link) => localPath(link.getAttribute('href')));
+      const scripts = [...document.querySelectorAll('script[src]')].map((script) => localPath(script.getAttribute('src')));
+      const publicAssets = new Set();
+      const recordAsset = (value) => {
+        if (!value || !value.includes('public/')) return;
+        try {
+          const pathname = new URL(value, location.href).pathname;
+          const publicIndex = pathname.indexOf('/public/');
+          if (publicIndex >= 0) publicAssets.add(pathname.slice(publicIndex + 1));
+        } catch {
+          const match = value.match(/(?:\.\.\/)?(public\/[A-Za-z0-9_./-]+)/);
+          if (match) publicAssets.add(match[1]);
+        }
+      };
+      document.querySelectorAll('*').forEach((element) => {
+        for (const attribute of element.attributes) recordAsset(attribute.value);
+      });
+      const dependencySources = await Promise.all([...stylesheets, ...scripts].map(async (dependency) => {
+        const response = await fetch(dependency);
+        if (!response.ok) throw new Error(`failed to inspect ${dependency}: ${response.status}`);
+        return response.text();
+      }));
+      for (const source of dependencySources) {
+        for (const match of source.matchAll(/(?:\.\.\/)?public\/[A-Za-z0-9_./-]+/g)) recordAsset(match[0]);
+      }
+      return {
+        stylesheets,
+        scripts,
+        publicAssets: [...publicAssets].sort(),
+      };
+    });
+    expect(dependencies.stylesheets, 'production stylesheet ownership changed without updating the calm contract').toEqual(expectedStylesheets);
+    expect(dependencies.scripts, 'production script ownership changed without updating the calm contract').toEqual(expectedScripts);
+    expect(dependencies.publicAssets, 'production public asset ownership changed without updating the calm contract').toEqual(expectedPublicAssets);
 
     const hero = page.locator('.calm-hero-art img');
     await expectImageReady(hero);
@@ -201,6 +320,17 @@ test.describe('calm redesign production contract', () => {
     await expect(calmTargets).toHaveCount(1);
     await expect(calmTargets).toHaveText('sit still.');
     await expect(page.locator('[data-calm-fixture]')).toHaveCount(0);
+    const initialMotionContract = await page.evaluate(() => {
+      const controller = window.__portfolioLocalizedMotion;
+      return {
+        diagnostics: controller.getDiagnostics(),
+        hasFixtureImpulseApi: typeof controller.kickFixture === 'function',
+      };
+    });
+    expect(initialMotionContract.hasFixtureImpulseApi, 'phrase-only motion must not expose a fixture impulse API').toBe(false);
+    expect(initialMotionContract.diagnostics.lines, 'motion diagnostics must own exactly one phrase target').toBe(1);
+    expect(initialMotionContract.diagnostics.fixtures, 'the phrase-only engine must have no fixture surface').toBe(0);
+    expect(initialMotionContract.diagnostics.activeBodies).toBe(1);
 
     const phrase = calmTargets.first();
     const phraseBox = await phrase.boundingBox();
