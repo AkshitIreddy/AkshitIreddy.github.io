@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 const rooms = ['foyer', 'alcove', 'pet', 'keyscape', 'archive', 'workbench'];
 const roomIndex = Object.fromEntries(rooms.map((room, index) => [room, index]));
 const expectedStylesheets = [
-  'styles/museum.css',
+  'styles/site.css',
   'styles/calm.css',
 ];
 const expectedScripts = [
