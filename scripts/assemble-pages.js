@@ -17,6 +17,7 @@ const siteFiles = [
   'styles/premium/footer.css',
   'styles/premium/archive.css',
   'styles/premium/tools.css',
+  'styles/calm.css',
   'scripts/museum.js',
   'scripts/premium/localized-motion.js',
   'scripts/premium/alcove.js',
@@ -38,8 +39,10 @@ const siteFiles = [
   'public/fonts/ibm-plex-mono-600.woff2',
   'public/fonts/ibm-plex-mono-700.woff2',
   'public/media/akshit-avatar.webp',
-  'public/media/features/alcove-full.webp',
+  'public/media/generated/hero-studio-night-v1.webp',
   'public/media/features/alcove-poster.webp',
+  'public/media/features/alcove.webm',
+  'public/media/features/alcove.mp4',
   'public/media/features/pet-poster.webp',
   'public/media/features/pet.webm',
   'public/media/features/pet.mp4',
@@ -73,7 +76,7 @@ if (missing.length) {
 }
 
 const referencedPublicFiles = new Set();
-for (const relativePath of ['index.html', 'styles/museum.css', 'styles/premium/base.css', 'styles/premium/foyer.css', 'styles/premium/alcove.css', 'styles/premium/pet.css', 'styles/premium/footer.css', 'styles/premium/archive.css', 'styles/premium/tools.css', 'scripts/museum.js', 'scripts/premium/localized-motion.js', 'scripts/premium/alcove.js', 'scripts/premium/pet.js', 'scripts/premium/archive.js', 'scripts/premium/bootstrap.js']) {
+for (const relativePath of ['index.html', 'styles/museum.css', 'styles/premium/base.css', 'styles/premium/foyer.css', 'styles/premium/alcove.css', 'styles/premium/pet.css', 'styles/premium/footer.css', 'styles/premium/archive.css', 'styles/premium/tools.css', 'styles/calm.css', 'scripts/museum.js', 'scripts/premium/localized-motion.js', 'scripts/premium/alcove.js', 'scripts/premium/pet.js', 'scripts/premium/archive.js', 'scripts/premium/bootstrap.js']) {
   const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
   for (const match of source.matchAll(/public\/[A-Za-z0-9_./-]+/g)) referencedPublicFiles.add(match[0]);
 }

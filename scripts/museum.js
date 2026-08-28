@@ -182,6 +182,17 @@
       }
     });
     if (changed) video.load();
+
+    const requestedStart = Number.parseFloat(video.dataset.startTime || "");
+    if (Number.isFinite(requestedStart) && video.dataset.startApplied !== "true") {
+      const applyStart = () => {
+        const finalFrame = Number.isFinite(video.duration) ? Math.max(0, video.duration - .05) : requestedStart;
+        video.currentTime = Math.min(requestedStart, finalFrame);
+        video.dataset.startApplied = "true";
+      };
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) applyStart();
+      else video.addEventListener("loadedmetadata", applyStart, { once: true });
+    }
   }
 
   function ensureVideoPoster(video) {
@@ -270,7 +281,7 @@
     if (options.focusHeading) focusRoomHeading(index);
 
     const room = rooms[index];
-    if (room && options.resetScroll) room.scrollTo({ top: 0, behavior: "instant" });
+    if (room && (options.resetScroll || from !== index)) room.scrollTo({ top: 0, behavior: "instant" });
 
     window.requestAnimationFrame(() => {
       stage.scrollLeft = 0;
@@ -870,17 +881,25 @@
   const ambientField = canvas ? new AmbientField(canvas) : null;
 
   let resizeFrame = 0;
+  let viewportBand = window.innerWidth <= 760 ? "mobile" : window.innerWidth <= 900 ? "tablet" : "desktop";
   window.addEventListener("resize", () => {
+    shell.classList.add("is-resizing");
     if (resizeFrame) return;
     resizeFrame = window.requestAnimationFrame(() => {
       resizeFrame = 0;
+      const nextBand = window.innerWidth <= 760 ? "mobile" : window.innerWidth <= 900 ? "tablet" : "desktop";
+      if (nextBand !== viewportBand) {
+        rooms[state.room]?.scrollTo({ top: 0, behavior: "instant" });
+        viewportBand = nextBand;
+      }
       setSpatialVariables(state.room);
       syncMobileScrollHint();
+      window.requestAnimationFrame(() => shell.classList.remove("is-resizing"));
     });
   }, { passive: true });
 
   document.addEventListener("visibilitychange", syncVideoPlayback);
-  window.addEventListener("popstate", () => goToRoom(getRoomFromHash(), { updateHash: false, forceAnnounce: true, focusHeading: true }));
+  window.addEventListener("popstate", () => goToRoom(getRoomFromHash(), { updateHash: false, forceAnnounce: true, focusHeading: true, resetScroll: true }));
 
   document.querySelectorAll("img").forEach((image) => {
     image.addEventListener("load", () => image.classList.add("is-loaded"), { once: true });
@@ -893,7 +912,7 @@
   // Keep the canonical foyer URL fragment-free. Writing #foyer during startup
   // makes browsers begin sequential keyboard focus after the room fragment,
   // skipping the skip link and masthead controls.
-  goToRoom(initialRoom, { updateHash: Boolean(window.location.hash), forceAnnounce: false });
+  goToRoom(initialRoom, { updateHash: Boolean(window.location.hash), forceAnnounce: false, resetScroll: true });
   ambientField?.changeRoom(state.room);
   window.addEventListener("load", () => {
     stage.scrollLeft = 0;
