@@ -51,25 +51,21 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('h1')).toContainText(/I make software\s*that refuses to\s*sit still/i);
   });
 
-  test('the thesis gives only the nearest line a bounded local response', async ({ page }) => {
+  test('the thesis moves as one stable phrase with a normal cursor', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.__portfolioLocalizedMotion);
-    const thesis = page.locator('[data-motion-thesis]');
-    const lines = thesis.locator('[data-motion-line]');
-    const bounds = await lines.first().boundingBox();
+    const thesis = page.locator('[data-restless-thesis]');
+    const target = thesis.locator('.moving-word');
+    const bounds = await thesis.boundingBox();
     expect(bounds).not.toBeNull();
-    const copyBefore = await page.locator('.foyer-copy').boundingBox();
-    const finePointer = await page.evaluate(() => matchMedia('(pointer: fine)').matches);
-    await page.mouse.move(bounds.x - 150, bounds.y + bounds.height / 2);
-    await page.mouse.move(bounds.x + bounds.width * .55, bounds.y + bounds.height / 2, { steps: 4 });
-    if (finePointer) await expect.poll(() => lines.first().evaluate((element) => getComputedStyle(element).translate)).not.toBe('0px');
-    else await expect(lines.first()).toHaveCSS('translate', '0px');
-    await expect(lines.nth(1)).toHaveCSS('translate', '0px');
-    await expect(lines.nth(2)).toHaveCSS('translate', '0px');
+    const before = await thesis.boundingBox();
+    await thesis.dispatchEvent('pointermove', { pointerId: 7, pointerType: 'mouse', clientX: bounds.x + bounds.width * .82, clientY: bounds.y + bounds.height * .72 });
+    await expect(thesis).toHaveClass(/is-restless/);
+    await expect.poll(() => target.evaluate((element) => getComputedStyle(element).transform)).not.toBe('none');
+    await expect(thesis.locator('.restless-letter')).toHaveCount(0);
     await expect(thesis).not.toHaveCSS('cursor', 'crosshair');
-    const copyAfter = await page.locator('.foyer-copy').boundingBox();
-    expect(copyAfter.x).toBeCloseTo(copyBefore.x, 2);
-    expect(copyAfter.y).toBeCloseTo(copyBefore.y, 2);
+    const after = await thesis.boundingBox();
+    expect(after.width).toBeCloseTo(before.width, 1);
+    expect(after.height).toBeCloseTo(before.height, 1);
     await expect(thesis).toHaveAttribute('aria-label', 'I make software that refuses to sit still.');
   });
 
@@ -131,10 +127,10 @@ test.describe('Software in Motion production contract', () => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('[data-guide-button] svg')).toHaveAttribute('aria-label', /studio kitten/i);
     await expect(page.locator('.guide-pupil')).toHaveCount(2);
-    await expect(page.locator('.guide-aureole')).toHaveCount(1);
-    await expect(page.locator('.guide-aureole > i')).toHaveCount(11);
-    await expect(page.locator('.foyer-luminaire')).toHaveCount(3);
-    await expect(page.locator('.guide-signal,.foyer-motion-field')).toHaveCount(0);
+    await expect(page.locator('svg.guide-signal')).toHaveCount(1);
+    await expect(page.locator('.guide-signal__path')).toHaveCount(3);
+    await expect(page.locator('.guide-signal__runner')).toHaveCount(3);
+    await expect(page.locator('.foyer-motion-field__path')).toHaveCount(3);
     await expect(page.locator('.visitor > .visitor__art')).toHaveAttribute('viewBox', '0 0 84 60');
     await expect(page.locator('.visitor > .visitor__art')).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
     await expect(page.locator('.visitor__head .visitor__ear')).toHaveCount(2);
@@ -167,13 +163,8 @@ test.describe('Software in Motion production contract', () => {
       elements.map((element) => getComputedStyle(element).animationName),
     );
     expect(new Set(animationNames)).toEqual(new Set(['none']));
-    const fixtureTransforms = await page.locator('[data-motion-fixture]').evaluateAll((elements) => elements.map((element) => ({
-      translate: getComputedStyle(element).translate,
-      rotate: getComputedStyle(element).rotate,
-    })));
-    expect(fixtureTransforms.every(({ translate, rotate }) => (translate === '0px' || translate === 'none') && (rotate === '0deg' || rotate === 'none'))).toBe(true);
-    const vaneAnimations = await page.locator('.guide-aureole > i').evaluateAll((elements) => elements.map((element) => getComputedStyle(element).animationName));
-    expect(new Set(vaneAnimations)).toEqual(new Set(['none']));
+    await expect(page.locator('.guide-signal__runner').first()).toHaveCSS('display', 'none');
+    await expect(page.locator('.foyer-motion-field__runner').first()).toHaveCSS('display', 'none');
   });
 
   test('the studio companion owns a separate speech zone and follows the pointer through it', async ({ page }) => {
@@ -211,8 +202,7 @@ test.describe('Software in Motion production contract', () => {
     const rightLook = Number.parseFloat(await page.locator('.museum-shell').evaluate((element) =>
       getComputedStyle(element).getPropertyValue('--look-x'),
     ));
-    if (await page.evaluate(() => matchMedia('(pointer: fine)').matches)) expect(rightLook - leftLook).toBeGreaterThan(1);
-    else expect(Math.abs(rightLook - leftLook)).toBeLessThanOrEqual(.01);
+    expect(rightLook - leftLook).toBeGreaterThan(1);
   });
 
   test('only the current room is exposed and every route remains directly reachable', async ({ page }) => {
@@ -225,59 +215,35 @@ test.describe('Software in Motion production contract', () => {
     }
   });
 
-  test('the foyer uses three working specimens and component-owned physical fixtures', async ({ page }) => {
+  test('the foyer index is a working three-way shortcut and its orbit paths are closed loops', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
     const shortcuts = page.locator('.foyer-index button');
     await expect(shortcuts).toHaveCount(3);
-    if (await shortcuts.first().isVisible()) {
+    if (page.viewportSize().width > 900) {
       await shortcuts.nth(1).click();
       await expect(page.locator('.museum-shell')).toHaveAttribute('data-current-room', '4');
     } else {
       await expect(shortcuts.first()).toBeHidden();
     }
     await page.goto('/#foyer');
-    await expect(page.locator('.foyer-motion-field,.guide-signal')).toHaveCount(0);
-    await expect(page.locator('.foyer-architecture')).toHaveCount(1);
-    await expect(page.locator('[data-motion-fixture]')).toHaveCount(3);
-    await expect(page.locator('.guide-aureole > i')).toHaveCount(11);
+    for (const path of await page.locator('.foyer-motion-field__path, #guide-orbit-b, #guide-orbit-c').all()) {
+      expect((await path.getAttribute('d')).trim().endsWith('Z')).toBe(true);
+    }
+    await expect(page.locator('.foyer-motion-field')).toHaveCSS('overflow', 'visible');
   });
 
-  test('fixture physics is bounded, pausable, and sleeps outside the foyer', async ({ page }) => {
-    await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.__portfolioLocalizedMotion);
-    const finePointer = await page.evaluate(() => matchMedia('(pointer: fine)').matches);
-    const fixture = page.locator('[data-motion-fixture]').last();
-    if (finePointer) {
-      const shade = await fixture.locator('.foyer-luminaire__shade').boundingBox();
-      await page.mouse.move(shade.x - 100, shade.y + shade.height / 2);
-      await page.mouse.move(shade.x + shade.width + 100, shade.y + shade.height / 2, { steps: 2 });
-      await expect.poll(async () => Math.abs(Number.parseFloat(await fixture.evaluate((element) => getComputedStyle(element).rotate)))).toBeGreaterThan(.15);
-    }
-    for (const layer of await page.locator('#foyer .room__layer').all()) {
-      expect(await layer.evaluate((element) => getComputedStyle(element).getPropertyValue('--layer-x'))).toBe('');
-    }
-    const toggle = page.locator('[data-motion-toggle]');
-    await toggle.click();
-    await expect.poll(() => fixture.evaluate((element) => getComputedStyle(element).rotate)).toMatch(/^(0deg|none)$/);
-    await toggle.click();
-    await page.locator('.museum-map [data-room-target="1"]').click();
-    await expect.poll(() => page.evaluate(() => window.__portfolioLocalizedMotion.getDiagnostics().running)).toBe(false);
-    expect(await page.evaluate(() => window.__portfolioLocalizedMotion.getDiagnostics().activeBodies)).toBe(0);
-  });
-
-  test('Alcove field notes remain separate from its uncropped demo', async ({ page }) => {
+  test('Alcove notes never cover its uncropped demo', async ({ page }) => {
     for (const viewport of viewports) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
-      const specimen = page.locator('.alcove-folio__recess');
-      const media = page.locator('.alcove-folio__recess img');
-      const notes = page.locator('.alcove-field-note');
+      const specimen = page.locator('.specimen-window--alcove');
+      const notes = page.locator('.alcove-ledger');
       await expect(specimen).toBeVisible();
       await expect(notes).toBeVisible();
       const [specimenBox, notesBox, objectFit] = await Promise.all([
-        media.boundingBox(),
+        specimen.boundingBox(),
         notes.boundingBox(),
-        page.locator('.alcove-folio__recess img').evaluate((media) => getComputedStyle(media).objectFit),
+        page.locator('.specimen-window--alcove img').evaluate((media) => getComputedStyle(media).objectFit),
       ]);
       expect(overlapArea(specimenBox, notesBox), viewport.name).toBe(0);
       expect(objectFit, viewport.name).toBe('contain');
@@ -357,7 +323,7 @@ test.describe('Software in Motion production contract', () => {
   test('every moving feature has a persistent play and pause control', async ({ page }) => {
     await page.goto('/#pet', { waitUntil: 'domcontentloaded' });
     const video = page.locator('#pet [data-room-video]');
-    const control = page.locator('#pet [data-video-control]');
+    const control = page.locator('#pet [data-video-toggle]');
     await expectVideoReady(video);
     await expect.poll(() => video.evaluate((element) => element.paused)).toBe(false);
     await expect(control).toHaveAttribute('aria-label', /Pause AI Desktop Pet/i);
@@ -374,31 +340,28 @@ test.describe('Software in Motion production contract', () => {
     await expect.poll(() => video.evaluate((element) => element.paused)).toBe(false);
   });
 
-  test('the desktop companion reacts inside its habitat without moving the room', async ({ page }) => {
+  test('the desktop-pet glass highlight arrives once instead of looping forever', async ({ page }) => {
     await page.goto('/#pet', { waitUntil: 'domcontentloaded' });
-    const room = page.locator('[data-pet-room]');
-    const habitat = page.locator('[data-habitat]');
-    const roomBefore = await room.boundingBox();
-    const companionBefore = await page.locator('[data-desktop-companion]').evaluate((element) => getComputedStyle(element).transform);
-    const bounds = await habitat.boundingBox();
-    await page.mouse.move(bounds.x + bounds.width * .28, bounds.y + bounds.height * .34);
-    await expect.poll(() => page.locator('[data-desktop-companion]').evaluate((element) => getComputedStyle(element).transform)).not.toBe(companionBefore);
-    const roomAfter = await room.boundingBox();
-    expect(roomAfter.x).toBeCloseTo(roomBefore.x, 2);
-    expect(roomAfter.y).toBeCloseTo(roomBefore.y, 2);
+    const glint = page.locator('#pet .glass-glint');
+    await expect(glint).toHaveCSS('animation-name', 'glass-glint-arrive');
+    await expect(glint).toHaveCSS('animation-iteration-count', '1');
+    await expect(glint).toHaveCSS('animation-duration', '1.35s');
   });
 
   test('interactive exhibits visibly announce and react to touch', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.interaction-cue')).toHaveCount(4);
+    await expect(page.locator('.interaction-cue').first()).toContainText(/try|touch|click|swipe|play/i);
+
     await page.locator('[data-guide-button]').click();
     await expect(page.locator('[data-guide]')).toHaveClass(/is-greeting/);
     await page.goto('/#alcove');
-    await page.locator('[data-alcove-volume="page"]').click();
-    await expect(page.locator('[data-alcove-volume="page"]')).toHaveAttribute('aria-selected', 'true');
-    await expect(page.locator('#alcove-panel-page')).toBeVisible();
+    await page.locator('[data-alcove-notes]').click();
+    await expect(page.locator('#alcove')).toHaveClass(/is-annotated/);
+    await expect(page.locator('.alcove-demo-notes li').first()).toBeVisible();
     await page.goto('/#pet');
-    await page.locator('[data-companion-invite]').click();
-    await expect(page.locator('[data-pet-room]')).toHaveAttribute('data-company', 'true');
+    await page.locator('[data-call-pet]').click();
+    await expect(page.locator('#pet')).toHaveClass(/is-called/);
     await page.goto('/#keyscape');
     await page.locator('[data-light-key="physics"]').click();
     await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'physics');
@@ -406,53 +369,61 @@ test.describe('Software in Motion production contract', () => {
 
   test('archive exposes stars and switches among three project-specific demos', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
-    const tabs = page.locator('.cabinet-object');
+    const tabs = page.locator('.archive-project-tab');
     await expect(tabs).toHaveCount(3);
     await expect(page.locator('#archive')).toContainText('719');
     await expect(page.locator('#archive')).toContainText('310');
     await expect(page.locator('#archive')).toContainText('127');
-    await expect(page.locator('[data-cabinet-video]')).toHaveAttribute('loop', '');
+    await expect(page.locator('[data-archive-video]')).toHaveAttribute('loop', '');
 
     for (const [index, title] of [[0, /Interactive LLM/i], [1, /AI Video Tutorial/i], [2, /CupcakeAGI/i]]) {
       await tabs.nth(index).click();
-      await expect(page.locator('[data-cabinet-title]')).toHaveText(title);
+      await expect(page.locator('[data-archive-title]')).toHaveText(title);
       await expect(page.locator('#archive')).toHaveAttribute('data-archive-project', ['npc', 'tutorial', 'cupcake'][index]);
-      await expectVideoReady(page.locator('[data-cabinet-video]'));
-      await expect.poll(() => page.locator('[data-cabinet-video]').evaluate((video) => video.duration)).toBeGreaterThan(30);
-      await expect(page.locator('[data-cabinet-counter]')).toContainText(`0${index + 1} / 03`);
-      await expect(page.locator('[data-cabinet-counter]')).not.toContainText(/README/i);
+      await expectVideoReady(page.locator('[data-archive-video]'));
+      await expect.poll(() => page.locator('[data-archive-video]').evaluate((video) => video.duration)).toBeGreaterThan(30);
+      await expect(page.locator('[data-archive-counter]')).toContainText(`0${index + 1} / 03`);
+      await expect(page.locator('[data-archive-counter]')).not.toContainText(/README/i);
+      await expect(page.locator('[data-archive-tech]')).not.toBeEmpty();
     }
   });
 
   test('archive and tool selectors carry authored diagrams with legible metadata', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.reliquary')).toHaveCount(3);
-    for (const star of await page.locator('.cabinet-object__label > em').all()) {
+    await expect(page.locator('.archive-card-art')).toHaveCount(3);
+    for (const star of await page.locator('.archive-project-tab > em').all()) {
       const size = Number.parseFloat(await star.evaluate((element) => getComputedStyle(element).fontSize));
-      expect(size).toBeGreaterThanOrEqual(7);
+      expect(size).toBeGreaterThanOrEqual(9);
     }
     await page.goto('/#workbench', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.instrument-tab__object')).toHaveCount(4);
+    await expect(page.locator('.tool-card-art')).toHaveCount(4);
   });
 
   test('supporting project type stays readable and Alcove names its AI agent', async ({ page }) => {
     await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.alcove-bookplate__facts')).toContainText('optional library agent');
-    const ledgerSize = Number.parseFloat(await page.locator('.alcove-field-note__leaf p').last().evaluate((element) => getComputedStyle(element).fontSize));
+    await expect(page.locator('.project-facts')).toContainText('AI library agent');
+    const ledgerSize = Number.parseFloat(await page.locator('.alcove-ledger__entry p').first().evaluate((element) => getComputedStyle(element).fontSize));
     expect(ledgerSize).toBeGreaterThanOrEqual(10);
     await page.goto('/#keyscape');
     await expect(page.locator('.museum-shell')).toHaveAttribute('data-frame', 'keyscape');
     await page.waitForTimeout(500);
     const signalSize = Number.parseFloat(await page.locator('.keyscape-signal-flow small').first().evaluate((element) => getComputedStyle(element).fontSize));
     expect(signalSize).toBeGreaterThanOrEqual(8);
-    const footerDeck = await page.locator('.museum-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--footer-deck').trim());
-    expect(footerDeck).toBe('#101726');
+    const declaredMapColor = await page.evaluate(() => {
+      for (const sheet of document.styleSheets) {
+        for (const rule of [...sheet.cssRules]) {
+          if (rule.selectorText === '.museum-shell[data-frame="keyscape"] .museum-map') return rule.style.backgroundColor;
+        }
+      }
+      return '';
+    });
+    expect(declaredMapColor).toBe('rgb(18, 26, 44)');
   });
 
   test('the tutorial and every browser video stay at normal 1x playback', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
-    await page.locator('[data-project="tutorial"]').click();
-    const tutorial = page.locator('[data-cabinet-video]');
+    await page.locator('[data-archive-project="tutorial"]').click();
+    const tutorial = page.locator('[data-archive-video]');
     await expectVideoReady(tutorial);
     await expect.poll(() => tutorial.evaluate((video) => video.playbackRate)).toBe(1);
     await expect.poll(() => tutorial.evaluate((video) => video.defaultPlaybackRate)).toBe(1);
@@ -475,8 +446,8 @@ test.describe('Software in Motion production contract', () => {
     }
 
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
-    for (const tab of await page.locator('.cabinet-object').all()) {
-      expect((await tab.getAttribute('data-description')).length).toBeGreaterThan(85);
+    for (const tab of await page.locator('.archive-project-tab').all()) {
+      expect((await tab.getAttribute('data-description')).length).toBeGreaterThan(145);
     }
     await page.goto('/#workbench', { waitUntil: 'domcontentloaded' });
     for (const tab of await page.locator('.tool-selector').all()) {
@@ -487,10 +458,9 @@ test.describe('Software in Motion production contract', () => {
   test('archive and workbench environments visibly retheme with their selected object', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
     const archive = page.locator('#archive');
-    const cabinet = page.locator('.archive-cabinet-demo');
-    const npcAccent = await cabinet.evaluate((element) => getComputedStyle(element).getPropertyValue('--room-accent').trim());
-    await page.locator('[data-project="tutorial"]').click();
-    const tutorialAccent = await cabinet.evaluate((element) => getComputedStyle(element).getPropertyValue('--room-accent').trim());
+    const npcAccent = await archive.evaluate((element) => getComputedStyle(element).getPropertyValue('--archive-accent').trim());
+    await page.locator('[data-archive-project="tutorial"]').click();
+    const tutorialAccent = await archive.evaluate((element) => getComputedStyle(element).getPropertyValue('--archive-accent').trim());
     expect(tutorialAccent).not.toBe(npcAccent);
     await expect(archive).toHaveAttribute('data-archive-project', 'tutorial');
     await expect(page.locator('.museum-shell')).toHaveAttribute('data-frame', 'archive-tutorial');
@@ -559,13 +529,13 @@ test.describe('Software in Motion production contract', () => {
 
   test('archive pause choice survives film and room changes', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
-    const video = page.locator('[data-cabinet-video]');
-    const control = page.locator('[data-film-control]');
+    const video = page.locator('[data-archive-video]');
+    const control = page.locator('[data-archive-play]');
     await expectVideoReady(video);
     await expect.poll(() => video.evaluate((element) => element.paused)).toBe(false);
     await control.click();
     await expect.poll(() => video.evaluate((element) => element.paused)).toBe(true);
-    await page.locator('[data-project="tutorial"]').click();
+    await page.locator('[data-archive-project="tutorial"]').click();
     await expect.poll(() => video.evaluate((element) => element.paused)).toBe(true);
     await page.locator('.museum-map [data-room-target="3"]').click();
     await page.locator('.museum-map [data-room-target="4"]').click();
@@ -615,7 +585,7 @@ test.describe('Software in Motion production contract', () => {
 
   test('tablists own their arrow, Home, and End keys without changing rooms', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
-    const archiveTabs = page.locator('.cabinet-object');
+    const archiveTabs = page.locator('.archive-project-tab');
     await archiveTabs.first().focus();
     await page.keyboard.press('End');
     await expect(archiveTabs.last()).toBeFocused();
@@ -664,16 +634,16 @@ test.describe('Software in Motion production contract', () => {
   test('Alcove keeps the real 1200:750 demo plane without black side bars', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 600 });
     await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
-    const geometry = await page.locator('.alcove-folio__recess').evaluate((windowElement) => {
+    const geometry = await page.locator('.museum-window--alcove').evaluate((windowElement) => {
       const image = windowElement.querySelector('img');
       const host = windowElement.getBoundingClientRect();
       const media = image.getBoundingClientRect();
       return { hostWidth: host.width, mediaWidth: media.width, ratio: media.width / media.height, background: getComputedStyle(windowElement).backgroundColor };
     });
     expect(geometry.ratio).toBeCloseTo(1200 / 750, 2);
-    // The remaining width is the intentional conservator's recess and its
-    // borders/page edges, not a letterboxed media plane.
-    expect(Math.abs(geometry.hostWidth - geometry.mediaWidth)).toBeLessThan(44);
+    // The remaining width is the intentional 7px-per-side book-cloth mat and
+    // its borders, not a letterboxed media plane.
+    expect(Math.abs(geometry.hostWidth - geometry.mediaWidth)).toBeLessThan(34);
     expect(geometry.background).not.toBe('rgb(13, 20, 22)');
   });
 
@@ -727,22 +697,6 @@ test.describe('Software in Motion production contract', () => {
       }
     }
   });
-
-  test('a 200% zoom-equivalent viewport keeps every chapter readable without horizontal page overflow', async ({ page }) => {
-    await page.setViewportSize({ width: 720, height: 900 });
-    for (const [index, room] of rooms.entries()) {
-      await page.goto(`/#${room}`, { waitUntil: 'domcontentloaded' });
-      await waitForRoomSettled(page, index);
-      const geometry = await page.evaluate(() => ({
-        viewport: document.documentElement.clientWidth,
-        body: document.body.scrollWidth,
-        current: document.querySelector('.room.is-current')?.clientWidth || 0,
-      }));
-      expect(geometry.body, room).toBeLessThanOrEqual(geometry.viewport + 1);
-      expect(geometry.current, room).toBeLessThanOrEqual(geometry.viewport + 1);
-      await expect(page.locator(`#${room} h1, #${room} h2`).first()).toBeVisible();
-    }
-  });
 });
 
 for (const viewport of viewports) {
@@ -759,7 +713,7 @@ for (const viewport of viewports) {
       await waitForRoomSettled(page, roomIndex);
       const geometry = await page.evaluate(() => {
         const current = document.querySelector('.room.is-current');
-        const canvas = current?.querySelector('.room-canvas, .alcove-library, .pet-room')?.getBoundingClientRect();
+        const canvas = current?.querySelector('.room-canvas')?.getBoundingClientRect();
         return {
           viewportWidth: document.documentElement.clientWidth,
           bodyWidth: document.body.scrollWidth,

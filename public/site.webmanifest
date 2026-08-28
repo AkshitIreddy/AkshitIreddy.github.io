@@ -4,8 +4,8 @@
   "description": "Open-source projects in characterful interfaces, AI companions, creative tools, and thoughtful desktop software.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#d8e5de",
-  "theme_color": "#18312f",
+  "background_color": "#f4ead4",
+  "theme_color": "#172326",
   "icons": [
     {
       "src": "favicon-aperture.svg",
