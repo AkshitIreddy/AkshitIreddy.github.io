@@ -526,11 +526,12 @@
   };
 
   function measurePetStop() {
-    if (!petRoom || !petWindow || !petSlab || !petCreature) return;
+    if (!petRoom || !petSlab || !petCreature) return;
     const slabBox = petSlab.getBoundingClientRect();
-    const windowBox = petWindow.getBoundingClientRect();
-    const stop = windowBox.left - slabBox.left + windowBox.width * 0.16 - petCreature.offsetWidth * 0.5;
-    petRoom.style.setProperty("--pet-stop-x", `${Math.max(12, stop).toFixed(1)}px`);
+    const creatureWidth = petCreature.offsetWidth || 68;
+    const margin = Math.max(14, slabBox.width * 0.04);
+    const stop = slabBox.width * 0.68 - creatureWidth * 0.5;
+    petRoom.style.setProperty("--pet-stop-x", `${Math.max(margin, Math.min(stop, slabBox.width - creatureWidth - margin)).toFixed(1)}px`);
   }
 
   function resetPetLook() {
