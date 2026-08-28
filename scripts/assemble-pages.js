@@ -31,7 +31,6 @@ const siteFiles = [
   'public/fonts/ibm-plex-mono-400.woff2',
   'public/fonts/ibm-plex-mono-600.woff2',
   'public/fonts/ibm-plex-mono-700.woff2',
-  'public/media/akshit-avatar.webp',
   'public/media/generated/hero-studio-night-v1.webp',
   'public/media/features/alcove-poster.webp',
   'public/media/features/alcove.webm',
