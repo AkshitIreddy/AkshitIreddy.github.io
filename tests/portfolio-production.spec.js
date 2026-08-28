@@ -8,11 +8,13 @@ const expectedStylesheets = [
 ];
 const expectedScripts = [
   'scripts/museum.js',
-  'scripts/premium/localized-motion.js',
-  'scripts/premium/alcove.js',
-  'scripts/premium/pet.js',
-  'scripts/premium/archive.js',
-  'scripts/premium/bootstrap.js',
+  'scripts/lib/localized-motion.js',
+  'scripts/components/alcove.js',
+  'scripts/components/pet.js',
+  'scripts/components/archive.js',
+  'scripts/components/workbench.js',
+  'scripts/components/keyscape.js',
+  'scripts/components/motion.js',
 ];
 const expectedPublicAssets = [
   'public/favicon-aperture-16.png',
@@ -253,23 +255,34 @@ test.describe('portfolio production contract', () => {
       document.querySelectorAll('*').forEach((element) => {
         for (const attribute of element.attributes) recordAsset(attribute.value);
       });
-      const dependencySources = await Promise.all([...stylesheets, ...scripts].map(async (dependency) => {
+      const dependencyEntries = await Promise.all([...stylesheets, ...scripts].map(async (dependency) => {
         const response = await fetch(dependency);
         if (!response.ok) throw new Error(`failed to inspect ${dependency}: ${response.status}`);
-        return response.text();
+        return [dependency, await response.text()];
       }));
-      for (const source of dependencySources) {
+      for (const [, source] of dependencyEntries) {
         for (const match of source.matchAll(/(?:\.\.\/)?public\/[A-Za-z0-9_./-]+/g)) recordAsset(match[0]);
       }
       return {
         stylesheets,
         scripts,
         publicAssets: [...publicAssets].sort(),
+        scriptSources: Object.fromEntries(dependencyEntries.filter(([dependency]) => scripts.includes(dependency))),
       };
     });
     expect(dependencies.stylesheets, 'production stylesheet ownership changed without updating the calm contract').toEqual(expectedStylesheets);
     expect(dependencies.scripts, 'production script ownership changed without updating the calm contract').toEqual(expectedScripts);
     expect(dependencies.publicAssets, 'production public asset ownership changed without updating the calm contract').toEqual(expectedPublicAssets);
+
+    const ownersOf = (selector) => Object.entries(dependencies.scriptSources)
+      .filter(([, source]) => source.includes(selector))
+      .map(([script]) => script);
+    expect(ownersOf('.tool-selector'), 'Workbench selectors must have one component owner').toEqual(['scripts/components/workbench.js']);
+    expect(ownersOf('[data-keyscape-demo-toggle]'), 'Keyscape playback must have one component owner').toEqual(['scripts/components/keyscape.js']);
+    expect(ownersOf('window.LocalizedMotion.create'), 'localized phrase motion must have one initializer owner').toEqual(['scripts/components/motion.js']);
+    expect(dependencies.scriptSources['scripts/museum.js'], 'the museum shell must not own Workbench selectors').not.toContain('[data-tool-');
+    expect(dependencies.scriptSources['scripts/museum.js'], 'the museum shell must not own Keyscape controls').not.toContain('data-keyscape-demo-toggle');
+    expect(dependencies.scripts.some((script) => script.includes('bootstrap')), 'the obsolete global bootstrap must not ship').toBe(false);
 
     const hero = page.locator('.calm-hero-art img');
     await expectImageReady(hero);

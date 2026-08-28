@@ -3,6 +3,16 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const destination = path.join(root, 'dist');
+const productionScripts = [
+  'scripts/museum.js',
+  'scripts/lib/localized-motion.js',
+  'scripts/components/alcove.js',
+  'scripts/components/pet.js',
+  'scripts/components/archive.js',
+  'scripts/components/workbench.js',
+  'scripts/components/keyscape.js',
+  'scripts/components/motion.js',
+];
 const siteFiles = [
   'index.html',
   '.nojekyll',
@@ -11,12 +21,7 @@ const siteFiles = [
   'THIRD_PARTY_NOTICES.md',
   'styles/site.css',
   'styles/rooms.css',
-  'scripts/museum.js',
-  'scripts/premium/localized-motion.js',
-  'scripts/premium/alcove.js',
-  'scripts/premium/pet.js',
-  'scripts/premium/archive.js',
-  'scripts/premium/bootstrap.js',
+  ...productionScripts,
   'public/favicon-aperture.svg',
   'public/favicon-aperture-16.png',
   'public/favicon-aperture-32.png',
@@ -68,7 +73,7 @@ if (missing.length) {
 }
 
 const referencedPublicFiles = new Set();
-for (const relativePath of ['index.html', 'styles/site.css', 'styles/rooms.css', 'scripts/museum.js', 'scripts/premium/localized-motion.js', 'scripts/premium/alcove.js', 'scripts/premium/pet.js', 'scripts/premium/archive.js', 'scripts/premium/bootstrap.js']) {
+for (const relativePath of ['index.html', 'styles/site.css', 'styles/rooms.css', ...productionScripts]) {
   const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
   for (const match of source.matchAll(/public\/[A-Za-z0-9_./-]+/g)) referencedPublicFiles.add(match[0]);
 }

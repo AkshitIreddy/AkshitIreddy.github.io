@@ -207,6 +207,11 @@
 
   }
 
+  function refreshComponentMedia() {
+    syncFrameTheme();
+    syncVideoPlayback();
+  }
+
   function syncMobileScrollHint() {
     if (!mobileScrollHint) return;
     const room = rooms[state.room];
@@ -360,95 +365,6 @@
     goToRoom(delta > 0 ? state.room + 1 : state.room - 1, { pushHistory: true, resetScroll: true });
   }, { passive: false });
 
-  /* Workbench: one real utility demo at a time. */
-
-  const toolSelectors = [...document.querySelectorAll(".tool-selector")];
-  const workbenchRoom = document.querySelector(".room--workbench");
-  const toolFeature = document.querySelector(".workbench-feature__media");
-  const toolMedia = document.querySelector("[data-tool-media]");
-  const toolVideo = document.querySelector("[data-tool-video]");
-  const toolIndex = document.querySelector("[data-tool-index]");
-  const toolTitle = document.querySelector(".workbench-feature h3");
-  const toolDescription = document.querySelector("[data-tool-description]");
-  const toolPlatform = document.querySelector("[data-tool-platform]");
-  const toolSteps = [...document.querySelectorAll("[data-tool-step]")];
-  const toolMediaLabel = document.querySelector("[data-tool-media-label]");
-  const toolLink = document.querySelector("[data-tool-link]");
-  const toolPlay = document.querySelector("[data-tool-play]");
-  const workbenchPanel = document.querySelector("#workbench-panel");
-
-  function setTool(selector, focus = false) {
-    if (!(selector instanceof HTMLButtonElement) || !(toolMedia instanceof HTMLImageElement) || !(toolVideo instanceof HTMLVideoElement)) return;
-    toolSelectors.forEach((item) => {
-      const active = item === selector;
-      item.classList.toggle("is-active", active);
-      item.setAttribute("aria-selected", String(active));
-      item.tabIndex = active ? 0 : -1;
-    });
-    toolFeature?.classList.add("is-changing");
-    if (workbenchRoom) workbenchRoom.dataset.tool = selector.dataset.tool || "email";
-    if (state.room === 5) syncFrameTheme(5);
-    window.setTimeout(() => {
-      const isVideo = selector.dataset.type === "video";
-      toolVideo.pause();
-      toolVideo.defaultPlaybackRate = 1;
-      toolVideo.playbackRate = 1;
-      toolVideo.hidden = !isVideo;
-      toolMedia.hidden = isVideo;
-      if (toolPlay) toolPlay.hidden = !isVideo;
-
-      if (isVideo) {
-        toolVideo.poster = selector.dataset.poster || "";
-        toolVideo.setAttribute("aria-label", selector.dataset.alt || `${selector.dataset.title || "Utility"} demo`);
-        toolVideo.replaceChildren();
-        if (selector.dataset.webm) {
-          const source = document.createElement("source");
-          source.src = selector.dataset.webm;
-          source.type = "video/webm";
-          toolVideo.append(source);
-        }
-        if (selector.dataset.mp4) {
-          const source = document.createElement("source");
-          source.src = selector.dataset.mp4;
-          source.type = "video/mp4";
-          toolVideo.append(source);
-        }
-        toolVideo.load();
-        if (state.room === 5 && toolVideo.dataset.userPaused !== "true" && !reduceMotion.matches && !state.motionPaused && !document.hidden) toolVideo.play().catch(() => {});
-      } else {
-        toolMedia.src = selector.dataset.media || selector.dataset.poster || "";
-        toolMedia.alt = selector.dataset.alt || `${selector.dataset.title || "Utility"} demo`;
-      }
-      if (toolIndex) toolIndex.textContent = selector.dataset.index || "";
-      if (toolTitle) toolTitle.textContent = selector.dataset.title || "";
-      if (toolDescription) toolDescription.textContent = selector.dataset.description || "";
-      if (toolPlatform) toolPlatform.textContent = selector.dataset.platform || "";
-      const process = (selector.dataset.process || "").split("|");
-      toolSteps.forEach((step, index) => { step.textContent = process[index] || ""; });
-      if (toolMediaLabel) toolMediaLabel.textContent = selector.dataset.mediaLabel || "PROJECT DEMO";
-      if (toolLink) toolLink.href = selector.dataset.repo || "#";
-      if (workbenchPanel && selector.id) workbenchPanel.setAttribute("aria-labelledby", selector.id);
-      toolFeature?.classList.remove("is-changing");
-      syncVideoPlayback();
-    }, reduceMotion.matches ? 0 : 130);
-    if (focus) selector.focus();
-  }
-
-  toolSelectors.forEach((selector) => {
-    selector.addEventListener("click", () => setTool(selector));
-    selector.addEventListener("keydown", (event) => {
-      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
-      event.preventDefault();
-      const direction = event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 1;
-      const next = event.key === "Home"
-        ? toolSelectors[0]
-        : event.key === "End"
-          ? toolSelectors.at(-1)
-          : toolSelectors[(toolSelectors.indexOf(selector) + direction + toolSelectors.length) % toolSelectors.length];
-      setTool(next, true);
-    });
-  });
-
   document.querySelectorAll("[data-video-toggle]").forEach((button) => {
     const video = button.parentElement?.querySelector("video");
     if (!(button instanceof HTMLButtonElement) || !(video instanceof HTMLVideoElement)) return;
@@ -519,6 +435,7 @@
   }, { passive: true });
 
   document.addEventListener("visibilitychange", syncVideoPlayback);
+  window.addEventListener("museum:mediarefresh", refreshComponentMedia);
   window.addEventListener("popstate", () => goToRoom(getRoomFromHash(), { updateHash: false, forceAnnounce: true, focusHeading: true, resetScroll: true }));
 
   document.querySelectorAll("img").forEach((image) => {
