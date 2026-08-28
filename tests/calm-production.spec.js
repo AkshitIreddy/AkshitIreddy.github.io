@@ -4,7 +4,6 @@ const rooms = ['foyer', 'alcove', 'pet', 'keyscape', 'archive', 'workbench'];
 const roomIndex = Object.fromEntries(rooms.map((room, index) => [room, index]));
 const expectedStylesheets = [
   'styles/museum.css',
-  'styles/premium/archive.css',
   'styles/calm.css',
 ];
 const expectedScripts = [

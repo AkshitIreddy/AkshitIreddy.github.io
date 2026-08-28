@@ -417,6 +417,40 @@
 #keyscape .media-play--feature { display:none!important; }
 
 /* Earlier experiments ---------------------------------------------------- */
+.room--archive[data-archive-project="cupcake"] { background-color:#dbc6cf; }
+.archive-cabinet-demo {
+  --room-ink:#151722;
+  --room-accent:#8071df;
+  --archive-indicator:color-mix(in srgb,var(--room-accent) 85%,var(--room-ink));
+  --archive-accent-text:color-mix(in srgb,var(--room-accent) 60%,var(--room-ink));
+  position:relative;
+  display:grid;
+  align-items:center;
+  min-width:0;
+  color:var(--room-ink);
+  transition:color 420ms ease;
+}
+.archive-cabinet-demo[data-archive-project="tutorial"] { --room-ink:#292016;--room-accent:#b07b20; }
+.archive-cabinet-demo[data-archive-project="cupcake"] { --room-ink:#2e1724;--room-accent:#c74976; }
+.archive-view { min-width:0; }
+.archive-view__film { margin:0; }
+.archive-view__bezel { position:relative; }
+.archive-view video { display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#050607;border:1px solid rgba(255,255,255,.38); }
+.film-control { position:absolute;z-index:4;display:grid;place-items:center;cursor:pointer;font:800 .75rem/1 "IBM Plex Mono",monospace;text-transform:uppercase;transition:transform 180ms ease,background-color 180ms ease; }
+.film-control:hover { transform:translateY(-2px); }
+.film-control:active { transform:translateY(1px); }
+.archive-view__caption { display:grid;align-items:start; }
+.archive-view__caption p,.archive-view__caption h3 { margin:0; }
+.archive-view__kicker { margin-bottom:7px!important;color:var(--archive-accent-text);font:800 12px/1.2 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase; }
+.archive-view__caption h3 { max-width:16ch;font:720 clamp(1.5rem,2vw,2rem)/.98 "Fraunces",Georgia,serif;letter-spacing:-.04em; }
+.archive-view__caption>p { color:color-mix(in srgb,var(--room-ink) 72%,transparent);font-family:"IBM Plex Mono",monospace;font-weight:500; }
+.archive-view__caption a { align-self:end;min-width:108px;color:var(--room-ink);font:800 12px/1.2 "IBM Plex Mono",monospace;text-decoration:none;text-transform:uppercase; }
+.archive-cabinet { position:relative;z-index:3;align-self:center;min-width:0; }
+.cabinet-object { width:100%;min-width:0;text-align:left;cursor:pointer; }
+.cabinet-object__label small { font-family:"IBM Plex Mono",monospace;font-weight:700;letter-spacing:.045em;text-transform:uppercase; }
+.cabinet-object__label strong { align-self:end;font:700 1.06rem/.98 "Fraunces",Georgia,serif; }
+.cabinet-object__label em { align-self:end;margin:0;color:#654e28;font:normal 700 .75rem/1.2 "IBM Plex Mono",monospace; }
+.cabinet-status { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0; }
 .room--archive .room-texture--archive,.room--archive .archive-cable,
 .archive-cabinet-demo .archive-atmosphere,.archive-view__environment,
 .archive-cabinet__crown,.cabinet-object__niche,.archive-cabinet__footer { display:none!important; }
@@ -457,9 +491,9 @@
 .cabinet-object:first-child .cabinet-object__label { border-top:0; }
 .cabinet-object__label small { grid-column:1 / -1;color:color-mix(in srgb,var(--room-ink) 72%,transparent);font-size:.75rem;line-height:1.35; }
 .cabinet-object__label strong { font-size:1.06rem; }.cabinet-object__label em { font-size:.75rem; }.cabinet-object__label i { display:none!important; }
-.cabinet-object.is-active { border-left-color:var(--room-accent); }
+.cabinet-object.is-active { border-left-color:var(--archive-indicator); }
 .cabinet-object.is-active .cabinet-object__label { background:color-mix(in srgb,var(--room-accent) 8%,transparent); }
-.cabinet-object:focus-visible { outline:2px solid var(--room-accent);outline-offset:2px;box-shadow:none; }
+.cabinet-object:focus-visible { outline:2px solid var(--archive-indicator);outline-offset:2px;box-shadow:0 0 0 6px var(--room-ink)!important; }
 
 /* Useful things ---------------------------------------------------------- */
 .room--workbench .room-texture--workbench,.room--workbench .workbench-desk,
@@ -640,6 +674,8 @@
   .room--pet .demo-window,.room--pet .video-control { transition:none!important; }
   .alcove-library *,.alcove-library *::before,.alcove-library *::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
   .alcove-spine[aria-selected="true"] { filter:brightness(1.18); }
+  .archive-cabinet-demo,.archive-cabinet-demo *,.archive-cabinet-demo *::before,.archive-cabinet-demo *::after { scroll-behavior:auto!important;transition-duration:.001ms!important; }
+  .film-control:hover,.film-control:active { transform:none; }
 }
 
 @media (prefers-contrast:more) {
@@ -647,12 +683,20 @@
   .room--pet .demo-viewport { border-color:#fff;box-shadow:none; }
   .room--pet .demo-window__chrome p,.room--pet .demo-resolution,.room--pet .demo-window figcaption,.room--pet .demo-window figcaption a { color:#fff; }
   .room--pet .video-control { color:#02060b;background:#fff;border:2px solid #fff;backdrop-filter:none; }
+  .archive-cabinet-demo { --archive-indicator:var(--room-ink);--archive-accent-text:var(--room-ink); }
+  .archive-star-note,.archive-view__caption>p,.cabinet-object__label small { color:var(--room-ink); }
+  .cabinet-object__label { border-top-color:var(--room-ink); }
+  .cabinet-object.is-active .cabinet-object__label { background:transparent; }
 }
 
 @media (forced-colors:active) {
   .alcove-library { forced-color-adjust:auto; }
   .alcove-bookplate,.alcove-folio__recess,.alcove-working-shelf,.alcove-field-note__leaf,.alcove-spine { border:2px solid CanvasText!important; }
   .alcove-spine[aria-selected="true"] { outline:4px solid Highlight!important;outline-offset:2px; }
+  .archive-view__bezel,.archive-view video,.archive-view__caption a,.film-control { border-color:CanvasText; }
+  .film-control { color:ButtonText;background:ButtonFace; }
+  .cabinet-object.is-active { border-left-color:Highlight; }
+  .cabinet-object:focus-visible { outline-color:Highlight; }
 }
 
 @media (min-width:1200px) and (min-height:720px) {
