@@ -11,39 +11,11 @@
   const title = root.querySelector("[data-cabinet-title]");
   const kicker = root.querySelector("[data-cabinet-kicker]");
   const description = root.querySelector("[data-cabinet-description]");
-  const counter = root.querySelector("[data-cabinet-counter]");
   const sourceLink = root.querySelector("[data-cabinet-link]");
   const status = root.querySelector("[data-cabinet-status]");
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const museumRoom = root.closest(".room--archive");
   const museumShell = root.closest(".museum-shell");
-
-  const editorial = {
-    npc: {
-      kicker: "Context + voice + memory",
-      description: "Shared-world context, voice, and memory let game characters carry a conversation beyond a single prompt.",
-      label: "Context, voice + memory",
-    },
-    tutorial: {
-      kicker: "Topic to narrated lesson",
-      description: "A generative pipeline turns one topic into a planned, narrated visual lesson, then produces its presenter and slides.",
-      label: "Topic to narrated lesson",
-    },
-    cupcake: {
-      kicker: "Tools, memory, emotions, and dreams",
-      description: "An early agent combines tools, persistent memory, emotions, spontaneous thoughts, and dreams—and makes those internal states visible.",
-      label: "Tools, memory, emotions + dreams",
-    },
-  };
-
-  for (const tab of tabs) {
-    const copy = editorial[tab.dataset.project];
-    if (!copy) continue;
-    tab.dataset.kicker = copy.kicker;
-    tab.dataset.description = copy.description;
-    const label = tab.querySelector(".cabinet-object__label small");
-    if (label) label.textContent = copy.label;
-  }
 
   if (!(panel instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
 
@@ -103,7 +75,6 @@
     if (title) title.textContent = tab.dataset.title || "";
     if (kicker) kicker.textContent = tab.dataset.kicker || "";
     if (description) description.textContent = tab.dataset.description || "";
-    if (counter) counter.textContent = tab.dataset.counter || "";
     if (sourceLink instanceof HTMLAnchorElement) sourceLink.href = tab.dataset.repo || "#";
     if (!alreadySelected) replaceVideoSources(tab);
     if (focus) tab.focus();

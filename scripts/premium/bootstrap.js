@@ -42,46 +42,12 @@
     sync();
   };
 
-  const setupToolCopy = () => {
-    const copy = {
-      email: {
-        label: "Newsletter briefings",
-        description: "Email Briefing clusters and deduplicates newsletter stories into topic dashboards, then adds current web context and imagery to make one inbox readable at a glance.",
-      },
-      gifsmith: {
-        label: "Product demo capture",
-        description: "Describe browser actions, timing, cursor motion, and the loop anchor in a declarative timeline. Gifsmith runs the real interface and exports GIF, WebP, or video.",
-      },
-      compendium: {
-        label: "Cited technique search",
-        description: "Describe a technical problem in plain English, search curated knowledge packs for relevant techniques, and open the cited source material behind each result.",
-      },
-      transparency: {
-        label: "Windows display controls",
-      },
-    };
-
-    for (const tab of document.querySelectorAll(".tool-selector[data-tool]")) {
-      const entry = copy[tab.dataset.tool];
-      if (!entry) continue;
-      const label = tab.querySelector(".instrument-tab__label small");
-      if (label) label.textContent = entry.label;
-      if (entry.description) tab.dataset.description = entry.description;
-      if (tab.getAttribute("aria-selected") === "true" && entry.description) {
-        const description = document.querySelector("[data-tool-description]");
-        if (description) description.textContent = entry.description;
-      }
-    }
-  };
-
   const start = () => {
-    setupToolCopy();
     setupKeyscapeDemo();
     if (!window.LocalizedMotion || window.__portfolioLocalizedMotion) return;
     window.__portfolioLocalizedMotion = window.LocalizedMotion.create({
       root: ".museum-stage",
       lineSelector: "[data-calm-motion]",
-      fixtureSelector: "[data-calm-fixture]",
     });
   };
 

@@ -437,7 +437,7 @@
 }
 .cabinet-object:first-child .cabinet-object__label { border-top:0; }
 .cabinet-object__label small { grid-column:1 / -1;color:color-mix(in srgb,var(--room-ink) 72%,transparent);font-size:.75rem;line-height:1.35; }
-.cabinet-object__label strong { font-size:1.06rem; }.cabinet-object__label em { font-size:.75rem; }.cabinet-object__label i { display:none; }
+.cabinet-object__label strong { font-size:1.06rem; }.cabinet-object__label em { font-size:.75rem; }
 .cabinet-object.is-active { border-left-color:var(--archive-indicator); }
 .cabinet-object.is-active .cabinet-object__label { background:color-mix(in srgb,var(--room-accent) 8%,transparent); }
 .cabinet-object:focus-visible { outline:2px solid var(--archive-indicator);outline-offset:2px;box-shadow:0 0 0 6px var(--room-ink); }
