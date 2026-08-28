@@ -187,21 +187,38 @@
 
           <section class="room room--alcove" id="alcove" aria-labelledby="alcove-title">
             <div class="room-texture room-texture--alcove" aria-hidden="true"></div>
-            <div class="edge-shelf edge-shelf--left" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <div class="edge-shelf edge-shelf--right" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             <div class="room-canvas room-canvas--alcove">
               <header class="exhibit-copy exhibit-copy--alcove">
                 <p class="eyebrow"><span>01 · recent habitat</span> / 2026</p><h2 id="alcove-title" tabindex="-1">Alcove</h2>
-                <p class="project-story">A local-first notebook built like a shelf of storybooks—not a stack of files. Pages turn, covers become places, and your writing stays entirely on your machine.</p>
-                <ul class="project-facts" aria-label="Alcove details"><li>local-first</li><li>Rust + Tauri</li><li>page physics</li><li>private by default</li></ul>
+                <p class="project-story">A local-first notebook built like a shelf of storybooks—not a stack of files. Pages turn, covers become places, and the library never leaves your machine. One tool in the rail is optional: an AI agent that answers questions and drafts pages for your review.</p>
+                <ul class="project-facts" aria-label="Alcove details"><li>local-first</li><li>Rust + Tauri</li><li>page physics</li><li>optional AI agent</li><li>no account</li></ul>
               </header>
               <figure class="media-exhibit alcove-specimen">
-                <div class="museum-window museum-window--alcove specimen-window--alcove"><img data-motion-src="public/media/features/alcove-full.webp" data-still-src="public/media/features/alcove-poster.webp" alt="Alcove's full storybook notebook and bookshelf demo, shown without cropping" width="900" height="562" /><span class="window-label"><i></i> complete README demo · continuous loop</span></div>
-                <figcaption><span><b>In motion:</b> the complete README recording—shelves respond, pages turn, and notebooks become little worlds.</span><a class="repo-link" href="https://github.com/AkshitIreddy/Alcove" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
+                <div class="museum-window museum-window--alcove specimen-window--alcove"><video muted loop playsinline preload="none" data-poster="public/media/features/alcove-tour-poster.webp" aria-label="Alcove guided tour: the Welcome book opens from the shelf, two pages turn, then the library, studios, catalogue and optional AI agent" data-room-video><source data-src="public/media/features/alcove-tour.webm" type="video/webm" /><source data-src="public/media/features/alcove-tour.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play Alcove demo"><span aria-hidden="true">▶</span></button><span class="window-label"><i></i> the guided tour · rendered, not recorded</span></div>
+                <figcaption><span><b>In motion:</b> the real app, frame by frame—the Welcome book opens, two pages turn, then the full tour: shelves, studios, catalogue, diagrams, and the optional agent drafting pages for review.</span><a class="repo-link" href="https://github.com/AkshitIreddy/Alcove" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
               <aside class="alcove-notes" aria-label="Alcove field notes">
-                <p class="scribble-card">made to feel<br /><b>kept, not stored</b></p><p class="scribble-card">interaction as<br /><b>bookbinding</b></p>
-                <div class="interactive-action"><button type="button" class="exhibit-button" data-disturb-books>Disturb the shelves <span aria-hidden="true">↝</span></button><p class="interaction-cue"><i aria-hidden="true"></i> Try the room</p></div>
+                <div class="agent-card">
+                  <p class="agent-card__label">catalogue card · the optional agent</p>
+                  <p class="agent-card__body">One optional tool in the book's left rail, run with your own Cohere key. Ask a question and get an answer; ask for pages and they are drafted away from your book, rendered as real Alcove pages and checked before you see them. The draft stays a preview until you choose <b>Insert</b>—and every other book stays local.</p>
+                  <span class="agent-card__stamp" aria-hidden="true">optional</span>
+                </div>
+                <div class="alcove-shelf-row">
+                  <div class="alcove-shelf">
+                    <span class="alcove-shelf__spines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                    <button type="button" class="alcove-book" data-open-book aria-expanded="false" aria-label="Pull the Welcome book off the shelf and open it">
+                      <span class="alcove-book__block">
+                        <span class="alcove-book__page"><b>Welcome</b><i aria-hidden="true"></i><em>the tour in the frame starts on this very book</em></span>
+                        <span class="alcove-book__leaf">
+                          <span class="alcove-book__cover"><b>Alcove</b><i>the welcome book</i></span>
+                          <span class="alcove-book__endpaper" aria-hidden="true"></span>
+                        </span>
+                      </span>
+                    </button>
+                    <span class="alcove-shelf__plank" aria-hidden="true"></span>
+                  </div>
+                  <p class="interaction-cue"><i aria-hidden="true"></i> Pull the book</p>
+                </div>
               </aside>
             </div>
             <button class="doorway doorway--left" type="button" data-room-target="0"><i aria-hidden="true">←</i><span>Start</span></button>

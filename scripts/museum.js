@@ -42,7 +42,7 @@
 
   const frameColors = {
     foyer: "#f4ead4",
-    alcove: "#f4d6dd",
+    alcove: "#ede1c6",
     pet: "#efd8cc",
     keyscape: "#111722",
     "archive-npc": "#ded9ef",
@@ -499,22 +499,15 @@
 
   /* Room-specific behaviors */
 
-  const disturbButton = document.querySelector("[data-disturb-books]");
-  const shelves = [...document.querySelectorAll(".edge-shelf")];
-  disturbButton?.setAttribute("aria-pressed", "false");
-  let shelfTimer = 0;
-  disturbButton?.addEventListener("click", () => {
-    const disturbed = !shelves.some((shelf) => shelf.classList.contains("is-disturbed"));
-    shelves.forEach((shelf) => shelf.classList.toggle("is-disturbed", disturbed));
-    disturbButton.firstChild.textContent = disturbed ? "Let the shelves settle " : "Disturb the shelves ";
-    disturbButton.setAttribute("aria-pressed", String(disturbed));
-    announceReaction(disturbed ? "The Alcove shelves are moving." : "The Alcove shelves have settled.");
-    window.clearTimeout(shelfTimer);
-    if (disturbed && !reduceMotion.matches) shelfTimer = window.setTimeout(() => {
-      shelves.forEach((shelf) => shelf.classList.remove("is-disturbed"));
-      disturbButton.firstChild.textContent = "Disturb the shelves ";
-      disturbButton.setAttribute("aria-pressed", "false");
-    }, 4000);
+  const alcoveBook = document.querySelector("[data-open-book]");
+  alcoveBook?.setAttribute("aria-expanded", "false");
+  alcoveBook?.addEventListener("click", () => {
+    const open = !alcoveBook.classList.contains("is-open");
+    alcoveBook.classList.toggle("is-open", open);
+    alcoveBook.setAttribute("aria-expanded", String(open));
+    announceReaction(open
+      ? "The Welcome book slides off the shelf and opens on its first ruled page."
+      : "The Welcome book closes and slides back onto the shelf.");
   });
 
   const petRoom = document.querySelector(".room--pet");
