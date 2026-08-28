@@ -176,6 +176,43 @@
 .museum-shell[data-frame="foyer"] { --frame-surface:#dce8e5;--frame-ink:#102927;--frame-accent:#b5443c;--frame-secondary:#f2cc75; }
 
 /* Alcove ----------------------------------------------------------------- */
+.alcove-library {
+  --alcove-brass:#c3a15d;
+  --alcove-ease-out:cubic-bezier(.18,.82,.24,1);
+  --alcove-ease-home:cubic-bezier(.22,.72,.2,1);
+  position:relative;
+  isolation:isolate;
+}
+.alcove-library :is(a,button) { touch-action:manipulation;-webkit-tap-highlight-color:rgba(195,161,93,.28); }
+.alcove-cabinet { position:relative; }
+.alcove-bookplate,.alcove-folio,.alcove-working-shelf,.alcove-field-note { position:relative;z-index:2;min-width:0; }
+.alcove-bookplate__index { display:flex;align-items:baseline;gap:8px;margin:0 0 15px;font-family:"IBM Plex Mono",monospace;font-weight:600;line-height:1.2;letter-spacing:.09em;text-transform:uppercase; }
+.alcove-bookplate__index span { display:inline-grid;place-items:center;letter-spacing:0; }
+.alcove-bookplate__index i { margin-left:auto;color:#52645d;font-style:normal; }
+.alcove-bookplate h2 { font-family:"Fraunces",Georgia,serif;font-weight:720;font-variation-settings:"opsz" 120,"SOFT" 35,"WONK" 1;letter-spacing:-.075em;text-wrap:balance;scroll-margin-top:96px; }
+.alcove-bookplate__thesis { padding-top:18px;border-top:1px solid rgba(109,32,52,.34);text-wrap:pretty; }
+.alcove-source { align-items:center;gap:13px;min-height:46px;font-family:"IBM Plex Mono",monospace;font-weight:600;line-height:1;letter-spacing:.08em;text-decoration:none;text-transform:uppercase;transition:transform 180ms var(--alcove-ease-out); }
+.alcove-source i { display:grid;place-items:center;font-style:normal; }
+.alcove-source:focus-visible { outline:3px solid var(--alcove-brass);outline-offset:5px; }
+.alcove-folio__recess { position:relative;z-index:2; }
+.alcove-folio figcaption b { color:#fff8e9; }
+.alcove-working-shelf__label { display:flex;align-items:baseline;justify-content:space-between;gap:18px;font-family:"IBM Plex Mono",monospace;font-weight:600;line-height:1.2;letter-spacing:.08em;text-transform:uppercase; }
+.alcove-working-shelf__label p { margin:0; }
+.alcove-spines { position:relative;z-index:2; }
+.alcove-spine { position:relative;overflow:visible;cursor:pointer;transform-origin:50% 100%;transition:transform 240ms var(--alcove-ease-home); }
+.alcove-spine b { letter-spacing:.035em; }
+.alcove-spine:active { transform:translateY(-2px) scaleY(.985); }
+.alcove-spine[aria-selected="true"] { z-index:3;transition-timing-function:var(--alcove-ease-out); }
+.alcove-spine:focus-visible { outline:3px solid var(--alcove-brass);outline-offset:4px; }
+.alcove-field-note__leaf { position:relative;align-self:center;transform:translateX(-1px); }
+.alcove-field-note__leaf h3 { max-width:22ch;font-family:"Fraunces",Georgia,serif;font-weight:700;font-variation-settings:"opsz" 56,"SOFT" 30; }
+.alcove-field-note__leaf [role="tabpanel"]>p { font-weight:540; }
+.alcove-field-note__leaf footer { padding-top:10px;border-top:1px solid rgba(109,32,52,.28);font-family:"IBM Plex Mono",monospace;font-weight:600;line-height:1.45;letter-spacing:.035em; }
+.alcove-field-note__leaf [role="tabpanel"][hidden] { display:none!important; }
+.alcove-field-note__leaf [role="tabpanel"]:not([hidden]) { animation:alcove-slip-change 360ms var(--alcove-ease-out) both; }
+.alcove-field-note__leaf [role="tabpanel"]:not([hidden])>* { animation:alcove-ink-resolve 300ms 55ms ease both; }
+@keyframes alcove-slip-change { 0%{opacity:.68;transform:translateX(-1px)}46%{opacity:.88;transform:translateX(5px)}100%{opacity:1;transform:translateX(-1px)} }
+@keyframes alcove-ink-resolve { 0%{opacity:.68;transform:translateY(1px)}100%{opacity:1;transform:translateY(0)} }
 .room--alcove.alcove-premium-room { background:#173c37; }
 .alcove-library { min-height:100%;overflow:visible;color:#f2ead7;background:#173c37;font-family:"DM Sans",sans-serif; }
 .alcove-library__wall,.alcove-library__pilaster,.alcove-cabinet__cornice,
@@ -548,6 +585,9 @@
   .foyer--premium .room-canvas--foyer { min-height:calc(100dvh - var(--header-h) - var(--map-h));padding:42px 28px; }
   .foyer--premium .foyer-copy h1 { font-size:clamp(3.8rem,8.4vw,5.4rem); }
   .alcove-cabinet { grid-template-columns:minmax(230px,.72fr) minmax(420px,1.28fr);gap:26px;width:calc(100% - 56px);padding-top:46px; }
+  .alcove-working-shelf { margin-bottom:22px; }
+  .alcove-spines { justify-content:center; }
+  .alcove-field-note { margin-right:6px; }
 }
 
 @media (max-width:760px) {
@@ -574,6 +614,9 @@
   .alcove-spines { width:100%; }
   .alcove-spine { flex:1;padding-inline:7px; }
   .alcove-field-note { order:4;width:100%; }
+  .alcove-working-shelf { margin:0 1px 20px; }
+  .alcove-field-note { margin:0 3px 0 1px; }
+  .alcove-spine:active { transform:translateX(2px) scaleX(.99); }
   .museum-map { overflow:hidden;padding-inline:4px; }
   .museum-map ol { display:grid;width:100%;min-width:100%;grid-template-columns:repeat(6,minmax(0,1fr));gap:0; }
   .museum-map li { min-width:0; }
@@ -595,6 +638,8 @@
   .room * { scroll-behavior:auto!important; }
   .moving-word { translate:0!important;rotate:0!important; }
   .room--pet .demo-window,.room--pet .video-control { transition:none!important; }
+  .alcove-library *,.alcove-library *::before,.alcove-library *::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
+  .alcove-spine[aria-selected="true"] { filter:brightness(1.18); }
 }
 
 @media (prefers-contrast:more) {
@@ -602,6 +647,16 @@
   .room--pet .demo-viewport { border-color:#fff;box-shadow:none; }
   .room--pet .demo-window__chrome p,.room--pet .demo-resolution,.room--pet .demo-window figcaption,.room--pet .demo-window figcaption a { color:#fff; }
   .room--pet .video-control { color:#02060b;background:#fff;border:2px solid #fff;backdrop-filter:none; }
+}
+
+@media (forced-colors:active) {
+  .alcove-library { forced-color-adjust:auto; }
+  .alcove-bookplate,.alcove-folio__recess,.alcove-working-shelf,.alcove-field-note__leaf,.alcove-spine { border:2px solid CanvasText!important; }
+  .alcove-spine[aria-selected="true"] { outline:4px solid Highlight!important;outline-offset:2px; }
+}
+
+@media (min-width:1200px) and (min-height:720px) {
+  .alcove-library { height:100%; }
 }
 
 /* Legibility floor: no interface or supporting copy depends on microtype. */
