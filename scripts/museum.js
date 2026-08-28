@@ -674,6 +674,9 @@
   const archiveLink = document.querySelector("[data-archive-link]");
   const archiveCounter = document.querySelector("[data-archive-counter]");
   const archivePanel = document.querySelector("#archive-panel");
+  const archiveStars = document.querySelector("[data-archive-stars]");
+  const archiveStamp = document.querySelector("[data-archive-stamp]");
+  let archiveStampTimer = 0;
 
   function syncArchivePlayButton(video = archiveVideo) {
     if (!(video instanceof HTMLVideoElement) || !archivePlay) return;
@@ -697,8 +700,17 @@
     if (archiveDescription) archiveDescription.textContent = tab.dataset.description || "";
     if (archiveLink) archiveLink.href = tab.dataset.repo || "#";
     if (archiveCounter) archiveCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(archiveTabs.length).padStart(2, "0")} · README FILM`;
+    if (archiveStars) archiveStars.textContent = `★ ${tab.dataset.stars || "0"}`;
+    if (archiveStamp) archiveStamp.textContent = `No. ${String(index + 1).padStart(2, "0")}`;
     if (archivePanel && tab.id) archivePanel.setAttribute("aria-labelledby", tab.id);
-    if (archiveRoom) archiveRoom.dataset.archiveProject = tab.dataset.archiveProject || "npc";
+    if (archiveRoom) {
+      archiveRoom.dataset.archiveProject = tab.dataset.archiveProject || "npc";
+      archiveRoom.classList.remove("is-stamping");
+      void archiveRoom.offsetWidth;
+      archiveRoom.classList.add("is-stamping");
+      window.clearTimeout(archiveStampTimer);
+      archiveStampTimer = window.setTimeout(() => archiveRoom.classList.remove("is-stamping"), reduceMotion.matches ? 30 : 650);
+    }
     if (state.room === 4) syncFrameTheme(4);
 
     archiveVideo.pause();
@@ -768,7 +780,9 @@
   const toolDescription = document.querySelector("[data-tool-description]");
   const toolLink = document.querySelector("[data-tool-link]");
   const toolPlay = document.querySelector("[data-tool-play]");
+  const toolStars = document.querySelector("[data-tool-stars]");
   const workbenchPanel = document.querySelector("#workbench-panel");
+  let workbenchStampTimer = 0;
 
   function setTool(selector, focus = false) {
     if (!(selector instanceof HTMLButtonElement) || !(toolMedia instanceof HTMLImageElement) || !(toolVideo instanceof HTMLVideoElement)) return;
@@ -779,7 +793,14 @@
       item.tabIndex = active ? 0 : -1;
     });
     toolFeature?.classList.add("is-changing");
-    if (workbenchRoom) workbenchRoom.dataset.tool = selector.dataset.tool || "email";
+    if (workbenchRoom) {
+      workbenchRoom.dataset.tool = selector.dataset.tool || "email";
+      workbenchRoom.classList.remove("is-stamping");
+      void workbenchRoom.offsetWidth;
+      workbenchRoom.classList.add("is-stamping");
+      window.clearTimeout(workbenchStampTimer);
+      workbenchStampTimer = window.setTimeout(() => workbenchRoom.classList.remove("is-stamping"), reduceMotion.matches ? 30 : 650);
+    }
     if (state.room === 5) syncFrameTheme(5);
     window.setTimeout(() => {
       const isVideo = selector.dataset.type === "video";
@@ -815,6 +836,7 @@
       if (toolIndex) toolIndex.textContent = selector.dataset.index || "";
       if (toolTitle) toolTitle.textContent = selector.dataset.title || "";
       if (toolDescription) toolDescription.textContent = selector.dataset.description || "";
+      if (toolStars) toolStars.textContent = `★ ${selector.dataset.stars || "0"}`;
       if (toolLink) toolLink.href = selector.dataset.repo || "#";
       if (workbenchPanel && selector.id) workbenchPanel.setAttribute("aria-labelledby", selector.id);
       toolFeature?.classList.remove("is-changing");
