@@ -45,7 +45,7 @@ async function waitForRoomSettled(page, index) {
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
-  const outRoot = path.resolve('qa/production-final');
+  const outRoot = path.resolve(process.env.PORTFOLIO_OUTPUT || 'qa/production-final');
   fs.mkdirSync(outRoot, { recursive: true });
   const errors = [];
 
@@ -96,9 +96,9 @@ async function waitForRoomSettled(page, index) {
   };
 
   await captureInteraction('guide-greeting', 'foyer', async () => page.locator('[data-guide-button]').click());
-  await captureInteraction('alcove-disturbed', 'alcove', async () => page.locator('[data-disturb-books]').click());
+  await captureInteraction('alcove-annotated', 'alcove', async () => page.locator('[data-alcove-notes]').click());
   await captureInteraction('pet-called', 'pet', async () => page.locator('[data-call-pet]').click());
-  await captureInteraction('keyscape-gold', 'keyscape', async () => page.locator('[data-light-key="gold"]').click());
+  await captureInteraction('keyscape-physics', 'keyscape', async () => page.locator('[data-light-key="physics"]').click());
   await captureInteraction('archive-cupcake', 'archive', async () => page.locator('[data-archive-project="cupcake"]').click());
   await captureInteraction('workbench-gifsmith', 'workbench', async () => page.locator('[data-tool="gifsmith"]').click());
   await captureInteraction('workbench-transparency', 'workbench', async () => page.locator('[data-tool="transparency"]').click());

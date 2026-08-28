@@ -39,9 +39,11 @@ async function waitForRoomSettled(page, index) {
 test.describe('Software in Motion production contract', () => {
   test('the root URL is the selected Software in Motion experience', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle('Akshit Ireddy');
+    await expect(page).toHaveTitle('Akshit — Built to Move');
     await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', 'public/favicon-aperture.svg');
+    await expect(page.locator('link[rel="icon"][sizes="16x16"]')).toHaveAttribute('href', 'public/favicon-aperture-16.png');
     await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', 'public/favicon-aperture-32.png');
+    await expect(page.locator('link[rel="icon"][sizes="48x48"]')).toHaveAttribute('href', 'public/favicon-aperture-48.png');
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'public/favicon-aperture-180.png');
     await expect(page.locator('link[rel="mask-icon"]')).toHaveAttribute('href', 'public/favicon-aperture-mask.svg');
     await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', 'public/site.webmanifest');
@@ -75,6 +77,9 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('.quiet-toggle')).toHaveCount(0);
     await expect(page.locator('.masthead-exhibit img')).toHaveCount(0);
     await expect(page.locator('.museum-map button')).toHaveCount(6);
+    await expect(page.locator('.museum-map__object')).toHaveCount(6);
+    await expect(page.locator('.museum-map__courier')).toHaveCount(1);
+    await expect(page.locator('[data-motion-toggle]')).toBeVisible();
   });
 
   test('all public-facing branding and navigation use the new language', async ({ page }) => {
@@ -173,7 +178,7 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('.kinetic-guide svg > .guide-sparks')).toHaveCount(1);
 
     const speech = await page.locator('.guide-speech').boundingBox();
-    await expect(page.locator('.guide-speech')).toHaveCSS('pointer-events', 'none');
+    await expect(page.locator('.guide-speech')).toHaveCSS('pointer-events', 'auto');
     const face = await page.locator('.guide-face').boundingBox();
     const ears = await page.locator('.guide-ear').all();
     const dots = await page.locator('.guide-speech-trail i').all();
@@ -184,6 +189,9 @@ test.describe('Software in Motion production contract', () => {
       expect(overlapArea(dotBox, face)).toBe(0);
       for (const ear of ears) expect(overlapArea(dotBox, await ear.boundingBox())).toBe(0);
     }
+    const firstNote = await page.locator('[data-guide-message]').textContent();
+    await page.locator('[data-guide-speech-button]').click();
+    await expect(page.locator('[data-guide-message]')).not.toHaveText(firstNote);
     expect(Math.min(speech.x, page.viewportSize().width - speech.x - speech.width)).toBeGreaterThanOrEqual(10);
 
     await page.mouse.move(speech.x + 10, speech.y + speech.height / 2);
@@ -207,12 +215,29 @@ test.describe('Software in Motion production contract', () => {
     }
   });
 
+  test('the foyer index is a working three-way shortcut and its orbit paths are closed loops', async ({ page }) => {
+    await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+    const shortcuts = page.locator('.foyer-index button');
+    await expect(shortcuts).toHaveCount(3);
+    if (page.viewportSize().width > 900) {
+      await shortcuts.nth(1).click();
+      await expect(page.locator('.museum-shell')).toHaveAttribute('data-current-room', '4');
+    } else {
+      await expect(shortcuts.first()).toBeHidden();
+    }
+    await page.goto('/#foyer');
+    for (const path of await page.locator('.foyer-motion-field__path, #guide-orbit-b, #guide-orbit-c').all()) {
+      expect((await path.getAttribute('d')).trim().endsWith('Z')).toBe(true);
+    }
+    await expect(page.locator('.foyer-motion-field')).toHaveCSS('overflow', 'visible');
+  });
+
   test('Alcove notes never cover its uncropped demo', async ({ page }) => {
     for (const viewport of viewports) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
       const specimen = page.locator('.specimen-window--alcove');
-      const notes = page.locator('.alcove-notes');
+      const notes = page.locator('.alcove-ledger');
       await expect(specimen).toBeVisible();
       await expect(notes).toBeVisible();
       const [specimenBox, notesBox, objectFit] = await Promise.all([
@@ -232,10 +257,13 @@ test.describe('Software in Motion production contract', () => {
     await expect.poll(() => alcoveImage.evaluate((image) => image.complete && image.naturalWidth)).toBeGreaterThan(0);
     await expect(alcoveImage).toHaveAttribute('src', 'public/media/features/alcove-full.webp');
     await expect(alcoveImage).toHaveCSS('object-fit', 'contain');
+    const expectedVideoSizes = { pet: { width: 1920, height: 1080 }, keyscape: { width: 2080, height: 1302 } };
     for (const room of ['pet', 'keyscape']) {
       await page.goto(`/#${room}`, { waitUntil: 'domcontentloaded' });
-      await expectVideoReady(page.locator(`#${room} [data-room-video]`));
-      await expect(page.locator(`#${room} [data-room-video]`)).toHaveCSS('object-fit', 'contain');
+      const video = page.locator(`#${room} [data-room-video]`);
+      await expectVideoReady(video);
+      await expect(video).toHaveCSS('object-fit', 'contain');
+      expect(await video.evaluate((element) => ({ width: element.videoWidth, height: element.videoHeight }))).toEqual(expectedVideoSizes[room]);
     }
   });
 
@@ -244,7 +272,7 @@ test.describe('Software in Motion production contract', () => {
     const image = page.locator('#alcove [data-motion-src]');
     await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth)).toBeGreaterThan(0);
     const dimensions = await image.evaluate((element) => ({ width: element.naturalWidth, height: element.naturalHeight }));
-    expect(dimensions).toEqual({ width: 900, height: 562 });
+    expect(dimensions).toEqual({ width: 1200, height: 750 });
     const first = await image.screenshot();
     await expect.poll(async () => (await image.screenshot()).equals(first), { timeout: 8_000, intervals: [800, 1_200, 1_800] }).toBe(false);
     await expect(image).toHaveAttribute('src', 'public/media/features/alcove-full.webp');
@@ -328,17 +356,18 @@ test.describe('Software in Motion production contract', () => {
     await page.locator('[data-guide-button]').click();
     await expect(page.locator('[data-guide]')).toHaveClass(/is-greeting/);
     await page.goto('/#alcove');
-    await page.locator('[data-disturb-books]').click();
-    await expect(page.locator('.edge-shelf').first()).toHaveClass(/is-disturbed/);
+    await page.locator('[data-alcove-notes]').click();
+    await expect(page.locator('#alcove')).toHaveClass(/is-annotated/);
+    await expect(page.locator('.alcove-demo-notes li').first()).toBeVisible();
     await page.goto('/#pet');
     await page.locator('[data-call-pet]').click();
     await expect(page.locator('#pet')).toHaveClass(/is-called/);
     await page.goto('/#keyscape');
-    await page.locator('[data-light-key="gold"]').click();
-    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'gold');
+    await page.locator('[data-light-key="physics"]').click();
+    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'physics');
   });
 
-  test('archive exposes stars and switches among three real README films', async ({ page }) => {
+  test('archive exposes stars and switches among three project-specific demos', async ({ page }) => {
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
     const tabs = page.locator('.archive-project-tab');
     await expect(tabs).toHaveCount(3);
@@ -354,7 +383,41 @@ test.describe('Software in Motion production contract', () => {
       await expectVideoReady(page.locator('[data-archive-video]'));
       await expect.poll(() => page.locator('[data-archive-video]').evaluate((video) => video.duration)).toBeGreaterThan(30);
       await expect(page.locator('[data-archive-counter]')).toContainText(`0${index + 1} / 03`);
+      await expect(page.locator('[data-archive-counter]')).not.toContainText(/README/i);
+      await expect(page.locator('[data-archive-tech]')).not.toBeEmpty();
     }
+  });
+
+  test('archive and tool selectors carry authored diagrams with legible metadata', async ({ page }) => {
+    await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.archive-card-art')).toHaveCount(3);
+    for (const star of await page.locator('.archive-project-tab > em').all()) {
+      const size = Number.parseFloat(await star.evaluate((element) => getComputedStyle(element).fontSize));
+      expect(size).toBeGreaterThanOrEqual(9);
+    }
+    await page.goto('/#workbench', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.tool-card-art')).toHaveCount(4);
+  });
+
+  test('supporting project type stays readable and Alcove names its AI agent', async ({ page }) => {
+    await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.project-facts')).toContainText('AI library agent');
+    const ledgerSize = Number.parseFloat(await page.locator('.alcove-ledger__entry p').first().evaluate((element) => getComputedStyle(element).fontSize));
+    expect(ledgerSize).toBeGreaterThanOrEqual(10);
+    await page.goto('/#keyscape');
+    await expect(page.locator('.museum-shell')).toHaveAttribute('data-frame', 'keyscape');
+    await page.waitForTimeout(500);
+    const signalSize = Number.parseFloat(await page.locator('.keyscape-signal-flow small').first().evaluate((element) => getComputedStyle(element).fontSize));
+    expect(signalSize).toBeGreaterThanOrEqual(8);
+    const declaredMapColor = await page.evaluate(() => {
+      for (const sheet of document.styleSheets) {
+        for (const rule of [...sheet.cssRules]) {
+          if (rule.selectorText === '.museum-shell[data-frame="keyscape"] .museum-map') return rule.style.backgroundColor;
+        }
+      }
+      return '';
+    });
+    expect(declaredMapColor).toBe('rgb(18, 26, 44)');
   });
 
   test('the tutorial and every browser video stay at normal 1x playback', async ({ page }) => {
@@ -401,7 +464,7 @@ test.describe('Software in Motion production contract', () => {
     expect(tutorialAccent).not.toBe(npcAccent);
     await expect(archive).toHaveAttribute('data-archive-project', 'tutorial');
     await expect(page.locator('.museum-shell')).toHaveAttribute('data-frame', 'archive-tutorial');
-    await expect(page).toHaveTitle('Projects · Akshit');
+    await expect(page).toHaveTitle('Projects · Built to Move');
 
     await page.goto('/#workbench');
     const workbench = page.locator('#workbench');
@@ -411,12 +474,13 @@ test.describe('Software in Motion production contract', () => {
     expect(gifsmithAccent).not.toBe(emailAccent);
     await expect(workbench).toHaveAttribute('data-tool', 'gifsmith');
     await expect(page.locator('.museum-shell')).toHaveAttribute('data-frame', 'workbench-gifsmith');
-    await expect(page).toHaveTitle('Tools · Akshit');
+    await expect(page).toHaveTitle('Tools · Built to Move');
   });
 
   test('the masthead and map inherit every room material, including a compact mobile room label', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
     const frameSurfaces = [];
+    const mapColors = [];
     for (let index = 0; index < rooms.length; index += 1) {
       await page.locator(`.museum-map [data-room-target="${index}"]`).click();
       await expect(page.locator('.museum-shell')).toHaveAttribute('data-current-room', String(index));
@@ -425,10 +489,13 @@ test.describe('Software in Motion production contract', () => {
         page.locator('.museum-masthead').evaluate((element) => getComputedStyle(element).backgroundColor),
         page.locator('.museum-map').evaluate((element) => getComputedStyle(element).backgroundColor),
       ]);
-      expect(mapColor).toBe(mastheadColor);
+      expect(mapColor).not.toBe('rgba(0, 0, 0, 0)');
+      expect(mastheadColor).not.toBe('rgba(0, 0, 0, 0)');
+      mapColors.push(mapColor);
       frameSurfaces.push(await page.locator('.museum-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--frame-surface').trim()));
     }
     expect(new Set(frameSurfaces).size).toBe(rooms.length);
+    expect(new Set(mapColors).size).toBeGreaterThanOrEqual(4);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/#keyscape');
@@ -539,17 +606,45 @@ test.describe('Software in Motion production contract', () => {
 
   test('Keyscape lights respond to native Enter and Space activation', async ({ page }) => {
     await page.goto('/#keyscape', { waitUntil: 'domcontentloaded' });
-    const gold = page.locator('[data-light-key="gold"]');
-    await gold.focus();
+    const organic = page.locator('[data-light-key="organic"]');
+    await organic.focus();
     await page.keyboard.press('Enter');
-    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'gold');
-    await expect(gold).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'organic');
+    await expect(organic).toHaveAttribute('aria-pressed', 'true');
 
-    const coral = page.locator('[data-light-key="coral"]');
-    await coral.focus();
+    const typing = page.locator('[data-light-key="typing"]');
+    await typing.focus();
     await page.keyboard.press('Space');
-    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'coral');
-    await expect(coral).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'typing');
+    await expect(typing).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.keyscape-keyboard i')).toHaveCount(24);
+  });
+
+  test('global motion control pauses and resumes ambient systems', async ({ page }) => {
+    await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+    const toggle = page.locator('[data-motion-toggle]');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('.museum-shell')).toHaveClass(/is-motion-paused/);
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('.museum-shell')).not.toHaveClass(/is-motion-paused/);
+  });
+
+  test('Alcove keeps the real 1200:750 demo plane without black side bars', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 600 });
+    await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
+    const geometry = await page.locator('.museum-window--alcove').evaluate((windowElement) => {
+      const image = windowElement.querySelector('img');
+      const host = windowElement.getBoundingClientRect();
+      const media = image.getBoundingClientRect();
+      return { hostWidth: host.width, mediaWidth: media.width, ratio: media.width / media.height, background: getComputedStyle(windowElement).backgroundColor };
+    });
+    expect(geometry.ratio).toBeCloseTo(1200 / 750, 2);
+    // The remaining width is the intentional 7px-per-side book-cloth mat and
+    // its borders, not a letterboxed media plane.
+    expect(Math.abs(geometry.hostWidth - geometry.mediaWidth)).toBeLessThan(34);
+    expect(geometry.background).not.toBe('rgb(13, 20, 22)');
   });
 
   test('reduced motion removes the arrival sequence and pauses moving media', async ({ page }) => {
