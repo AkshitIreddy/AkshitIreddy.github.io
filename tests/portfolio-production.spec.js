@@ -187,7 +187,7 @@ async function supportingTextBelow(page, minimumPx) {
   }, minimumPx);
 }
 
-test.describe('calm redesign production contract', () => {
+test.describe('portfolio production contract', () => {
   let runtimeErrors;
 
   test.beforeEach(async ({ page }) => {

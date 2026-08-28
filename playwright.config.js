@@ -2,7 +2,7 @@ const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: './tests',
-  testMatch: 'calm-production.spec.js',
+  testMatch: 'portfolio-production.spec.js',
   timeout: 30_000,
   fullyParallel: false,
   workers: 1,
