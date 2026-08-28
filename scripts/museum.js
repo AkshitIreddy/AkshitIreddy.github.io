@@ -674,7 +674,6 @@
   const archiveLink = document.querySelector("[data-archive-link]");
   const archiveCounter = document.querySelector("[data-archive-counter]");
   const archivePanel = document.querySelector("#archive-panel");
-  const archiveStars = document.querySelector("[data-archive-stars]");
   const archiveStamp = document.querySelector("[data-archive-stamp]");
   let archiveStampTimer = 0;
 
@@ -700,7 +699,6 @@
     if (archiveDescription) archiveDescription.textContent = tab.dataset.description || "";
     if (archiveLink) archiveLink.href = tab.dataset.repo || "#";
     if (archiveCounter) archiveCounter.textContent = `${String(index + 1).padStart(2, "0")} / ${String(archiveTabs.length).padStart(2, "0")} · README FILM`;
-    if (archiveStars) archiveStars.textContent = `★ ${tab.dataset.stars || "0"}`;
     if (archiveStamp) archiveStamp.textContent = `No. ${String(index + 1).padStart(2, "0")}`;
     if (archivePanel && tab.id) archivePanel.setAttribute("aria-labelledby", tab.id);
     if (archiveRoom) {
@@ -780,7 +778,6 @@
   const toolDescription = document.querySelector("[data-tool-description]");
   const toolLink = document.querySelector("[data-tool-link]");
   const toolPlay = document.querySelector("[data-tool-play]");
-  const toolStars = document.querySelector("[data-tool-stars]");
   const workbenchPanel = document.querySelector("#workbench-panel");
   let workbenchStampTimer = 0;
 
@@ -836,7 +833,6 @@
       if (toolIndex) toolIndex.textContent = selector.dataset.index || "";
       if (toolTitle) toolTitle.textContent = selector.dataset.title || "";
       if (toolDescription) toolDescription.textContent = selector.dataset.description || "";
-      if (toolStars) toolStars.textContent = `★ ${selector.dataset.stars || "0"}`;
       if (toolLink) toolLink.href = selector.dataset.repo || "#";
       if (workbenchPanel && selector.id) workbenchPanel.setAttribute("aria-labelledby", selector.id);
       toolFeature?.classList.remove("is-changing");
