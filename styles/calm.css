@@ -3,6 +3,8 @@
 
 :root { --header-h:58px;--map-h:56px; }
 
+.room:not(.is-current) * { animation-play-state:paused!important; }
+
 .ambient-canvas,.visitor,.visitor-rail,.doorway,.masthead-exhibit { display:none!important; }
 .museum-shell::before,.museum-shell::after,.museum-masthead::after { display:none!important; }
 
@@ -557,6 +559,7 @@
 }
 
 @media (prefers-reduced-motion:reduce) {
+  .room * { scroll-behavior:auto!important; }
   .moving-word { translate:0!important;rotate:0!important; }
 }
 
