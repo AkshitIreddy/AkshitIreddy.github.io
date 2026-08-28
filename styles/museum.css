@@ -1781,6 +1781,9 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   .archive-project-tab,
   .tool-selector,
   .museum-map button { min-height: 44px; }
+  .media-play { min-width: 44px; }
+  .maker-mark,
+  .exhibit-button { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
