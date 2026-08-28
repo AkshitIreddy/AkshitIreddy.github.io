@@ -256,6 +256,39 @@
 .museum-shell[data-frame="alcove"] { --frame-surface:#173c37;--frame-ink:#f2ead7;--frame-accent:#c3a15d;--frame-secondary:#91a79a; }
 
 /* AI Desktop Pet --------------------------------------------------------- */
+.pet-room {
+  position:relative;
+  isolation:isolate;
+  font-family:"DM Sans",system-ui,sans-serif;
+}
+.pet-room::before {
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  content:"";
+  pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 79px,rgba(243,239,231,.024) 80px 81px),repeating-linear-gradient(0deg,transparent 0 79px,rgba(243,239,231,.02) 80px 81px);
+}
+.pet-room__inner { position:relative;z-index:2; }
+.room-index { display:flex;align-items:center;gap:11px;margin:0 0 20px;font:600 .75rem/1.2 "IBM Plex Mono",monospace;letter-spacing:.13em;text-transform:uppercase; }
+.room-index i { width:32px;height:1px;background:linear-gradient(90deg,#62c0ce,transparent); }
+.pet-premise { font-weight:390; }
+.habitat-column,.habitat-stage { position:relative; }
+.demo-window { margin:0; }
+.demo-window__chrome { display:grid;align-items:center;gap:8px; }
+.demo-window__chrome p,.demo-resolution { margin:0;color:rgba(243,239,231,.48);font:600 .75rem/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase; }
+.demo-window__chrome p { display:flex;align-items:center; }
+.demo-viewport { position:relative;aspect-ratio:2/1;overflow:hidden;background:#250d17; }
+.demo-viewport video { display:block;width:100%;height:100%;object-fit:contain;background:#180b13; }
+.video-control { position:absolute;display:flex;align-items:center;gap:9px;cursor:pointer;transition:background-color 180ms ease,border-color 180ms ease; }
+.video-control:hover { background:rgba(24,23,45,.94);border-color:#62c0ce; }
+.video-control__icon { display:grid;place-items:center; }
+.video-control>span:last-child { font:600 .75rem/1 "IBM Plex Mono",monospace; }
+.demo-window figcaption { display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0;font:600 .75rem/1.3 "IBM Plex Mono",monospace; }
+.demo-window figcaption>span { display:flex;align-items:center;gap:7px; }
+.demo-window figcaption a { text-decoration:none; }
+.demo-window figcaption a i { color:#62c0ce;font-style:normal; }
+.pet-room button:focus-visible,.pet-room a:focus-visible { outline:3px solid #f6d272;outline-offset:4px; }
 .pet-premium-room { background:#0b1520; }
 .pet-room { min-height:100%;overflow:visible;color:#f0eee7;background:#0b1520; }
 .room-atmosphere,.habitat-backdrop,.glass-pane,.desktop-companion,.habitat-caption,
@@ -561,6 +594,14 @@
 @media (prefers-reduced-motion:reduce) {
   .room * { scroll-behavior:auto!important; }
   .moving-word { translate:0!important;rotate:0!important; }
+  .room--pet .demo-window,.room--pet .video-control { transition:none!important; }
+}
+
+@media (prefers-contrast:more) {
+  .room--pet .pet-room { color:#fff;background:#02060b; }
+  .room--pet .demo-viewport { border-color:#fff;box-shadow:none; }
+  .room--pet .demo-window__chrome p,.room--pet .demo-resolution,.room--pet .demo-window figcaption,.room--pet .demo-window figcaption a { color:#fff; }
+  .room--pet .video-control { color:#02060b;background:#fff;border:2px solid #fff;backdrop-filter:none; }
 }
 
 /* Legibility floor: no interface or supporting copy depends on microtype. */

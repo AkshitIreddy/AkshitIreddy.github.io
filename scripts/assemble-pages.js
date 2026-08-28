@@ -11,7 +11,6 @@ const siteFiles = [
   'THIRD_PARTY_NOTICES.md',
   'styles/museum.css',
   'styles/premium/alcove.css',
-  'styles/premium/pet.css',
   'styles/premium/archive.css',
   'styles/calm.css',
   'scripts/museum.js',
@@ -72,7 +71,7 @@ if (missing.length) {
 }
 
 const referencedPublicFiles = new Set();
-for (const relativePath of ['index.html', 'styles/museum.css', 'styles/premium/alcove.css', 'styles/premium/pet.css', 'styles/premium/archive.css', 'styles/calm.css', 'scripts/museum.js', 'scripts/premium/localized-motion.js', 'scripts/premium/alcove.js', 'scripts/premium/pet.js', 'scripts/premium/archive.js', 'scripts/premium/bootstrap.js']) {
+for (const relativePath of ['index.html', 'styles/museum.css', 'styles/premium/alcove.css', 'styles/premium/archive.css', 'styles/calm.css', 'scripts/museum.js', 'scripts/premium/localized-motion.js', 'scripts/premium/alcove.js', 'scripts/premium/pet.js', 'scripts/premium/archive.js', 'scripts/premium/bootstrap.js']) {
   const source = fs.readFileSync(path.join(root, relativePath), 'utf8');
   for (const match of source.matchAll(/public\/[A-Za-z0-9_./-]+/g)) referencedPublicFiles.add(match[0]);
 }
