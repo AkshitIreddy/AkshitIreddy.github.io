@@ -5,7 +5,6 @@ const roomIndex = Object.fromEntries(rooms.map((room, index) => [room, index]));
 const expectedStylesheets = [
   'styles/museum.css',
   'styles/premium/base.css',
-  'styles/premium/foyer.css',
   'styles/premium/alcove.css',
   'styles/premium/pet.css',
   'styles/premium/footer.css',
