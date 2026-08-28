@@ -64,7 +64,7 @@ test.describe('Software in Motion production contract', () => {
     const after = await thesis.boundingBox();
     expect(after.width).toBeCloseTo(before.width, 1);
     expect(after.height).toBeCloseTo(before.height, 1);
-    await expect(thesis).toHaveAttribute('aria-label', 'I make software that refuses to sit still.');
+    await expect(thesis).toHaveAttribute('aria-label', 'I make software that refuses to sit still');
   });
 
   test('the masthead carries Akshit’s identity without prototype or quiet-mode chrome', async ({ page }) => {
