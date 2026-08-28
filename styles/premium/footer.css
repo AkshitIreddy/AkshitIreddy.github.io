@@ -1,0 +1,786 @@
+/*
+ * Premium-pass prototype: room-native museum route materials.
+ * Load after styles/museum.css. No markup or script changes required.
+ */
+
+/* Semantic defaults. These deliberately do not alias --frame-ink/surface: dark
+   rooms need independent backgrounds and foregrounds for every state. */
+.museum-shell {
+  --footer-outer: #8faea7;
+  --footer-outer-pattern:
+    linear-gradient(90deg, rgba(8,38,37,.12), transparent 18%, transparent 82%, rgba(8,38,37,.12)),
+    repeating-linear-gradient(90deg, transparent 0 29px, rgba(18,59,57,.12) 30px 31px);
+  --footer-outer-size: 100% 100%, 36px 28px;
+  --footer-deck: #d2e3de;
+  --footer-deck-2: #bcd6cf;
+  --footer-deck-pattern:
+    linear-gradient(180deg, rgba(255,255,255,.34), transparent 30%),
+    repeating-linear-gradient(112deg, transparent 0 31px, rgba(18,59,57,.055) 32px 33px);
+  --footer-edge: #123b39;
+  --footer-edge-soft: #5b817a;
+  --footer-highlight: #eff7ea;
+  --footer-shadow: rgba(8,38,37,.34);
+  --footer-ink: #123b39;
+  --footer-muted: #456b65;
+  --footer-index: #a53b31;
+  --footer-hover-bg: #eaf2d2;
+  --footer-hover-ink: #123b39;
+  --footer-hover-edge: #d96a50;
+  --footer-selected-bg: #174946;
+  --footer-selected-ink: #fff4dc;
+  --footer-selected-index: #f2c953;
+  --footer-selected-edge: #f06449;
+  --footer-selected-icon: #e5b845;
+  --footer-selected-icon-stroke: #fff4dc;
+  --footer-focus: #f06449;
+  --footer-focus-gap: #fff4dc;
+  --footer-route: #3f6f68;
+  --footer-route-halo: rgba(240,100,73,.2);
+  --footer-station: #fff4dc;
+  --footer-station-edge: #123b39;
+  --footer-courier-body: #f06449;
+  --footer-courier-wing: #e5b845;
+  --footer-courier-stroke: #123b39;
+  --footer-courier-glow: rgba(240,100,73,.36);
+  --footer-icon-fill: #aed0c7;
+  --footer-icon-stroke: #173f3c;
+  --footer-icon-shadow: rgba(240,100,73,.32);
+  background-color: var(--footer-outer);
+  background-image: var(--footer-outer-pattern);
+  background-position: bottom;
+  background-size: var(--footer-outer-size);
+  background-repeat: repeat-x;
+  transition: background-color 420ms ease;
+}
+
+/* 00 — Verdigris directory enamel. */
+.museum-shell[data-frame="foyer"] {
+  --footer-outer: #8faea7;
+  --footer-deck: #d2e3de;
+  --footer-deck-2: #bcd6cf;
+  --footer-edge: #123b39;
+  --footer-edge-soft: #5b817a;
+  --footer-highlight: #eff7ea;
+  --footer-shadow: rgba(8,38,37,.34);
+  --footer-ink: #123b39;
+  --footer-muted: #456b65;
+  --footer-index: #a53b31;
+  --footer-hover-bg: #eaf2d2;
+  --footer-hover-ink: #123b39;
+  --footer-hover-edge: #d96a50;
+  --footer-selected-bg: #174946;
+  --footer-selected-ink: #fff4dc;
+  --footer-selected-index: #f2c953;
+  --footer-selected-edge: #f06449;
+  --footer-selected-icon: #e5b845;
+  --footer-selected-icon-stroke: #fff4dc;
+  --footer-focus: #f06449;
+  --footer-focus-gap: #fff4dc;
+  --footer-route: #3f6f68;
+  --footer-route-halo: rgba(240,100,73,.2);
+  --footer-courier-body: #f06449;
+  --footer-courier-wing: #e5b845;
+  --footer-courier-stroke: #123b39;
+  --footer-courier-glow: rgba(240,100,73,.36);
+  --footer-icon-fill: #aed0c7;
+  --footer-icon-stroke: #173f3c;
+  --footer-icon-shadow: rgba(240,100,73,.32);
+}
+
+/* 01 — Oxblood book cloth, parchment and muted gilt. */
+.museum-shell[data-frame="alcove"] {
+  --footer-outer: #5a2933;
+  --footer-outer-pattern: repeating-linear-gradient(112deg, transparent 0 18px, rgba(255,238,202,.055) 19px 20px);
+  --footer-outer-size: 24px 24px;
+  --footer-deck: #eadcc9;
+  --footer-deck-2: #d8c2aa;
+  --footer-deck-pattern: linear-gradient(180deg, rgba(255,250,232,.66), transparent 36%), repeating-linear-gradient(90deg, transparent 0 52px, rgba(91,36,50,.07) 53px 54px);
+  --footer-edge: #4a1825;
+  --footer-edge-soft: #9b645f;
+  --footer-highlight: #fff7e6;
+  --footer-shadow: rgba(58,16,28,.42);
+  --footer-ink: #351a20;
+  --footer-muted: #725450;
+  --footer-index: #7c1d37;
+  --footer-hover-bg: #f4e9d6;
+  --footer-hover-ink: #351a20;
+  --footer-hover-edge: #a43e50;
+  --footer-selected-bg: #681b34;
+  --footer-selected-ink: #fff4df;
+  --footer-selected-index: #e4bd63;
+  --footer-selected-edge: #d5a54d;
+  --footer-selected-icon: #d5a54d;
+  --footer-selected-icon-stroke: #fff4df;
+  --footer-focus: #b73d5a;
+  --footer-focus-gap: #fff4df;
+  --footer-route: #8b5856;
+  --footer-route-halo: rgba(213,165,77,.22);
+  --footer-courier-body: #7b1e3a;
+  --footer-courier-wing: #d5a54d;
+  --footer-courier-stroke: #351a20;
+  --footer-courier-glow: rgba(213,165,77,.35);
+  --footer-icon-fill: #ddc3ae;
+  --footer-icon-stroke: #4a2028;
+  --footer-icon-shadow: rgba(123,30,58,.3);
+}
+
+/* 02 — Warm charcoal felt, terracotta enamel and sage paint. */
+.museum-shell[data-frame="pet"] {
+  --footer-outer: #4f3a36;
+  --footer-outer-pattern: radial-gradient(ellipse at 11px 9px, rgba(234,132,91,.18) 0 2px, transparent 2.6px);
+  --footer-outer-size: 31px 21px;
+  --footer-deck: #e8cfc1;
+  --footer-deck-2: #d8b7a5;
+  --footer-deck-pattern: linear-gradient(150deg, rgba(255,246,228,.55), transparent 45%), radial-gradient(circle at 16px 14px, rgba(82,98,71,.09) 0 1.5px, transparent 2px);
+  --footer-edge: #392724;
+  --footer-edge-soft: #8f665b;
+  --footer-highlight: #fff0df;
+  --footer-shadow: rgba(49,29,25,.39);
+  --footer-ink: #302321;
+  --footer-muted: #6e554f;
+  --footer-index: #a03b2e;
+  --footer-hover-bg: #f1dfcc;
+  --footer-hover-ink: #302321;
+  --footer-hover-edge: #c9553c;
+  --footer-selected-bg: #523d38;
+  --footer-selected-ink: #fff0df;
+  --footer-selected-index: #f28c63;
+  --footer-selected-edge: #e36c49;
+  --footer-selected-icon: #9caf83;
+  --footer-selected-icon-stroke: #fff0df;
+  --footer-focus: #e36c49;
+  --footer-focus-gap: #fff0df;
+  --footer-route: #775b53;
+  --footer-route-halo: rgba(227,108,73,.22);
+  --footer-courier-body: #e36c49;
+  --footer-courier-wing: #a8b98c;
+  --footer-courier-stroke: #302321;
+  --footer-courier-glow: rgba(227,108,73,.34);
+  --footer-icon-fill: #c9aa98;
+  --footer-icon-stroke: #3c2b27;
+  --footer-icon-shadow: rgba(82,98,71,.3);
+}
+
+/* 03 — Smoked anodized glass. Every structural surface stays dark. */
+.museum-shell[data-frame="keyscape"] {
+  color-scheme: dark;
+  --footer-outer: #060914;
+  --footer-outer-pattern:
+    linear-gradient(90deg, rgba(140,121,255,.12), transparent 15%, transparent 85%, rgba(68,214,224,.1)),
+    linear-gradient(rgba(105,129,174,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(105,129,174,.08) 1px, transparent 1px);
+  --footer-outer-size: 100% 100%, 28px 28px, 28px 28px;
+  --footer-deck: #101726;
+  --footer-deck-2: #17243a;
+  --footer-deck-pattern:
+    linear-gradient(180deg, rgba(145,180,222,.09), transparent 29%),
+    radial-gradient(circle at 13px 11px, rgba(104,228,225,.16) 0 1px, transparent 1.6px);
+  --footer-edge: #60749d;
+  --footer-edge-soft: #293956;
+  --footer-highlight: #2f4666;
+  --footer-shadow: rgba(0,0,0,.68);
+  --footer-ink: #e9f1f4;
+  --footer-muted: #96a7bd;
+  --footer-index: #8eece5;
+  --footer-hover-bg: linear-gradient(135deg, #1a2740, #181c37);
+  --footer-hover-ink: #f4f8ff;
+  --footer-hover-edge: #6ee1df;
+  --footer-selected-bg: linear-gradient(135deg, #272355 0%, #18364b 54%, #0c1425 100%);
+  --footer-selected-ink: #f6f8ff;
+  --footer-selected-index: #8ff3ea;
+  --footer-selected-edge: #9b8cff;
+  --footer-selected-icon: #48d8d7;
+  --footer-selected-icon-stroke: #eefaff;
+  --footer-focus: #d9ee72;
+  --footer-focus-gap: #07101d;
+  --footer-route: #60769a;
+  --footer-route-halo: rgba(87,224,220,.25);
+  --footer-station: #8eece5;
+  --footer-station-edge: #0a101e;
+  --footer-courier-body: #d9ee72;
+  --footer-courier-wing: #8c79ff;
+  --footer-courier-stroke: #eafcff;
+  --footer-courier-glow: rgba(104,238,230,.55);
+  --footer-icon-fill: #1d3350;
+  --footer-icon-stroke: #b7c8e2;
+  --footer-icon-shadow: rgba(104,238,230,.28);
+}
+
+/* 04a — Charcoal-violet projection lacquer. */
+.museum-shell[data-frame="archive-npc"] {
+  --footer-outer: #29253d;
+  --footer-outer-pattern: radial-gradient(circle at 14px 12px, rgba(167,144,255,.18) 0 1.5px, transparent 2px);
+  --footer-outer-size: 34px 28px;
+  --footer-deck: #ded9ed;
+  --footer-deck-2: #c6bfdc;
+  --footer-deck-pattern: linear-gradient(135deg, rgba(140,121,255,.13), transparent 58%);
+  --footer-edge: #2d2941;
+  --footer-edge-soft: #70688d;
+  --footer-highlight: #f8f4ff;
+  --footer-shadow: rgba(34,29,58,.42);
+  --footer-ink: #242039;
+  --footer-muted: #5f5875;
+  --footer-index: #6757c7;
+  --footer-hover-bg: #eee8ff;
+  --footer-hover-ink: #242039;
+  --footer-hover-edge: #8c79ff;
+  --footer-selected-bg: #312b54;
+  --footer-selected-ink: #faf7ff;
+  --footer-selected-index: #8dd9e2;
+  --footer-selected-edge: #8c79ff;
+  --footer-selected-icon: #8dd9e2;
+  --footer-selected-icon-stroke: #faf7ff;
+  --footer-focus: #8c79ff;
+  --footer-focus-gap: #faf7ff;
+  --footer-route: #746b96;
+  --footer-route-halo: rgba(140,121,255,.24);
+  --footer-courier-body: #8c79ff;
+  --footer-courier-wing: #8dd9e2;
+  --footer-courier-stroke: #242039;
+  --footer-courier-glow: rgba(140,121,255,.38);
+  --footer-icon-fill: #c4bce4;
+  --footer-icon-stroke: #302b48;
+  --footer-icon-shadow: rgba(140,121,255,.3);
+}
+
+/* 04b — Sepia storyboard board and grease pencil. */
+.museum-shell[data-frame="archive-tutorial"] {
+  --footer-outer: #6b5a37;
+  --footer-outer-pattern: repeating-linear-gradient(90deg, transparent 0 27px, rgba(255,232,174,.12) 28px 29px);
+  --footer-outer-size: 29px 29px;
+  --footer-deck: #eadfbc;
+  --footer-deck-2: #d6c595;
+  --footer-deck-pattern: repeating-linear-gradient(0deg, transparent 0 17px, rgba(84,65,29,.07) 18px 19px);
+  --footer-edge: #40341f;
+  --footer-edge-soft: #8a7650;
+  --footer-highlight: #fff5d4;
+  --footer-shadow: rgba(56,42,20,.4);
+  --footer-ink: #30291d;
+  --footer-muted: #6d6044;
+  --footer-index: #a23f31;
+  --footer-hover-bg: #f5eac7;
+  --footer-hover-ink: #30291d;
+  --footer-hover-edge: #c54234;
+  --footer-selected-bg: #493c25;
+  --footer-selected-ink: #fff2c9;
+  --footer-selected-index: #efc95b;
+  --footer-selected-edge: #c54234;
+  --footer-selected-icon: #e5b845;
+  --footer-selected-icon-stroke: #fff2c9;
+  --footer-focus: #c54234;
+  --footer-focus-gap: #fff2c9;
+  --footer-route: #806f49;
+  --footer-route-halo: rgba(197,66,52,.2);
+  --footer-courier-body: #c54234;
+  --footer-courier-wing: #e5b845;
+  --footer-courier-stroke: #30291d;
+  --footer-courier-glow: rgba(229,184,69,.34);
+  --footer-icon-fill: #d2c08b;
+  --footer-icon-stroke: #463a24;
+  --footer-icon-shadow: rgba(197,66,52,.26);
+}
+
+/* 04c — Dark berry acetate with lilac reflections. */
+.museum-shell[data-frame="archive-cupcake"] {
+  --footer-outer: #4f2537;
+  --footer-outer-pattern: radial-gradient(circle at 13px 13px, rgba(244,112,149,.18) 0 3px, transparent 3.5px);
+  --footer-outer-size: 36px 31px;
+  --footer-deck: #ecd0d9;
+  --footer-deck-2: #d8b1c0;
+  --footer-deck-pattern: linear-gradient(135deg, rgba(255,255,255,.33), transparent 35%), radial-gradient(circle at 20px 16px, rgba(140,121,255,.1) 0 2px, transparent 2.5px);
+  --footer-edge: #482032;
+  --footer-edge-soft: #966177;
+  --footer-highlight: #fff0f6;
+  --footer-shadow: rgba(67,22,43,.43);
+  --footer-ink: #341b27;
+  --footer-muted: #775061;
+  --footer-index: #aa3158;
+  --footer-hover-bg: #f8e0e8;
+  --footer-hover-ink: #341b27;
+  --footer-hover-edge: #ef607f;
+  --footer-selected-bg: #572440;
+  --footer-selected-ink: #fff3f8;
+  --footer-selected-index: #d5c7ff;
+  --footer-selected-edge: #ef607f;
+  --footer-selected-icon: #a996ff;
+  --footer-selected-icon-stroke: #fff3f8;
+  --footer-focus: #ef607f;
+  --footer-focus-gap: #fff3f8;
+  --footer-route: #94617a;
+  --footer-route-halo: rgba(239,96,127,.24);
+  --footer-courier-body: #ef607f;
+  --footer-courier-wing: #8c79ff;
+  --footer-courier-stroke: #341b27;
+  --footer-courier-glow: rgba(239,96,127,.38);
+  --footer-icon-fill: #d9afc0;
+  --footer-icon-stroke: #482132;
+  --footer-icon-shadow: rgba(140,121,255,.28);
+}
+
+/* 05a — Blue-grey stamped steel. */
+.museum-shell[data-frame="workbench-email"] {
+  --footer-outer: #476a70;
+  --footer-outer-pattern: linear-gradient(35deg, transparent 47%, rgba(224,250,248,.1) 48% 50%, transparent 51%);
+  --footer-outer-size: 34px 28px;
+  --footer-deck: #cfe2e0;
+  --footer-deck-2: #b7d3d1;
+  --footer-deck-pattern: repeating-linear-gradient(90deg, transparent 0 67px, rgba(23,47,50,.08) 68px 69px);
+  --footer-edge: #173033;
+  --footer-edge-soft: #56777a;
+  --footer-highlight: #effbfa;
+  --footer-shadow: rgba(17,42,45,.4);
+  --footer-ink: #172f32;
+  --footer-muted: #4e6c70;
+  --footer-index: #287d8a;
+  --footer-hover-bg: #e2f0ed;
+  --footer-hover-ink: #172f32;
+  --footer-hover-edge: #5fbfce;
+  --footer-selected-bg: #1d474d;
+  --footer-selected-ink: #f3fffd;
+  --footer-selected-index: #89e7ea;
+  --footer-selected-edge: #5fbfce;
+  --footer-selected-icon: #7dd6df;
+  --footer-selected-icon-stroke: #f3fffd;
+  --footer-focus: #39a7b6;
+  --footer-focus-gap: #f3fffd;
+  --footer-route: #5d8285;
+  --footer-route-halo: rgba(95,191,206,.24);
+  --footer-courier-body: #5fbfce;
+  --footer-courier-wing: #78a996;
+  --footer-courier-stroke: #173033;
+  --footer-courier-glow: rgba(95,191,206,.38);
+  --footer-icon-fill: #accdca;
+  --footer-icon-stroke: #1e3e41;
+  --footer-icon-shadow: rgba(95,191,206,.28);
+}
+
+/* 05b — Film black, copper and amber leader marks. */
+.museum-shell[data-frame="workbench-gifsmith"] {
+  --footer-outer: #4b3027;
+  --footer-outer-pattern: radial-gradient(circle at 14px 12px, rgba(236,134,84,.2) 0 2px, transparent 2.5px);
+  --footer-outer-size: 32px 25px;
+  --footer-deck: #e6cfb9;
+  --footer-deck-2: #d4b395;
+  --footer-deck-pattern: repeating-linear-gradient(90deg, transparent 0 56px, rgba(65,35,26,.08) 57px 58px);
+  --footer-edge: #351f18;
+  --footer-edge-soft: #825848;
+  --footer-highlight: #fff0de;
+  --footer-shadow: rgba(50,27,18,.42);
+  --footer-ink: #301d17;
+  --footer-muted: #6f5045;
+  --footer-index: #a7442e;
+  --footer-hover-bg: #f2ddc7;
+  --footer-hover-ink: #301d17;
+  --footer-hover-edge: #f06449;
+  --footer-selected-bg: #3d2821;
+  --footer-selected-ink: #fff1df;
+  --footer-selected-index: #efc758;
+  --footer-selected-edge: #f06449;
+  --footer-selected-icon: #e5b845;
+  --footer-selected-icon-stroke: #fff1df;
+  --footer-focus: #f06449;
+  --footer-focus-gap: #fff1df;
+  --footer-route: #856153;
+  --footer-route-halo: rgba(240,100,73,.22);
+  --footer-courier-body: #f06449;
+  --footer-courier-wing: #e5b845;
+  --footer-courier-stroke: #301d17;
+  --footer-courier-glow: rgba(240,100,73,.38);
+  --footer-icon-fill: #cfae92;
+  --footer-icon-stroke: #40281f;
+  --footer-icon-shadow: rgba(229,184,69,.28);
+}
+
+/* 05c — Deep herbarium green and oxidized brass. */
+.museum-shell[data-frame="workbench-compendium"] {
+  --footer-outer: #3c5b51;
+  --footer-outer-pattern: repeating-linear-gradient(0deg, transparent 0 15px, rgba(227,221,163,.09) 16px 17px);
+  --footer-outer-size: 28px 17px;
+  --footer-deck: #d5dac2;
+  --footer-deck-2: #bbc5a4;
+  --footer-deck-pattern: linear-gradient(120deg, rgba(255,255,231,.34), transparent 44%), repeating-linear-gradient(0deg, transparent 0 18px, rgba(45,80,66,.07) 19px 20px);
+  --footer-edge: #17362f;
+  --footer-edge-soft: #5b766b;
+  --footer-highlight: #f4f6dc;
+  --footer-shadow: rgba(18,49,40,.4);
+  --footer-ink: #17362f;
+  --footer-muted: #526b61;
+  --footer-index: #356b5d;
+  --footer-hover-bg: #e7e9ca;
+  --footer-hover-ink: #17362f;
+  --footer-hover-edge: #b49332;
+  --footer-selected-bg: #244a40;
+  --footer-selected-ink: #f7f3d6;
+  --footer-selected-index: #e7cb66;
+  --footer-selected-edge: #c0a143;
+  --footer-selected-icon: #d0b34d;
+  --footer-selected-icon-stroke: #f7f3d6;
+  --footer-focus: #d0b34d;
+  --footer-focus-gap: #f7f3d6;
+  --footer-route: #66877a;
+  --footer-route-halo: rgba(208,179,77,.22);
+  --footer-courier-body: #d0b34d;
+  --footer-courier-wing: #72a490;
+  --footer-courier-stroke: #17362f;
+  --footer-courier-glow: rgba(208,179,77,.36);
+  --footer-icon-fill: #b5c3a2;
+  --footer-icon-stroke: #21473d;
+  --footer-icon-shadow: rgba(208,179,77,.27);
+}
+
+/* 05d — Smoked violet glass and an icy blue edge light. */
+.museum-shell[data-frame="workbench-transparency"] {
+  --footer-outer: #3a3652;
+  --footer-outer-pattern: linear-gradient(120deg, transparent 0 45%, rgba(157,145,220,.12) 46% 47%, transparent 48%);
+  --footer-outer-size: 38px 31px;
+  --footer-deck: #d9d6e8;
+  --footer-deck-2: #c3bfd8;
+  --footer-deck-pattern: linear-gradient(150deg, rgba(255,255,255,.37), transparent 42%), repeating-linear-gradient(90deg, transparent 0 61px, rgba(52,47,81,.07) 62px 63px);
+  --footer-edge: #29263f;
+  --footer-edge-soft: #706b91;
+  --footer-highlight: #f9f6ff;
+  --footer-shadow: rgba(32,29,55,.42);
+  --footer-ink: #24213a;
+  --footer-muted: #605b7b;
+  --footer-index: #6658bf;
+  --footer-hover-bg: #ebe8fa;
+  --footer-hover-ink: #24213a;
+  --footer-hover-edge: #8c79ff;
+  --footer-selected-bg: #302b50;
+  --footer-selected-ink: #f8f6ff;
+  --footer-selected-index: #9be9f0;
+  --footer-selected-edge: #8c79ff;
+  --footer-selected-icon: #8dd9e2;
+  --footer-selected-icon-stroke: #f8f6ff;
+  --footer-focus: #8c79ff;
+  --footer-focus-gap: #f8f6ff;
+  --footer-route: #77719b;
+  --footer-route-halo: rgba(141,217,226,.24);
+  --footer-courier-body: #8dd9e2;
+  --footer-courier-wing: #8c79ff;
+  --footer-courier-stroke: #24213a;
+  --footer-courier-glow: rgba(141,217,226,.4);
+  --footer-icon-fill: #beb8d7;
+  --footer-icon-stroke: #302c49;
+  --footer-icon-shadow: rgba(141,217,226,.28);
+}
+
+/* Installed deck: a restrained edge stack replaces the generic offset card. */
+.museum-map {
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--footer-ink);
+  background-color: var(--footer-deck);
+  background-image: var(--footer-deck-pattern), linear-gradient(135deg, var(--footer-deck), var(--footer-deck-2));
+  background-size: auto, 100% 100%;
+  border: 1px solid var(--footer-edge);
+  border-radius: 9px 13px 8px 11px;
+  box-shadow:
+    0 0 0 1px var(--footer-edge-soft),
+    0 7px 0 var(--footer-edge),
+    0 13px 28px var(--footer-shadow),
+    inset 0 1px 0 var(--footer-highlight),
+    inset 0 -1px 0 var(--footer-edge-soft);
+  backdrop-filter: blur(15px) saturate(1.08);
+  transition: color 360ms ease, background-color 360ms ease, border-color 360ms ease, box-shadow 360ms ease;
+}
+
+.museum-map::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 3%, var(--footer-selected-edge) 9%, transparent 17% 64%, var(--footer-route-halo) 78%, transparent 94%),
+    linear-gradient(180deg, var(--footer-highlight), transparent 2px);
+  border: 0;
+  border-radius: inherit;
+  clip-path: none;
+  opacity: .42;
+  transform: none;
+}
+
+.museum-map__you,
+.museum-map ol { position: relative; z-index: 2; }
+
+.museum-map__you { color: var(--footer-muted); }
+.museum-map__you i {
+  background: var(--footer-courier-body);
+  border-color: var(--footer-courier-stroke);
+  box-shadow: 0 0 0 3px var(--footer-courier-glow);
+}
+
+/* Etched route and independent courier material. */
+.museum-map { --route-ink: var(--footer-route); }
+.museum-map__route > path {
+  stroke: var(--footer-route);
+  stroke-width: 1.75;
+  stroke-dasharray: 1 3.7;
+  filter: drop-shadow(0 1px 0 var(--footer-route-halo));
+}
+.museum-map__courier circle {
+  fill: var(--footer-courier-body);
+  stroke: var(--footer-courier-stroke);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 5px var(--footer-courier-glow));
+}
+.museum-map__courier > path {
+  fill: var(--footer-courier-wing);
+  stroke: var(--footer-courier-stroke);
+  stroke-width: 1.25;
+  filter: drop-shadow(0 0 3px var(--footer-courier-glow));
+}
+
+/* Stations are quiet at rest. Richness comes from material, not perpetual bobbing. */
+.museum-map li { position: relative; }
+.museum-map li + li::before {
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: -5px;
+  z-index: 1;
+  width: 1px;
+  content: "";
+  background: linear-gradient(transparent, var(--footer-edge-soft), transparent);
+  opacity: .48;
+}
+
+.museum-map button {
+  color: var(--footer-ink);
+  background: color-mix(in srgb, var(--footer-deck) 72%, transparent);
+  border: 1px solid transparent;
+  border-radius: 5px 8px 5px 7px;
+  box-shadow: inset 0 0 0 0 transparent;
+  transform: none;
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 150ms cubic-bezier(.2,.8,.2,1);
+}
+
+.museum-map button > span { color: var(--footer-index); }
+.museum-map button > b { color: inherit; }
+.museum-map button > i {
+  background: var(--footer-station);
+  border-color: var(--footer-station-edge);
+}
+
+.museum-map__object,
+.museum-map [data-room-target] .museum-map__object {
+  fill: var(--footer-icon-fill);
+  stroke: var(--footer-icon-stroke);
+  stroke-width: 1.65;
+  animation: none;
+  filter: none;
+  transform: none;
+  transition: fill 150ms ease, stroke 150ms ease, filter 150ms ease, transform 180ms cubic-bezier(.2,.8,.2,1);
+}
+
+.museum-map button:hover {
+  color: var(--footer-hover-ink);
+  background: var(--footer-hover-bg);
+  border-color: var(--footer-hover-edge);
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--footer-hover-edge) 58%, transparent);
+  transform: translateY(-1px);
+}
+.museum-map button:hover .museum-map__object {
+  fill: color-mix(in srgb, var(--footer-icon-fill) 72%, var(--footer-hover-edge));
+  stroke: var(--footer-hover-ink);
+  filter: drop-shadow(1px 2px 0 var(--footer-icon-shadow));
+  transform: translateY(-2px) rotate(-1deg);
+}
+
+.museum-map button[aria-current="step"] {
+  color: var(--footer-selected-ink);
+  background: var(--footer-selected-bg);
+  border-color: var(--footer-selected-edge);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--footer-selected-edge) 52%, transparent),
+    inset 0 -3px 0 color-mix(in srgb, var(--footer-selected-edge) 76%, transparent),
+    0 2px 0 var(--footer-shadow);
+  transform: none;
+}
+.museum-map button[aria-current="step"] > span { color: var(--footer-selected-index); }
+.museum-map button[aria-current="step"] > i {
+  background: var(--footer-selected-icon);
+  border-color: var(--footer-selected-icon-stroke);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--footer-selected-edge) 24%, transparent);
+}
+.museum-map button[aria-current="step"] .museum-map__object {
+  fill: var(--footer-selected-icon);
+  stroke: var(--footer-selected-icon-stroke);
+  filter: drop-shadow(1px 2px 0 color-mix(in srgb, var(--footer-selected-edge) 52%, transparent));
+  transform: translateY(-1px);
+}
+.museum-map button[aria-current="step"]:hover {
+  color: var(--footer-selected-ink);
+  background: var(--footer-selected-bg);
+  border-color: var(--footer-selected-edge);
+  transform: translateY(-1px);
+}
+
+.museum-map button:focus-visible {
+  outline: 2px solid var(--footer-focus) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--footer-focus-gap), inset 0 -2px 0 var(--footer-focus) !important;
+  transform: none;
+}
+
+/* Keyscape hard guard: no light semantic can become a structural background. */
+.museum-shell[data-frame="keyscape"] .museum-map {
+  background-color: var(--footer-deck);
+  border-color: var(--footer-edge);
+  box-shadow:
+    0 0 0 1px #263755,
+    0 7px 0 #080d19,
+    0 13px 32px rgba(0,0,0,.72),
+    inset 0 1px 0 #324a6e,
+    inset 0 -1px 0 #293956;
+}
+.museum-shell[data-frame="keyscape"] .museum-map button:not([aria-current="step"]) {
+  background-color: rgba(10,18,31,.52);
+}
+
+/* Compact desktop/tablet. */
+@media (max-width: 1180px) and (min-width: 901px) {
+  .museum-map {
+    right: 16px;
+    bottom: 10px;
+    left: 16px;
+    gap: 8px;
+    padding: 8px 10px;
+    box-shadow:
+      0 0 0 1px var(--footer-edge-soft),
+      0 5px 0 var(--footer-edge),
+      0 10px 22px var(--footer-shadow),
+      inset 0 1px 0 var(--footer-highlight);
+  }
+  .museum-map ol { gap: 6px; }
+  .museum-map button { grid-template-columns: auto 26px minmax(0,1fr); gap: 4px; padding-inline: 5px; }
+  .museum-map__object { width: 26px; height: 21px; }
+  .museum-map__route { opacity: .72; }
+}
+
+/* Narrow tablet: preserve stations, remove the route diagram competing beneath. */
+@media (max-width: 900px) and (min-width: 761px) {
+  .museum-map {
+    right: 12px;
+    bottom: 9px;
+    left: 12px;
+    padding: 7px 8px;
+  }
+  .museum-map__route,
+  .museum-map__courier { display: none; }
+  .museum-map ol { gap: 4px; }
+  .museum-map li + li::before { left: -2px; }
+  .museum-map button { grid-template-columns: auto 23px minmax(0,1fr); gap: 3px; }
+  .museum-map__object { width: 23px; height: 18px; }
+}
+
+/* Phone: a room-native dock, not a pale card floating over a foreign mat. */
+@media (max-width: 760px) {
+  .museum-shell {
+    background-size: var(--footer-outer-size);
+  }
+  .museum-map {
+    right: 7px;
+    bottom: 7px;
+    left: 7px;
+    min-height: calc(var(--map-h) - 12px);
+    padding: 5px;
+    border-radius: 7px 9px 7px 8px;
+    box-shadow:
+      0 0 0 1px var(--footer-edge-soft),
+      0 3px 0 var(--footer-edge),
+      0 7px 14px var(--footer-shadow),
+      inset 0 1px 0 var(--footer-highlight);
+    backdrop-filter: blur(11px) saturate(1.05);
+  }
+  .museum-map::before { opacity: .3; }
+  .museum-map__route,
+  .museum-map__courier { display: none; }
+  .museum-map ol { gap: 2px; }
+  .museum-map li + li::before { top: 22%; bottom: 22%; left: -1px; opacity: .34; }
+  .museum-map button {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    place-items: center;
+    gap: 0;
+    min-height: 48px;
+    padding: 3px 1px 4px;
+    text-align: center;
+  }
+  .museum-map button > span { font-size: .46rem; line-height: 1; }
+  .museum-map button > b {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: .43rem;
+    line-height: 1.02;
+    text-overflow: clip;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .museum-map__object { width: 22px; height: 17px; }
+  .museum-map button:hover { transform: none; }
+  .museum-map button:hover .museum-map__object { transform: translateY(-1px); }
+  .museum-map button[aria-current="step"] {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--footer-selected-edge) 52%, transparent),
+      inset 0 -2px 0 var(--footer-selected-edge);
+  }
+  .museum-map button:focus-visible {
+    outline-width: 2px !important;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 3px var(--footer-focus-gap), inset 0 -2px 0 var(--footer-focus) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .museum-map { right: 6px; bottom: 6px; left: 6px; padding-inline: 4px; }
+  .museum-map button > span { font-size: .43rem; }
+  .museum-map button > b { font-size: .38rem; letter-spacing: .015em; }
+  .museum-map__object { width: 20px; height: 15px; }
+}
+
+@media (max-width: 340px) {
+  .museum-map button { min-height: 45px; }
+  .museum-map button > span { font-size: .4rem; }
+  .museum-map button > b { font-size: .35rem; }
+  .museum-map__object { width: 18px; height: 14px; }
+}
+
+@media (max-height: 700px) and (min-width: 761px) {
+  .museum-map { bottom: 8px; min-height: 60px; padding-block: 6px; }
+  .museum-map button { min-height: 45px; padding-block: 3px; }
+  .museum-map__object { height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .museum-shell,
+  .museum-map,
+  .museum-map button,
+  .museum-map__object { transition: none; }
+  .museum-map__courier { display: none; }
+  .museum-map [data-room-target] .museum-map__object { animation: none !important; transform: none; }
+}
+
+/* The new Desktop Pet room is nocturnal glass rather than the earlier peach
+   paper study, so its route deck follows the habitat instead of Alcove. */
+.museum-shell[data-frame="pet"] {
+  --footer-outer:#050914;
+  --footer-outer-pattern:linear-gradient(90deg,rgba(98,192,206,.11),transparent 18%,transparent 82%,rgba(229,138,99,.1)),radial-gradient(circle at 14px 12px,rgba(183,165,255,.13) 0 1.4px,transparent 2px);
+  --footer-outer-size:100% 100%,32px 27px;
+  --footer-deck:#111827;--footer-deck-2:#1a2032;
+  --footer-deck-pattern:linear-gradient(180deg,rgba(255,255,255,.055),transparent 31%),repeating-linear-gradient(90deg,transparent 0 55px,rgba(98,192,206,.055) 56px 57px);
+  --footer-edge:#455775;--footer-edge-soft:#283752;--footer-highlight:#293753;--footer-shadow:rgba(0,0,0,.68);
+  --footer-ink:#f3efe7;--footer-muted:#9ba7b8;--footer-index:#62c0ce;
+  --footer-hover-bg:linear-gradient(135deg,#202941,#251d31);--footer-hover-ink:#fff7ee;--footer-hover-edge:#e58a63;
+  --footer-selected-bg:linear-gradient(135deg,#322138,#172f40);--footer-selected-ink:#fff7ee;--footer-selected-index:#d9ea89;--footer-selected-edge:#e58a63;
+  --footer-selected-icon:#62c0ce;--footer-selected-icon-stroke:#f3efe7;--footer-focus:#d9ea89;--footer-focus-gap:#09111d;
+  --footer-route:#5c708e;--footer-route-halo:rgba(98,192,206,.23);--footer-station:#d9ea89;--footer-station-edge:#09111d;
+  --footer-courier-body:#e58a63;--footer-courier-wing:#b7a5ff;--footer-courier-stroke:#f3efe7;--footer-courier-glow:rgba(98,192,206,.42);
+  --footer-icon-fill:#1d3048;--footer-icon-stroke:#b9c7da;--footer-icon-shadow:rgba(229,138,99,.28);
+}
+
+@media print {
+  .museum-shell { background: transparent; }
+}

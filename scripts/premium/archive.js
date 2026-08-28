@@ -11,6 +11,7 @@
   const title = root.querySelector("[data-cabinet-title]");
   const kicker = root.querySelector("[data-cabinet-kicker]");
   const description = root.querySelector("[data-cabinet-description]");
+  const counter = root.querySelector("[data-cabinet-counter]");
   const sourceLink = root.querySelector("[data-cabinet-link]");
   const status = root.querySelector("[data-cabinet-status]");
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -75,6 +76,7 @@
     if (title) title.textContent = tab.dataset.title || "";
     if (kicker) kicker.textContent = tab.dataset.kicker || "";
     if (description) description.textContent = tab.dataset.description || "";
+    if (counter) counter.textContent = tab.dataset.counter || "";
     if (sourceLink instanceof HTMLAnchorElement) sourceLink.href = tab.dataset.repo || "#";
     if (!alreadySelected) replaceVideoSources(tab);
     if (focus) tab.focus();
