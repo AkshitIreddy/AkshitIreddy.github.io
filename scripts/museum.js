@@ -591,35 +591,75 @@
     announceReaction("The desktop pet comes running.");
   });
 
-  const keyscapeRoom = document.querySelector(".room--keyscape");
-  const lightKeys = [...document.querySelectorAll("[data-light-key]")];
-  const keyboardKeys = ["a", "s", "d", "f"];
-  const keyboardLights = ["violet", "cyan", "gold", "coral"];
-  let lightTimer = 0;
-  lightKeys.forEach((button) => button.setAttribute("aria-pressed", "false"));
+  /* Keyscape: one keypress, propagated. The demo window is the instrument;
+     the wave leaves its center and reaches every surface with distance-based
+     delay and physical falloff, the way a ripple crosses a keyboard. */
 
-  function playLight(light, button) {
-    if (!keyscapeRoom) return;
-    keyscapeRoom.dataset.light = light;
-    lightKeys.forEach((item) => item.classList.toggle("is-lit", item === button));
-    lightKeys.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-    announceReaction(`${light[0].toUpperCase()}${light.slice(1)} light activated.`);
-    window.clearTimeout(lightTimer);
-    lightTimer = window.setTimeout(() => {
-      keyscapeRoom.removeAttribute("data-light");
-      lightKeys.forEach((item) => item.classList.remove("is-lit"));
-      lightKeys.forEach((item) => item.setAttribute("aria-pressed", "false"));
-    }, reduceMotion.matches ? 220 : 850);
+  const keyscapeRoom = document.querySelector(".room--keyscape");
+  const rippleButton = document.querySelector("[data-play-ripple]");
+  const RIPPLE_SPEED = 1.35; // px per ms — matches the wavefront ring's expansion
+  const RIPPLE_FALLOFF = 560; // px at which the amplitude has halved
+  let rippleTimer = 0;
+
+  function playRipple() {
+    if (!keyscapeRoom || !rippleButton || state.room !== 3) return;
+    const still = reduceMotion.matches;
+    const originEl = keyscapeRoom.querySelector(".museum-window--keyscape");
+    const roomRect = keyscapeRoom.getBoundingClientRect();
+    const originRect = originEl?.getBoundingClientRect();
+    const origin = originRect
+      ? { x: originRect.left + originRect.width / 2, y: originRect.top + originRect.height / 2 }
+      : { x: roomRect.left + roomRect.width / 2, y: roomRect.top + roomRect.height / 2 };
+
+    const targets = [
+      originEl,
+      keyscapeRoom.querySelector(".exhibit-copy--keyscape h2"),
+      keyscapeRoom.querySelector(".exhibit-copy--keyscape .eyebrow span"),
+      ...keyscapeRoom.querySelectorAll(".exhibit-copy--keyscape .project-facts li"),
+      rippleButton,
+      ...keyscapeRoom.querySelectorAll(".doorway"),
+      ...keyscapeRoom.querySelectorAll(".keyscape-stars i"),
+      ...keyscapeRoom.querySelectorAll(".keyscape-beam"),
+      document.querySelector(".museum-map"),
+    ].filter(Boolean);
+
+    let maxDelay = 0;
+    targets.forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      const distance = Math.hypot(rect.left + rect.width / 2 - origin.x, rect.top + rect.height / 2 - origin.y);
+      const delay = still ? 0 : distance / RIPPLE_SPEED;
+      const amplitude = 1 / (1 + Math.pow(distance / RIPPLE_FALLOFF, 1.7));
+      maxDelay = Math.max(maxDelay, delay);
+      element.style.setProperty("--wave-delay", `${delay.toFixed(0)}ms`);
+      element.style.setProperty("--wave-amp", amplitude.toFixed(3));
+    });
+
+    keyscapeRoom.style.setProperty("--wave-x", `${(origin.x - roomRect.left).toFixed(0)}px`);
+    keyscapeRoom.style.setProperty("--wave-y", `${(origin.y - roomRect.top).toFixed(0)}px`);
+
+    window.clearTimeout(rippleTimer);
+    shell.classList.remove("is-rippling");
+    keyscapeRoom.classList.remove("is-rippling");
+    void keyscapeRoom.offsetWidth;
+    shell.classList.add("is-rippling");
+    keyscapeRoom.classList.add("is-rippling");
+    rippleButton.setAttribute("aria-pressed", "true");
+    announceReaction("A ripple leaves the keyboard and rolls across the room.");
+
+    rippleTimer = window.setTimeout(() => {
+      shell.classList.remove("is-rippling");
+      keyscapeRoom.classList.remove("is-rippling");
+      rippleButton.setAttribute("aria-pressed", "false");
+    }, still ? 700 : maxDelay + 1500);
   }
 
-  lightKeys.forEach((button) => button.addEventListener("click", () => playLight(button.dataset.lightKey, button)));
+  rippleButton?.addEventListener("click", playRipple);
 
   document.addEventListener("keydown", (event) => {
     if (state.room !== 3 || event.repeat || shouldIgnoreGlobalKey(event)) return;
-    const index = keyboardKeys.indexOf(event.key.toLowerCase());
-    if (index === -1) return;
+    if (event.key.toLowerCase() !== "r") return;
     event.preventDefault();
-    playLight(keyboardLights[index], lightKeys[index]);
+    playRipple();
   });
 
   /* Archive: one real README-derived film at a time. */

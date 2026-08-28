@@ -281,7 +281,7 @@ test.describe('Software in Motion production contract', () => {
 
   test('interactive focus uses a two-colour ring while room headings stay unframed', async ({ page }) => {
     await page.goto('/#keyscape', { waitUntil: 'domcontentloaded' });
-    const key = page.locator('[data-light-key]').first();
+    const key = page.locator('[data-play-ripple]');
     await key.focus();
     await expect(key).toHaveCSS('outline-style', 'solid');
     await expect.poll(() => key.evaluate((element) => getComputedStyle(element).boxShadow)).toContain('6px');
@@ -334,8 +334,8 @@ test.describe('Software in Motion production contract', () => {
     await page.locator('[data-call-pet]').click();
     await expect(page.locator('#pet')).toHaveClass(/is-called/);
     await page.goto('/#keyscape');
-    await page.locator('[data-light-key="gold"]').click();
-    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'gold');
+    await page.locator('[data-play-ripple]').click();
+    await expect(page.locator('#keyscape')).toHaveClass(/is-rippling/);
   });
 
   test('archive exposes stars and switches among three real README films', async ({ page }) => {
@@ -537,19 +537,20 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('.museum-shell')).toHaveAttribute('data-current-room', '5');
   });
 
-  test('Keyscape lights respond to native Enter and Space activation', async ({ page }) => {
+  test('Keyscape ripple responds to native Enter and Space activation', async ({ page }) => {
     await page.goto('/#keyscape', { waitUntil: 'domcontentloaded' });
-    const gold = page.locator('[data-light-key="gold"]');
-    await gold.focus();
+    const ripple = page.locator('[data-play-ripple]');
+    await ripple.focus();
     await page.keyboard.press('Enter');
-    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'gold');
-    await expect(gold).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#keyscape')).toHaveClass(/is-rippling/);
+    await expect(ripple).toHaveAttribute('aria-pressed', 'true');
 
-    const coral = page.locator('[data-light-key="coral"]');
-    await coral.focus();
+    await expect(page.locator('#keyscape')).not.toHaveClass(/is-rippling/);
+    await expect(ripple).toHaveAttribute('aria-pressed', 'false');
+    await ripple.focus();
     await page.keyboard.press('Space');
-    await expect(page.locator('#keyscape')).toHaveAttribute('data-light', 'coral');
-    await expect(coral).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#keyscape')).toHaveClass(/is-rippling/);
+    await expect(ripple).toHaveAttribute('aria-pressed', 'true');
   });
 
   test('reduced motion removes the arrival sequence and pauses moving media', async ({ page }) => {
