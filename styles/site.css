@@ -374,7 +374,7 @@ h2[tabindex="-1"]:focus {
   line-height: .84;
 }
 
-.exhibit-copy > p:not(.eyebrow):not(.curator-note) {
+.exhibit-copy > p:not(.eyebrow) {
   max-width: 47ch;
   margin: clamp(24px, 3vh, 34px) 0 0;
   color: var(--ink-soft);
@@ -387,22 +387,6 @@ h2[tabindex="-1"]:focus {
   color: var(--ink-soft);
   font-size: clamp(.9rem, 1vw, 1rem);
   line-height: 1.58;
-}
-
-.project-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 0;
-  margin: 20px 0 0;
-  list-style: none;
-}
-
-.project-facts li {
-  padding: 5px 8px;
-  color: var(--ink-soft);
-  border: 1px solid currentColor;
-  font: 600 .75rem/1.2 "IBM Plex Mono", monospace;
 }
 
 .repo-link {
@@ -569,7 +553,7 @@ h2[tabindex="-1"]:focus {
   padding-bottom: .06em;
 }
 
-#keyscape .exhibit-copy--keyscape > p:not(.eyebrow) {
+.room--keyscape .exhibit-copy--keyscape > p:not(.eyebrow) {
   margin-top: clamp(25px, 3.3vh, 38px);
   color: rgba(255, 250, 240, .9);
 }
@@ -856,10 +840,10 @@ h2[tabindex="-1"]:focus {
   font: 500 .8125rem/1.55 "IBM Plex Mono", monospace;
 }
 
-.workbench-platform {
-  margin-top: 8px !important;
-  color: color-mix(in srgb, var(--ink) 72%, transparent) !important;
-  font: 700 .75rem/1.45 "IBM Plex Mono", monospace !important;
+.workbench-feature__copy .workbench-platform {
+  margin-top: 8px;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+  font: 700 .75rem/1.45 "IBM Plex Mono", monospace;
 }
 
 .workbench-process {
@@ -1039,12 +1023,12 @@ h2[tabindex="-1"]:focus {
 /* Responsive and alternate render modes -------------------------------- */
 
 @media (min-width: 761px) and (max-width: 900px) {
-  #keyscape,
+  .room--keyscape,
   .room--workbench {
     overflow-y: auto;
   }
 
-  #keyscape .room-canvas--keyscape,
+  .room--keyscape .room-canvas--keyscape,
   .room-canvas--workbench {
     display: block;
     width: min(100% - 48px, 820px);
@@ -1053,7 +1037,7 @@ h2[tabindex="-1"]:focus {
     padding: 70px 0 180px;
   }
 
-  #keyscape .keyscape-specimen,
+  .room--keyscape .keyscape-specimen,
   .workbench-gallery {
     width: 100%;
     margin-top: 42px;
@@ -1291,7 +1275,7 @@ h2[tabindex="-1"]:focus {
   .skip-link,
   .motion-toggle,
   .media-play {
-    display: none !important;
+    display: none;
   }
 
   .museum-stage {
@@ -1325,7 +1309,7 @@ h2[tabindex="-1"]:focus {
     padding: 50px;
   }
 
-  video {
-    display: none !important;
+  .room video {
+    display: none;
   }
 }

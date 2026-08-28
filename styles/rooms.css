@@ -1,12 +1,6 @@
-/* Calm redesign — the real project proof and typography carry the site.
-   Loaded last so it deliberately removes the previous ornamental pass. */
+/* Room-specific presentation, loaded after the shared site chassis. */
 
 :root { --header-h:58px;--map-h:56px; }
-
-.room:not(.is-current) * { animation-play-state:paused!important; }
-
-.ambient-canvas,.visitor,.visitor-rail,.doorway,.masthead-exhibit { display:none!important; }
-.museum-shell::before,.museum-shell::after,.museum-masthead::after { display:none!important; }
 
 .museum-shell {
   background:#dce8e5;
@@ -20,11 +14,11 @@
   background:var(--frame-surface);
   background-image:none;
   border-bottom:1px solid color-mix(in srgb,var(--frame-ink) 22%,transparent);
-  box-shadow:none!important;
+  box-shadow:none;
 }
 
 .maker-mark { gap:0; }
-.maker-mark__portrait,.maker-mark__words small,.masthead-links a:nth-child(2) { display:none; }
+.maker-mark__words small { display:none; }
 .maker-mark__words b { font:680 clamp(.96rem,1.2vw,1.12rem)/1 "Fraunces",Georgia,serif;letter-spacing:-.02em; }
 .masthead-links { gap:8px; }
 .masthead-links a,.motion-toggle {
@@ -41,7 +35,7 @@
 .motion-toggle i { display:none; }
 
 .museum-stage { top:var(--header-h);height:calc(100dvh - var(--header-h)); }
-.museum-shell.is-resizing .museum-world { transition:none!important; }
+.museum-shell.is-resizing .museum-world { transition:none; }
 
 .museum-map {
   display:block;
@@ -53,14 +47,13 @@
   overflow:hidden;
   color:var(--frame-ink);
   background:var(--frame-surface);
-  background-image:none!important;
-  border:0!important;
-  border-top:1px solid color-mix(in srgb,var(--frame-ink) 22%,transparent)!important;
+  background-image:none;
+  border:0;
+  border-top:1px solid color-mix(in srgb,var(--frame-ink) 22%,transparent);
   border-radius:0;
-  box-shadow:none!important;
+  box-shadow:none;
   backdrop-filter:none;
 }
-.museum-map::before,.museum-map__you,.museum-map__route,.museum-map__progress,.museum-map li::before { display:none!important; }
 .museum-map ol { display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(12px,2vw,36px);width:min(100%,1180px);height:100%;margin:auto; }
 .museum-map button {
   display:flex;
@@ -68,23 +61,20 @@
   justify-content:center;
   min-height:var(--map-h);
   padding:0 2px;
-  color:color-mix(in srgb,var(--frame-ink) 72%,transparent)!important;
-  background:transparent!important;
-  border:0!important;
-  border-bottom:2px solid transparent!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  transform:none!important;
+  color:color-mix(in srgb,var(--frame-ink) 72%,transparent);
+  background:transparent;
+  border:0;
+  border-bottom:2px solid transparent;
+  border-radius:0;
+  box-shadow:none;
+  transform:none;
 }
-.museum-map button>span,.museum-map button>i,.museum-map__object { display:none!important; }
 .museum-map button>b { color:inherit;font:600 .75rem/1 "DM Sans",sans-serif;text-transform:none; }
-.museum-map button:hover { color:var(--frame-ink)!important; }
-.museum-map button[aria-current=step] { color:var(--frame-ink)!important;border-bottom-color:var(--frame-accent)!important; }
-.museum-map button:focus-visible { outline:2px solid var(--frame-accent)!important;outline-offset:-4px;box-shadow:none!important; }
+.museum-map button:hover { color:var(--frame-ink); }
+.museum-map button[aria-current=step] { color:var(--frame-ink);border-bottom-color:var(--frame-accent); }
+.museum-map button:focus-visible { outline:2px solid var(--frame-accent);outline-offset:-4px;box-shadow:none; }
 
 .room { padding-bottom:var(--map-h); }
-.room::after,.room--foyer::before { display:none!important; }
-.mobile-scroll-hint { display:none!important; }
 
 /* Hero ------------------------------------------------------------------- */
 .room--foyer.foyer--premium {
@@ -92,8 +82,6 @@
   color:#f4f1e5;
   background:#263e3d;
 }
-.foyer--premium .room-texture--foyer,.foyer-architecture,.foyer-luminaires,
-.foyer-specimen-rail,.guide-plinth { display:none!important; }
 .calm-hero-art {
   position:absolute;
   top:0;
@@ -137,7 +125,6 @@
   word-spacing:.05em;
 }
 .foyer--premium .thesis-line { width:max-content;max-width:100%;padding:0;white-space:nowrap;transform:none;will-change:auto; }
-.foyer--premium .thesis-line::after { display:none; }
 .foyer--premium .moving-word {
   display:inline-block;
   padding:0;
@@ -147,7 +134,6 @@
   transform:none;
   transition:none;
 }
-.foyer--premium .moving-word::before { display:none; }
 .foyer--premium .foyer-copy h1 .moving-word>em { color:inherit; }
 .foyer--premium .foyer-copy__intro {
   max-width:62ch;
@@ -208,18 +194,13 @@
 .alcove-field-note__leaf h3 { max-width:22ch;font-family:"Fraunces",Georgia,serif;font-weight:700;font-variation-settings:"opsz" 56,"SOFT" 30; }
 .alcove-field-note__leaf [role="tabpanel"]>p { font-weight:540; }
 .alcove-field-note__leaf footer { padding-top:10px;border-top:1px solid rgba(109,32,52,.28);font-family:"IBM Plex Mono",monospace;font-weight:600;line-height:1.45;letter-spacing:.035em; }
-.alcove-field-note__leaf [role="tabpanel"][hidden] { display:none!important; }
+.alcove-field-note__leaf [role="tabpanel"][hidden] { display:none; }
 .alcove-field-note__leaf [role="tabpanel"]:not([hidden]) { animation:alcove-slip-change 360ms var(--alcove-ease-out) both; }
 .alcove-field-note__leaf [role="tabpanel"]:not([hidden])>* { animation:alcove-ink-resolve 300ms 55ms ease both; }
 @keyframes alcove-slip-change { 0%{opacity:.68;transform:translateX(-1px)}46%{opacity:.88;transform:translateX(5px)}100%{opacity:1;transform:translateX(-1px)} }
 @keyframes alcove-ink-resolve { 0%{opacity:.68;transform:translateY(1px)}100%{opacity:1;transform:translateY(0)} }
 .room--alcove.alcove-premium-room { background:#173c37; }
 .alcove-library { min-height:100%;overflow:visible;color:#f2ead7;background:#173c37;font-family:"DM Sans",sans-serif; }
-.alcove-library__wall,.alcove-library__pilaster,.alcove-cabinet__cornice,
-.alcove-cabinet::before,.alcove-cabinet::after,.alcove-bookplate__tape,
-.alcove-bookplate__facts,.alcove-folio__page-edge,.alcove-folio__status,
-.alcove-working-shelf__board,.alcove-field-note__rail,.alcove-field-note__tab,
-.alcove-stack { display:none!important; }
 .alcove-cabinet {
   display:grid;
   grid-template-columns:minmax(270px,.72fr) minmax(540px,1.45fr);
@@ -244,7 +225,6 @@
   border:0;
   box-shadow:none;
 }
-.alcove-bookplate::before,.alcove-bookplate::after { display:none!important; }
 .alcove-bookplate__index { color:#c3a15d;font-size:.65rem; }
 .alcove-bookplate__index span { width:auto;height:auto;color:inherit;background:none;font:inherit; }
 .alcove-bookplate h2 { margin:17px 0 0;color:#f7f0df;font-size:clamp(4.6rem,6vw,6.8rem);line-height:.82;text-shadow:none; }
@@ -254,7 +234,6 @@
 .alcove-source:hover { color:#fff;background:none;box-shadow:none;transform:none; }
 .alcove-folio { grid-column:2;grid-row:1 / 4;align-self:center;margin:0; }
 .alcove-folio__recess { padding:0;background:none;border:1px solid rgba(242,234,215,.45);box-shadow:0 20px 48px rgba(6,22,20,.28); }
-.alcove-folio__recess::before,.alcove-folio__recess::after { display:none; }
 .alcove-folio__recess img { border:0; }
 .alcove-folio__recess video { display:block;width:100%;height:auto;aspect-ratio:900/562;object-fit:cover;border:0; }
 .alcove-folio figcaption { display:block;margin:17px 0 0;color:#d7e0d8;font-size:.86rem;line-height:1.5; }
@@ -279,16 +258,13 @@
   font-size:.72rem;
 }
 .alcove-spine:first-child { padding-left:0; }
-.alcove-spine__head,.alcove-spine__foot,.alcove-spine i,.alcove-spine::before { display:none; }
 .alcove-spine b { writing-mode:horizontal-tb;transform:none;font:600 .75rem/1 "DM Sans",sans-serif;text-transform:none; }
 .alcove-spine:hover { color:#f2ead7;filter:none;transform:none; }
 .alcove-spine[aria-selected="true"] { color:#f2ead7;border-bottom:2px solid #c3a15d;box-shadow:none;transform:none; }
 .alcove-field-note { grid-column:1;grid-row:3;display:block;align-self:start;padding:0; }
 .alcove-field-note__leaf { min-height:0;padding:0;color:#d7e0d8;background:none;border:0;box-shadow:none; }
-.alcove-field-note__leaf::before,.alcove-field-note__leaf::after { display:none!important; }
-.alcove-field-note__kicker { display:none; }
 .alcove-field-note__leaf h3 { margin:0 0 8px;color:#f2ead7;font-size:clamp(1.25rem,1.5vw,1.55rem);line-height:1.15; }
-.alcove-field-note__leaf [role="tabpanel"]>p:not(.alcove-field-note__kicker) { max-width:36ch;margin:0;color:#b9c8bf;font-size:.84rem;line-height:1.52; }
+.alcove-field-note__leaf [role="tabpanel"]>p { max-width:36ch;margin:0;color:#b9c8bf;font-size:.84rem;line-height:1.52; }
 .alcove-field-note__leaf footer { margin-top:9px;color:#9bafa5;font-size:.75rem; }
 .museum-shell[data-frame="alcove"] { --frame-surface:#173c37;--frame-ink:#f2ead7;--frame-accent:#c3a15d;--frame-secondary:#91a79a; }
 
@@ -328,10 +304,7 @@
 .pet-room button:focus-visible,.pet-room a:focus-visible { outline:3px solid #f6d272;outline-offset:4px; }
 .pet-premium-room { background:#0b1520; }
 .pet-room { min-height:100%;overflow:visible;color:#f0eee7;background:#0b1520; }
-.room-atmosphere,.habitat-backdrop,.glass-pane,.desktop-companion,.habitat-caption,
-.behavior-console,.system-rail,.demo-scan { display:none!important; }
 .pet-room::before { opacity:.18;mask-image:none; }
-.pet-room::after { display:none; }
 .pet-room__inner {
   display:grid;
   grid-template-columns:minmax(300px,.72fr) minmax(600px,1.38fr);
@@ -350,23 +323,10 @@
 .pet-thesis { margin:22px 0 0;color:#e58a63;font:560 clamp(1.2rem,1.55vw,1.55rem)/1.25 "DM Sans",sans-serif;letter-spacing:-.02em; }
 .pet-thesis em { color:inherit;font:inherit;text-decoration:none; }
 .pet-premise { max-width:48ch;margin:13px 0 0;color:#bac3c9;font-size:clamp(.92rem,1vw,1.02rem);line-height:1.58; }
-.company-control { margin-top:25px; }
-.company-button { grid-template-columns:1fr auto;width:min(100%,420px);min-height:54px;padding:0 15px;color:#f0eee7;background:transparent;border:1px solid rgba(229,138,99,.55);border-radius:3px;box-shadow:none; }
-.company-button__orb { display:none; }
-.company-button__copy b { font-size:.88rem; }.company-button__copy small { margin-top:3px;font-size:.58rem; }
-.company-button__arrow { color:#e58a63; }
-.companion-state { margin:10px 0 0;color:#9da9b1;font-size:.68rem; }
-.room-proof { display:block;margin:22px 0 0;padding:0;border:0; }
-.room-proof p:first-child { display:none; }
-.room-proof p { display:block;margin:0;color:#9da9b1;font-size:.7rem; }
-.room-proof p span { color:#e58a63; }.room-proof p b { margin-left:8px;color:#c9d0d3; }
 .habitat-column { align-self:center;min-width:0;margin:0; }
 .habitat-stage { min-height:0;height:auto;padding:0;overflow:visible;background:none;border:0;border-radius:0;box-shadow:none;contain:none; }
-.habitat-stage::before,.habitat-stage::after { display:none; }
-.demo-window { position:relative;inset:auto;z-index:1;padding:0;background:none;border:0;border-radius:0;box-shadow:none;transform:none!important;transition:none; }
-.demo-window::before { display:none; }
+.demo-window { position:relative;inset:auto;z-index:1;padding:0;background:none;border:0;border-radius:0;box-shadow:none;transform:none;transition:none; }
 .demo-window__chrome { min-height:32px;padding:0 0 9px;grid-template-columns:1fr auto; }
-.window-dots { display:none; }
 .demo-window__chrome p { justify-content:flex-start;font-size:.75rem; }.demo-resolution { font-size:.75rem; }
 .demo-viewport { border:1px solid rgba(240,238,231,.35);border-radius:2px;box-shadow:0 20px 48px rgba(0,0,0,.3); }
 .demo-window figcaption { min-height:0;padding:13px 0 0;color:#bec6cb;font-size:.76rem; }
@@ -377,23 +337,20 @@
 .museum-shell[data-frame="pet"] { --frame-surface:#0b1520;--frame-ink:#f0eee7;--frame-accent:#e58a63;--frame-secondary:#62c0ce; }
 
 /* Keyscape --------------------------------------------------------------- */
-#keyscape .keyscape-stars,#keyscape .keyscape-beam,#keyscape .keyscape-signal-flow,
-#keyscape .keyscape-keyboard,#keyscape .interaction-cue,#keyscape .light-console__label { display:none!important; }
-#keyscape .room-canvas--keyscape {
+.room--keyscape .room-canvas--keyscape {
   grid-template-columns:minmax(300px,.66fr) minmax(610px,1.4fr);
   gap:clamp(42px,5vw,78px);
   width:min(100% - clamp(56px,8vw,128px),1500px);
   margin:auto;
   padding-inline:0;
 }
-#keyscape .exhibit-copy--keyscape { max-width:520px; }
-#keyscape .exhibit-copy--keyscape h2 { margin-top:18px;font-size:clamp(4.7rem,6vw,6.8rem);text-shadow:none; }
-#keyscape .exhibit-copy--keyscape .project-story { max-width:46ch;margin-top:25px;font-size:clamp(.9rem,1vw,1rem);line-height:1.58; }
-.calm-proof-line { margin:20px 0 0;color:#8dd9e2;font:600 .66rem/1.4 "IBM Plex Mono",monospace; }
-#keyscape .light-console { margin-top:25px;padding:0;background:none;border:0;box-shadow:none;transform:none; }
-#keyscape .light-keys { display:block; }
-#keyscape .light-keys button { display:none; }
-#keyscape .light-keys [data-keyscape-demo-toggle] {
+.room--keyscape .exhibit-copy--keyscape { max-width:520px; }
+.room--keyscape .exhibit-copy--keyscape h2 { margin-top:18px;font-size:clamp(4.7rem,6vw,6.8rem);text-shadow:none; }
+.room--keyscape .exhibit-copy--keyscape .project-story { max-width:46ch;margin-top:25px;font-size:clamp(.9rem,1vw,1rem);line-height:1.58; }
+.room--keyscape .light-console { margin-top:25px;padding:0;background:none;border:0;box-shadow:none;transform:none; }
+.room--keyscape .light-keys { display:block; }
+.room--keyscape .light-keys button { display:none; }
+.room--keyscape .light-keys [data-keyscape-demo-toggle] {
   display:inline-flex;
   width:auto;
   height:44px;
@@ -405,16 +362,13 @@
   box-shadow:none;
   backdrop-filter:blur(8px);
 }
-#keyscape .light-keys [data-keyscape-demo-toggle] i { display:grid;place-items:center;width:14px;height:14px;margin-right:9px;background:none;border:0;box-shadow:none; }
-#keyscape .light-keys [data-keyscape-demo-toggle] i::before { content:"▶";font:700 .62rem/1 "IBM Plex Mono",monospace; }
-#keyscape .light-keys [data-keyscape-demo-toggle][aria-pressed="true"] i::before { content:"Ⅱ"; }
-#keyscape .light-keys [data-keyscape-demo-toggle] span { font-size:.75rem; }
-#keyscape .keyscape-specimen { width:100%;margin:0; }
-#keyscape .museum-window--keyscape { padding:8px;background:#0a111b;border:1px solid rgba(255,255,255,.5);box-shadow:0 20px 50px rgba(0,0,0,.34);transform:none; }
-#keyscape .keyscape-spectrum { display:none; }
-#keyscape .media-exhibit figcaption { width:100%;margin-top:14px;color:#bbc3cf;font-size:.76rem; }
-#keyscape .window-label { display:none; }
-#keyscape .media-play--feature { display:none!important; }
+.room--keyscape .light-keys [data-keyscape-demo-toggle] i { display:grid;place-items:center;width:14px;height:14px;margin-right:9px;background:none;border:0;box-shadow:none; }
+.room--keyscape .light-keys [data-keyscape-demo-toggle] i::before { content:"▶";font:700 .62rem/1 "IBM Plex Mono",monospace; }
+.room--keyscape .light-keys [data-keyscape-demo-toggle][aria-pressed="true"] i::before { content:"Ⅱ"; }
+.room--keyscape .light-keys [data-keyscape-demo-toggle] span { font-size:.75rem; }
+.room--keyscape .keyscape-specimen { width:100%;margin:0; }
+.room--keyscape .museum-window--keyscape { padding:8px;background:#0a111b;border:1px solid rgba(255,255,255,.5);box-shadow:0 20px 50px rgba(0,0,0,.34);transform:none; }
+.room--keyscape .media-exhibit figcaption { width:100%;margin-top:14px;color:#bbc3cf;font-size:.76rem; }
 
 /* Earlier experiments ---------------------------------------------------- */
 .room--archive[data-archive-project="cupcake"] { background-color:#dbc6cf; }
@@ -441,7 +395,7 @@
 .film-control:active { transform:translateY(1px); }
 .archive-view__caption { display:grid;align-items:start; }
 .archive-view__caption p,.archive-view__caption h3 { margin:0; }
-.archive-view__kicker { margin-bottom:7px!important;color:var(--archive-accent-text);font:800 12px/1.2 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase; }
+.archive-view__kicker { margin-bottom:7px;color:var(--archive-accent-text);font:800 12px/1.2 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase; }
 .archive-view__caption h3 { max-width:16ch;font:720 clamp(1.5rem,2vw,2rem)/.98 "Fraunces",Georgia,serif;letter-spacing:-.04em; }
 .archive-view__caption>p { color:color-mix(in srgb,var(--room-ink) 72%,transparent);font-family:"IBM Plex Mono",monospace;font-weight:500; }
 .archive-view__caption a { align-self:end;min-width:108px;color:var(--room-ink);font:800 12px/1.2 "IBM Plex Mono",monospace;text-decoration:none;text-transform:uppercase; }
@@ -451,28 +405,21 @@
 .cabinet-object__label strong { align-self:end;font:700 1.06rem/.98 "Fraunces",Georgia,serif; }
 .cabinet-object__label em { align-self:end;margin:0;color:#654e28;font:normal 700 .75rem/1.2 "IBM Plex Mono",monospace; }
 .cabinet-status { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0; }
-.room--archive .room-texture--archive,.room--archive .archive-cable,
-.archive-cabinet-demo .archive-atmosphere,.archive-view__environment,
-.archive-cabinet__crown,.cabinet-object__niche,.archive-cabinet__footer { display:none!important; }
 .room--archive { background-image:none; }
 .room-canvas--archive { grid-template-columns:minmax(260px,.54fr) minmax(650px,1.46fr);gap:clamp(42px,5vw,78px);width:min(100% - clamp(56px,8vw,128px),1500px);margin:auto;padding-inline:0; }
 .exhibit-copy--archive h2 { margin-top:17px;font-size:clamp(4.4rem,5.4vw,6.2rem);line-height:.82; }
-.exhibit-copy--archive>p:not(.eyebrow):not(.curator-note) { max-width:37ch;margin-top:24px;font-size:.9rem;line-height:1.58; }
-.exhibit-copy--archive .curator-note { display:none; }
+.exhibit-copy--archive>p:not(.eyebrow) { max-width:37ch;margin-top:24px;font-size:.9rem;line-height:1.58; }
 .archive-exhibit.archive-cabinet-demo { grid-template-columns:minmax(0,1fr) 290px;gap:27px;min-height:0;padding:0;background:none; }
 .archive-view__film { transform:none; }
 .archive-view__bezel,.archive-cabinet-demo[data-archive-project] .archive-view__bezel { padding:8px;background:#111;border:1px solid rgba(20,24,24,.48);border-radius:2px;box-shadow:0 18px 45px rgba(20,24,24,.2); }
-.bezel-detail,.archive-view__counter { display:none; }
 .film-control { right:14px;bottom:14px;min-width:70px;min-height:40px; }
 .archive-view__caption { grid-template-columns:minmax(180px,.8fr) minmax(220px,1.2fr) auto;gap:17px;padding:16px 0 0;background:none;border:0;box-shadow:none; }
 .archive-view__caption h3 { font-size:clamp(1.5rem,2vw,2rem); }
 .archive-view__caption>p { font-size:.86rem;line-height:1.5; }.archive-view__caption a { padding:8px 0;background:none;border:0;border-bottom:1px solid var(--room-accent);box-shadow:none;font-size:.75rem; }
 .archive-star-note { margin:0 12px 7px;color:color-mix(in srgb,var(--room-ink) 70%,transparent);font:600 .75rem/1.4 "IBM Plex Mono",monospace; }
 .archive-cabinet { padding:0;background:none;border:0;border-radius:0;box-shadow:none; }
-.archive-cabinet::before,.archive-cabinet::after { display:none; }
 .archive-cabinet__interior { display:grid;gap:0;padding:0;background:none;border:0;box-shadow:none; }
 .cabinet-object { display:block;min-height:0;padding:0;background:none;border:0;border-left:3px solid transparent; }
-.cabinet-object + .cabinet-object::before { display:none; }
 .cabinet-object__label,.cabinet-object--npc .cabinet-object__label,.cabinet-object--tutorial .cabinet-object__label,.cabinet-object--cupcake .cabinet-object__label {
   display:grid;
   grid-template-columns:1fr auto;
@@ -490,14 +437,12 @@
 }
 .cabinet-object:first-child .cabinet-object__label { border-top:0; }
 .cabinet-object__label small { grid-column:1 / -1;color:color-mix(in srgb,var(--room-ink) 72%,transparent);font-size:.75rem;line-height:1.35; }
-.cabinet-object__label strong { font-size:1.06rem; }.cabinet-object__label em { font-size:.75rem; }.cabinet-object__label i { display:none!important; }
+.cabinet-object__label strong { font-size:1.06rem; }.cabinet-object__label em { font-size:.75rem; }.cabinet-object__label i { display:none; }
 .cabinet-object.is-active { border-left-color:var(--archive-indicator); }
 .cabinet-object.is-active .cabinet-object__label { background:color-mix(in srgb,var(--room-accent) 8%,transparent); }
-.cabinet-object:focus-visible { outline:2px solid var(--archive-indicator);outline-offset:2px;box-shadow:0 0 0 6px var(--room-ink)!important; }
+.cabinet-object:focus-visible { outline:2px solid var(--archive-indicator);outline-offset:2px;box-shadow:0 0 0 6px var(--room-ink); }
 
 /* Useful things ---------------------------------------------------------- */
-.room--workbench .room-texture--workbench,.room--workbench .workbench-desk,
-.instrument-tab__object,.precision-cabinet::before,.precision-cabinet::after,.tool-tape { display:none!important; }
 .room--workbench { background-image:none; }
 .room-canvas--workbench { grid-template-columns:minmax(260px,.52fr) minmax(650px,1.48fr);gap:clamp(42px,5vw,78px);width:min(100% - clamp(56px,8vw,128px),1500px);margin:auto;padding-inline:0; }
 .exhibit-copy--workbench h2 { margin-top:17px;font-size:clamp(4.4rem,5.4vw,6.2rem);line-height:.82; }
@@ -518,22 +463,20 @@
 }
 .room--workbench .tool-selector.instrument-tab.is-active .instrument-tab__label b { color:var(--ink); }
 .room--workbench .tool-selector.instrument-tab.is-active .instrument-tab__label small { color:color-mix(in srgb,var(--ink) 72%,transparent); }
-.instrument-tab::after { display:none; }
 .instrument-tab:hover { transform:none; }.instrument-tab:focus-visible { outline:2px solid var(--drawer-accent);outline-offset:2px; }
 .workbench-gallery.precision-cabinet .workbench-feature { border:1px solid rgba(23,35,38,.38);box-shadow:0 18px 45px rgba(23,35,38,.16); }
 .precision-cabinet__panels { position:relative;min-width:0;min-height:0; }
 .workbench-feature__media { padding:8px; }.workbench-feature__copy { padding:16px 18px 18px; }
-.workbench-feature__copy,.workbench-feature__media::after { animation:none!important; }
-.workbench-feature__media::after { display:none!important; }
-.workbench-platform { color:color-mix(in srgb,var(--ink) 72%,transparent)!important;font-size:.75rem!important; }
+.workbench-feature__copy { animation:none; }
+.workbench-platform { color:color-mix(in srgb,var(--ink) 72%,transparent);font-size:.75rem; }
 .workbench-process { display:flex;flex-wrap:wrap;gap:6px 0;margin-top:9px; }
 .workbench-process li { display:inline-flex;align-items:center;padding:0;color:var(--ink-soft);background:none;border:0;font-size:.75rem; }
-.workbench-process li::before { display:none!important; }
+.workbench-process li::before { display:none; }
 .workbench-process li+li { margin:0;padding:0;border:0; }
-.workbench-process li+li::before { position:static!important;display:inline!important;width:auto!important;height:auto!important;margin:0 12px!important;content:"·"!important;color:color-mix(in srgb,var(--ink) 50%,transparent);font-size:12px!important; }
+.workbench-process li+li::before { position:static;display:inline;width:auto;height:auto;margin:0 12px;content:"·";color:color-mix(in srgb,var(--ink) 50%,transparent);font-size:12px; }
 
 /* One quiet material for media controls; no project-specific stickers. */
-#alcove .media-play--feature,#pet .video-control,#archive .film-control,#workbench .media-play--feature {
+.room--alcove .media-play--feature,.room--pet .video-control,.room--archive .film-control,.room--workbench .media-play--feature {
   right:auto;
   bottom:12px;
   left:12px;
@@ -547,27 +490,27 @@
   box-shadow:none;
   backdrop-filter:blur(8px);
 }
-#archive .film-control span { font-size:.75rem; }
-#alcove .media-play--feature,#workbench .media-play--feature { display:grid;place-items:center;width:40px;height:40px;padding:0; }
+.room--archive .film-control span { font-size:.75rem; }
+.room--alcove .media-play--feature,.room--workbench .media-play--feature { display:grid;place-items:center;width:40px;height:40px;padding:0; }
 
 @media (max-width:900px) {
-  .pet-premium-room,#keyscape,.room--archive,.room--workbench,.alcove-premium-room { overflow-y:auto; }
-  .pet-room__inner,#keyscape .room-canvas--keyscape,.room-canvas--archive,.room-canvas--workbench { display:block;width:min(100% - 48px,820px);min-height:0;padding:54px 0 160px; }
-  .pet-intro,#keyscape .exhibit-copy--keyscape,.exhibit-copy--archive,.exhibit-copy--workbench { max-width:680px; }
-  .habitat-column,#keyscape .keyscape-specimen,.archive-exhibit.archive-cabinet-demo,.workbench-gallery.precision-cabinet { margin-top:38px; }
+  .pet-premium-room,.room--keyscape,.room--archive,.room--workbench,.alcove-premium-room { overflow-y:auto; }
+  .pet-room__inner,.room--keyscape .room-canvas--keyscape,.room-canvas--archive,.room-canvas--workbench { display:block;width:min(100% - 48px,820px);min-height:0;padding:54px 0 160px; }
+  .pet-intro,.room--keyscape .exhibit-copy--keyscape,.exhibit-copy--archive,.exhibit-copy--workbench { max-width:680px; }
+  .habitat-column,.room--keyscape .keyscape-specimen,.archive-exhibit.archive-cabinet-demo,.workbench-gallery.precision-cabinet { margin-top:38px; }
   .archive-exhibit.archive-cabinet-demo { display:block; }
   .archive-cabinet { margin:22px 0 0; }
   .archive-cabinet__interior { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .cabinet-object__label { min-height:92px; }
   .workbench-gallery.precision-cabinet { display:block; }
   .workbench-gallery .precision-cabinet__rail {
-    display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    grid-template-rows:auto!important;
-    gap:0!important;
-    margin:0 0 22px!important;
-    padding:0!important;
-    overflow:visible!important;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:auto;
+    gap:0;
+    margin:0 0 22px;
+    padding:0;
+    overflow:visible;
   }
   .workbench-gallery .instrument-tab { min-height:0;flex:auto; }
   .workbench-gallery .instrument-tab__label small,
@@ -575,26 +518,26 @@
 }
 
 @media (max-width:760px) {
-  .pet-premium-room,#keyscape,.room--archive,.room--workbench { overflow-y:auto; }
-  .pet-room__inner,#keyscape .room-canvas--keyscape,.room-canvas--archive,.room-canvas--workbench { width:100%;padding:35px 18px 90px; }
-  .pet-intro .pet-title,#keyscape .exhibit-copy--keyscape h2,.exhibit-copy--archive h2,.exhibit-copy--workbench h2 { font-size:clamp(3.4rem,16vw,5rem); }
+  .pet-premium-room,.room--keyscape,.room--archive,.room--workbench { overflow-y:auto; }
+  .pet-room__inner,.room--keyscape .room-canvas--keyscape,.room-canvas--archive,.room-canvas--workbench { width:100%;padding:35px 18px 90px; }
+  .pet-intro .pet-title,.room--keyscape .exhibit-copy--keyscape h2,.exhibit-copy--archive h2,.exhibit-copy--workbench h2 { font-size:clamp(3.4rem,16vw,5rem); }
   .pet-thesis { margin-top:16px;font-size:1.2rem; }.pet-premise { font-size:.94rem; }
-  .habitat-column,#keyscape .keyscape-specimen,.archive-exhibit.archive-cabinet-demo,.workbench-gallery.precision-cabinet { margin-top:28px; }
+  .habitat-column,.room--keyscape .keyscape-specimen,.archive-exhibit.archive-cabinet-demo,.workbench-gallery.precision-cabinet { margin-top:28px; }
   .demo-window__chrome { display:none; }
   .demo-window figcaption { align-items:flex-start;flex-direction:column;gap:8px;font-size:.68rem; }
-  #keyscape .room-canvas--keyscape { min-height:0; }
-  #keyscape .media-exhibit { margin-top:28px; }
+  .room--keyscape .room-canvas--keyscape { min-height:0; }
+  .room--keyscape .media-exhibit { margin-top:28px; }
   .archive-cabinet__interior { grid-template-columns:1fr; }
   .cabinet-object__label { min-height:0;padding:12px 8px; }
   .archive-view__caption { grid-template-columns:1fr; }.archive-view__caption a { grid-column:auto;justify-self:start; }
   .workbench-gallery .precision-cabinet__rail {
-    display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    grid-template-rows:auto!important;
-    gap:0!important;
-    margin:0 0 22px!important;
-    padding:0!important;
-    overflow:visible!important;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:auto;
+    gap:0;
+    margin:0 0 22px;
+    padding:0;
+    overflow:visible;
   }
   .workbench-gallery .instrument-tab { min-height:0;flex:auto; }
   .workbench-gallery .instrument-tab__label small,
@@ -602,9 +545,9 @@
 }
 
 @media (min-width:761px) and (max-width:900px) {
-  .archive-exhibit.archive-cabinet-demo { margin-bottom:0;padding-bottom:80px!important; }
-  .archive-cabinet { padding-bottom:80px!important; }
-  .workbench-gallery.precision-cabinet { margin-bottom:0;padding-bottom:80px!important; }
+  .archive-exhibit.archive-cabinet-demo { margin-bottom:0;padding-bottom:80px; }
+  .archive-cabinet { padding-bottom:80px; }
+  .workbench-gallery.precision-cabinet { margin-bottom:0;padding-bottom:80px; }
 }
 
 @media (max-width:900px) {
@@ -669,13 +612,8 @@
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .room * { scroll-behavior:auto!important; }
   .moving-word { translate:0!important;rotate:0!important; }
-  .room--pet .demo-window,.room--pet .video-control { transition:none!important; }
-  .alcove-library *,.alcove-library *::before,.alcove-library *::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
   .alcove-spine[aria-selected="true"] { filter:brightness(1.18); }
-  .archive-cabinet-demo,.archive-cabinet-demo *,.archive-cabinet-demo *::before,.archive-cabinet-demo *::after { scroll-behavior:auto!important;transition-duration:.001ms!important; }
-  .film-control:hover,.film-control:active { transform:none; }
 }
 
 @media (prefers-contrast:more) {
@@ -691,8 +629,8 @@
 
 @media (forced-colors:active) {
   .alcove-library { forced-color-adjust:auto; }
-  .alcove-bookplate,.alcove-folio__recess,.alcove-working-shelf,.alcove-field-note__leaf,.alcove-spine { border:2px solid CanvasText!important; }
-  .alcove-spine[aria-selected="true"] { outline:4px solid Highlight!important;outline-offset:2px; }
+  .alcove-bookplate,.alcove-folio__recess,.alcove-working-shelf,.alcove-field-note__leaf,.alcove-spine { border:2px solid CanvasText; }
+  .alcove-spine[aria-selected="true"] { outline:4px solid Highlight;outline-offset:2px; }
   .archive-view__bezel,.archive-view video,.archive-view__caption a,.film-control { border-color:CanvasText; }
   .film-control { color:ButtonText;background:ButtonFace; }
   .cabinet-object.is-active { border-left-color:Highlight; }
@@ -708,26 +646,26 @@
 .alcove-bookplate__index,
 .alcove-working-shelf__label,
 .room-index,
-#keyscape .exhibit-copy--keyscape .eyebrow,
+.room--keyscape .exhibit-copy--keyscape .eyebrow,
 .exhibit-copy--archive .eyebrow,
 .exhibit-copy--workbench .eyebrow,
 .archive-view__kicker,
-#workbench .window-label b,
-#workbench .workbench-feature__copy>span {
-  font-size:12px!important;
+.room--workbench .window-label b,
+.room--workbench .workbench-feature__copy>span {
+  font-size:12px;
 }
 
-#pet .video-control>span:last-child,
+.room--pet .video-control>span:last-child,
 .demo-window figcaption,
 .demo-window figcaption a,
-#keyscape .repo-link,
-#archive .archive-view__caption a,
-#workbench .repo-link {
-  font-size:12px!important;
+.room--keyscape .repo-link,
+.room--archive .archive-view__caption a,
+.room--workbench .repo-link {
+  font-size:12px;
 }
 
-#workbench .exhibit-copy--workbench>p:not(.eyebrow),
-#workbench [data-tool-description] {
-  font-size:13px!important;
+.room--workbench .exhibit-copy--workbench>p:not(.eyebrow),
+.room--workbench [data-tool-description] {
+  font-size:13px;
   line-height:1.55;
 }
