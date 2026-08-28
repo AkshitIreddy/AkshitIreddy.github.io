@@ -39,7 +39,7 @@ async function waitForRoomSettled(page, index) {
 test.describe('Software in Motion production contract', () => {
   test('the root URL is the selected Software in Motion experience', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle('Akshit Ireddy');
+    await expect(page).toHaveTitle('Akshit Ireddy — this page refuses to sit still');
     await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', 'public/favicon-aperture.svg');
     await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', 'public/favicon-aperture-32.png');
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'public/favicon-aperture-180.png');
@@ -124,8 +124,8 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('.guide-pupil')).toHaveCount(2);
     await expect(page.locator('svg.guide-signal')).toHaveCount(1);
     await expect(page.locator('.guide-signal__path')).toHaveCount(3);
-    await expect(page.locator('.guide-signal__runner')).toHaveCount(3);
     await expect(page.locator('.foyer-motion-field__path')).toHaveCount(3);
+    await expect(page.locator('.guide-signal__path').first()).toHaveCSS('animation-name', 'foyer-field-draw');
     await expect(page.locator('.visitor > .visitor__art')).toHaveAttribute('viewBox', '0 0 84 60');
     await expect(page.locator('.visitor > .visitor__art')).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
     await expect(page.locator('.visitor__head .visitor__ear')).toHaveCount(2);
@@ -158,8 +158,10 @@ test.describe('Software in Motion production contract', () => {
       elements.map((element) => getComputedStyle(element).animationName),
     );
     expect(new Set(animationNames)).toEqual(new Set(['none']));
-    await expect(page.locator('.guide-signal__runner').first()).toHaveCSS('display', 'none');
-    await expect(page.locator('.foyer-motion-field__runner').first()).toHaveCSS('display', 'none');
+    for (const path of ['.guide-signal__path', '.foyer-motion-field__path']) {
+      const duration = await page.locator(path).first().evaluate((element) => getComputedStyle(element).animationDuration);
+      expect(parseFloat(duration), path).toBeLessThan(0.01);
+    }
   });
 
   test('the studio companion owns a separate speech zone and follows the pointer through it', async ({ page }) => {
@@ -173,7 +175,7 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('.kinetic-guide svg > .guide-sparks')).toHaveCount(1);
 
     const speech = await page.locator('.guide-speech').boundingBox();
-    await expect(page.locator('.guide-speech')).toHaveCSS('pointer-events', 'none');
+    expect(await page.locator('.guide-speech').evaluate((element) => element.tagName)).toBe('BUTTON');
     const face = await page.locator('.guide-face').boundingBox();
     const ears = await page.locator('.guide-ear').all();
     const dots = await page.locator('.guide-speech-trail i').all();
@@ -218,7 +220,7 @@ test.describe('Software in Motion production contract', () => {
       const [specimenBox, notesBox, objectFit] = await Promise.all([
         specimen.boundingBox(),
         notes.boundingBox(),
-        page.locator('.specimen-window--alcove img').evaluate((media) => getComputedStyle(media).objectFit),
+        page.locator('.specimen-window--alcove video').evaluate((media) => getComputedStyle(media).objectFit),
       ]);
       expect(overlapArea(specimenBox, notesBox), viewport.name).toBe(0);
       expect(objectFit, viewport.name).toBe('contain');
@@ -226,47 +228,47 @@ test.describe('Software in Motion production contract', () => {
   });
 
   test('feature demos decode at their real intrinsic dimensions', async ({ page }) => {
-    await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
-    const alcoveImage = page.locator('#alcove [data-motion-src]');
-    await expect(alcoveImage).toBeVisible();
-    await expect.poll(() => alcoveImage.evaluate((image) => image.complete && image.naturalWidth)).toBeGreaterThan(0);
-    await expect(alcoveImage).toHaveAttribute('src', 'public/media/features/alcove-full.webp');
-    await expect(alcoveImage).toHaveCSS('object-fit', 'contain');
-    for (const room of ['pet', 'keyscape']) {
+    const fits = { alcove: 'contain', pet: 'cover', keyscape: 'contain' };
+    for (const room of ['alcove', 'pet', 'keyscape']) {
       await page.goto(`/#${room}`, { waitUntil: 'domcontentloaded' });
-      await expectVideoReady(page.locator(`#${room} [data-room-video]`));
-      await expect(page.locator(`#${room} [data-room-video]`)).toHaveCSS('object-fit', 'contain');
+      const video = page.locator(`#${room} [data-room-video]`);
+      await expectVideoReady(video);
+      await expect(video).toHaveCSS('object-fit', fits[room]);
     }
   });
 
-  test('the complete Alcove README animation changes frames while its layout stays fixed', async ({ page }) => {
+  test('the Alcove guided tour plays as a living film while its layout stays fixed', async ({ page }) => {
     await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
-    const image = page.locator('#alcove [data-motion-src]');
-    await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth)).toBeGreaterThan(0);
-    const dimensions = await image.evaluate((element) => ({ width: element.naturalWidth, height: element.naturalHeight }));
-    expect(dimensions).toEqual({ width: 900, height: 562 });
-    const first = await image.screenshot();
-    await expect.poll(async () => (await image.screenshot()).equals(first), { timeout: 8_000, intervals: [800, 1_200, 1_800] }).toBe(false);
-    await expect(image).toHaveAttribute('src', 'public/media/features/alcove-full.webp');
+    const video = page.locator('#alcove [data-room-video]');
+    await expectVideoReady(video);
+    await expect.poll(() => video.evaluate((element) => element.paused)).toBe(false);
+    const before = await video.boundingBox();
+    const first = await video.screenshot();
+    await expect.poll(async () => (await video.screenshot()).equals(first), { timeout: 8_000, intervals: [800, 1_200, 1_800] }).toBe(false);
+    const after = await video.boundingBox();
+    expect(after.width).toBeCloseTo(before.width, 1);
+    expect(after.height).toBeCloseTo(before.height, 1);
+    await expect(video).toHaveAttribute('loop', '');
   });
 
   test('every demo is configured as a persistent loop', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('video')).toHaveCount(4);
+    await expect(page.locator('video')).toHaveCount(5);
     await expect(page.locator('video:not([loop])')).toHaveCount(0);
-    await expect(page.locator('#alcove [data-motion-src]')).toHaveAttribute('data-motion-src', 'public/media/features/alcove-full.webp');
+    await expect(page.locator('#alcove [data-room-video]')).toHaveAttribute('data-poster', 'public/media/features/alcove-tour-poster.webp');
   });
 
   test('cold rooms keep video bytes lazy until a visitor enters', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('video source[src]')).toHaveCount(0);
-    await expect(page.locator('video source[data-src]')).toHaveCount(8);
+    await expect(page.locator('video source[data-src]')).toHaveCount(10);
     await expect(page.locator('video[poster]')).toHaveCount(0);
-    await expect(page.locator('#alcove [data-motion-src]')).not.toHaveAttribute('src');
+    await expect(page.locator('#alcove [data-room-video] source[src]')).toHaveCount(0);
     await expect(page.locator('[data-tool-media]')).not.toHaveAttribute('src');
 
     await page.locator('.museum-map [data-room-target="1"]').click();
-    await expect(page.locator('#alcove [data-motion-src]')).toHaveAttribute('src', 'public/media/features/alcove-full.webp');
+    await expect(page.locator('#alcove [data-room-video]')).toHaveAttribute('poster', 'public/media/features/alcove-tour-poster.webp');
+    await expect(page.locator('#alcove [data-room-video] source[src]')).toHaveCount(2);
     await expect(page.locator('#pet video source[src]')).toHaveCount(0);
 
     await page.locator('.museum-map [data-room-target="2"]').click();
@@ -321,20 +323,60 @@ test.describe('Software in Motion production contract', () => {
   });
 
   test('interactive exhibits visibly announce and react to touch', async ({ page }) => {
+    test.setTimeout(60_000);
+    const announcer = page.locator('.room-announcer');
+
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.interaction-cue')).toHaveCount(4);
-    await expect(page.locator('.interaction-cue').first()).toContainText(/try|touch|click|swipe|play/i);
+    await expect(page.locator('.interaction-cue').first()).toContainText(/try|touch|click|swipe|play|pull|ring|press/i);
 
+    // Foyer: the kitten button and its speech bubble cycle the same 8 messages.
+    const speech = page.locator('.guide-speech');
+    await expect(speech).toContainText('Psst—almost everything here reacts.');
     await page.locator('[data-guide-button]').click();
     await expect(page.locator('[data-guide]')).toHaveClass(/is-greeting/);
+    await expect(speech).toContainText('The good chapters move. Follow me.');
+    await expect(announcer).toContainText('The good chapters move. Follow me.');
+    await speech.click();
+    await expect(speech).toContainText('Room 01: the books breathe.');
+    for (let index = 0; index < 6; index += 1) {
+      await (index % 2 === 0 ? page.locator('[data-guide-button]').click() : speech.click());
+    }
+    await expect(speech).toContainText('Psst—almost everything here reacts.');
+
+    // Alcove: the Welcome book pulls off the shelf and opens.
     await page.goto('/#alcove');
-    await page.locator('[data-disturb-books]').click();
-    await expect(page.locator('.edge-shelf').first()).toHaveClass(/is-disturbed/);
+    const book = page.locator('[data-open-book]');
+    await expect(book).toHaveAttribute('aria-expanded', 'false');
+    await book.click();
+    await expect(book).toHaveClass(/is-open/);
+    await expect(book).toHaveAttribute('aria-expanded', 'true');
+    await expect(announcer).toContainText(/Welcome book slides off the shelf/i);
+    await book.click();
+    await expect(book).toHaveAttribute('aria-expanded', 'false');
+
+    // Pet: the desk bell runs the full visit state machine.
     await page.goto('/#pet');
-    await page.locator('[data-call-pet]').click();
+    const bell = page.locator('[data-call-pet]');
+    await bell.click();
     await expect(page.locator('#pet')).toHaveClass(/is-called/);
+    await expect(bell).toHaveAttribute('aria-pressed', 'true');
+    await expect(announcer).toContainText(/comes running/i);
+    await expect(page.locator('#pet')).toHaveClass(/is-visiting/, { timeout: 10_000 });
+    await bell.click();
+    await expect(announcer).toContainText(/already here/i);
+    await expect(page.locator('#pet')).not.toHaveClass(/is-visiting|is-leaving|is-called/, { timeout: 15_000 });
+    await expect(bell).toHaveAttribute('aria-pressed', 'false');
+
+    // Keyscape: the ripple button and the R key both light the room.
     await page.goto('/#keyscape');
-    await page.locator('[data-play-ripple]').click();
+    const ripple = page.locator('[data-play-ripple]');
+    await ripple.click();
+    await expect(page.locator('#keyscape')).toHaveClass(/is-rippling/);
+    await expect(ripple).toHaveAttribute('aria-pressed', 'true');
+    await expect(announcer).toContainText(/ripple leaves the keyboard/i);
+    await expect(page.locator('#keyscape')).not.toHaveClass(/is-rippling/, { timeout: 10_000 });
+    await page.keyboard.press('r');
     await expect(page.locator('#keyscape')).toHaveClass(/is-rippling/);
   });
 
@@ -371,15 +413,21 @@ test.describe('Software in Motion production contract', () => {
   });
 
   test('every project has substantial explanatory copy and deliberate title spacing', async ({ page }) => {
+    const stories = { alcove: '.project-story', pet: '.pet-note__story', keyscape: '.project-story' };
     for (const room of ['alcove', 'pet', 'keyscape']) {
       await page.goto(`/#${room}`, { waitUntil: 'domcontentloaded' });
-      const copy = page.locator(`#${room} .project-story`);
+      const copy = page.locator(`#${room} ${stories[room]}`);
       expect((await copy.innerText()).length, room).toBeGreaterThan(130);
       const [titleBox, copyBox] = await Promise.all([
         page.locator(`#${room} h2`).boundingBox(),
         copy.boundingBox(),
       ]);
-      expect(copyBox.y - (titleBox.y + titleBox.height), room).toBeGreaterThanOrEqual(18);
+      if (room === 'pet') {
+        // The pet's story lives in its own field-note column beside the title.
+        expect(overlapArea(titleBox, copyBox), room).toBe(0);
+      } else {
+        expect(copyBox.y - (titleBox.y + titleBox.height), room).toBeGreaterThanOrEqual(18);
+      }
     }
 
     await page.goto('/#archive', { waitUntil: 'domcontentloaded' });
@@ -420,12 +468,15 @@ test.describe('Software in Motion production contract', () => {
     for (let index = 0; index < rooms.length; index += 1) {
       await page.locator(`.museum-map [data-room-target="${index}"]`).click();
       await expect(page.locator('.museum-shell')).toHaveAttribute('data-current-room', String(index));
-      await page.waitForTimeout(480);
-      const [mastheadColor, mapColor] = await Promise.all([
-        page.locator('.museum-masthead').evaluate((element) => getComputedStyle(element).backgroundColor),
-        page.locator('.museum-map').evaluate((element) => getComputedStyle(element).backgroundColor),
-      ]);
-      expect(mapColor).toBe(mastheadColor);
+      // Both surfaces transition to the new room material; sample them together
+      // until the transitions settle on the identical colour.
+      await expect.poll(async () => {
+        const [mastheadColor, mapColor] = await Promise.all([
+          page.locator('.museum-masthead').evaluate((element) => getComputedStyle(element).backgroundColor),
+          page.locator('.museum-map').evaluate((element) => getComputedStyle(element).backgroundColor),
+        ]);
+        return mapColor === mastheadColor;
+      }, { timeout: 4_000 }).toBe(true);
       frameSurfaces.push(await page.locator('.museum-shell').evaluate((element) => getComputedStyle(element).getPropertyValue('--frame-surface').trim()));
     }
     expect(new Set(frameSurfaces).size).toBe(rooms.length);
@@ -557,8 +608,11 @@ test.describe('Software in Motion production contract', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.museum-shell')).not.toHaveClass(/is-intro/);
-    await expect(page.locator('.ambient-canvas')).toHaveCSS('display', 'none');
-    await expect(page.locator('#alcove [data-motion-src]')).toHaveAttribute('src', 'public/media/features/alcove-poster.webp');
+    await expect(page.locator('.ambient-canvas')).toHaveCount(0);
+    const alcoveVideo = page.locator('#alcove [data-room-video]');
+    await expect(alcoveVideo).toHaveAttribute('poster', 'public/media/features/alcove-tour-poster.webp');
+    await expect(alcoveVideo.locator('source').first()).not.toHaveAttribute('src', /.+/);
+    await expect(alcoveVideo).toHaveJSProperty('paused', true);
 
     await page.goto('/#pet', { waitUntil: 'domcontentloaded' });
     const petVideo = page.locator('#pet [data-room-video]');
