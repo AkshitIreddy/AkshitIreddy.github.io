@@ -227,6 +227,51 @@ test.describe('Software in Motion production contract', () => {
     }
   });
 
+  test('the Welcome book hides its cover and keeps ruled page copy in bounds at 390', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
+    const book = page.locator('[data-open-book]');
+    await book.click();
+    await expect(book).toHaveClass(/is-open/);
+    await expect.poll(async () => page.locator('.alcove-book.is-open .alcove-book__cover').evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { opacity: Number(style.opacity), visibility: style.visibility };
+    })).toEqual({ opacity: 0, visibility: 'hidden' });
+
+    const coverState = await page.locator('.alcove-book.is-open .alcove-book__cover').evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { opacity: Number(style.opacity), visibility: style.visibility };
+    });
+    expect(coverState.opacity).toBeLessThanOrEqual(0.01);
+    expect(coverState.visibility).toBe('hidden');
+
+    const pageMetrics = await page.locator('.alcove-book__page').evaluate((pageEl) => {
+      const rule = Number.parseFloat(getComputedStyle(pageEl).getPropertyValue('--book-rule')) || 9;
+      const pageRect = pageEl.getBoundingClientRect();
+      const title = pageEl.querySelector('b');
+      const note = pageEl.querySelector('em');
+      const titleRect = title.getBoundingClientRect();
+      const noteRect = note.getBoundingClientRect();
+      const titleOffset = titleRect.top - pageRect.top;
+      const noteOffset = noteRect.top - pageRect.top;
+      const inRuleBand = (offset) => {
+        const pos = ((offset % rule) + rule) % rule;
+        return pos >= 0.5 && pos <= rule - 1.5;
+      };
+      return {
+        withinBounds: titleRect.left >= pageRect.left - 0.5
+          && titleRect.right <= pageRect.right + 0.5
+          && noteRect.left >= pageRect.left - 0.5
+          && noteRect.bottom <= pageRect.bottom + 1.5,
+        titleAligned: inRuleBand(titleOffset),
+        noteAligned: inRuleBand(noteOffset),
+      };
+    });
+    expect(pageMetrics.withinBounds).toBe(true);
+    expect(pageMetrics.titleAligned).toBe(true);
+    expect(pageMetrics.noteAligned).toBe(true);
+  });
+
   test('feature demos decode at their real intrinsic dimensions', async ({ page }) => {
     const fits = { alcove: 'contain', pet: 'cover', keyscape: 'contain' };
     for (const room of ['alcove', 'pet', 'keyscape']) {
