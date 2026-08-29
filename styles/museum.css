@@ -1125,7 +1125,8 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 .room--archive[data-archive-project="tutorial"] .archive-motif .motif--tutorial{display:block}
 .room--archive[data-archive-project="cupcake"] .archive-motif .motif--cupcake{display:block}
 .archive-ticket-rail{display:grid;min-width:0;min-height:0}
-.archive-project-tabs{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:11px;min-height:0}{--ticket-accent:#5b4bd6;--ticket-chip:#8c79ff;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px 10px;min-width:0;padding:11px;text-align:left;color:var(--ink);background:rgba(255,250,240,.93);border:2px solid var(--ink);box-shadow:3px 4px 0 rgba(23,35,38,.72);cursor:pointer;transition:transform 180ms ease,color 180ms ease,background-color 180ms ease,box-shadow 180ms ease}
+.archive-project-tabs{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:11px;min-height:0}
+.archive-project-tab{--ticket-accent:#5b4bd6;--ticket-chip:#8c79ff;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px 10px;min-width:0;padding:11px;text-align:left;color:var(--ink);background:rgba(255,250,240,.93);border:2px solid var(--ink);box-shadow:3px 4px 0 rgba(23,35,38,.72);cursor:pointer;transition:transform 180ms ease,color 180ms ease,background-color 180ms ease,box-shadow 180ms ease}
 .archive-project-tab[data-archive-project="npc"]{--ticket-accent:#5b4bd6;--ticket-chip:#8c79ff;border-radius:6px 13px 5px 11px/7px 10px 6px 9px;transform:rotate(-.8deg)}
 .archive-project-tab[data-archive-project="tutorial"]{--ticket-accent:#8a6d1f;--ticket-chip:#e5b845;border-radius:3px 6px 3px 5px;transform:rotate(.6deg)}
 .archive-project-tab[data-archive-project="cupcake"]{--ticket-accent:#c2334f;--ticket-chip:#f06479;border-radius:5px 5px 15px 15px/5px 5px 19px 19px;transform:rotate(-1.2deg)}
