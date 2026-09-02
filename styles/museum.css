@@ -237,9 +237,11 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   bottom: -5px;
   width: 15px;
   height: 15px;
-  background: var(--acid);
-  border: 2px solid var(--ink);
+  background: var(--frame-accent);
+  border: 2px solid var(--frame-ink);
   border-radius: 50%;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--frame-accent) 22%, transparent);
+  transition: background-color 420ms ease, border-color 420ms ease, box-shadow 420ms ease;
 }
 
 .maker-mark__words b,
