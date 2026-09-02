@@ -141,7 +141,7 @@
     window.clearTimeout(state.walkingTimer);
     shell.classList.toggle("is-walking", from !== to && !reduceMotion.matches);
     shell.dataset.walkDirection = to >= from ? "forward" : "backward";
-    state.walkingTimer = window.setTimeout(() => shell.classList.remove("is-walking"), reduceMotion.matches ? 20 : 940);
+    state.walkingTimer = window.setTimeout(() => shell.classList.remove("is-walking"), reduceMotion.matches ? 20 : 760);
   }
 
   function focusRoomHeading(index) {
@@ -182,6 +182,29 @@
   function ensureVideoPoster(video) {
     if (!(video instanceof HTMLVideoElement)) return;
     if (video.dataset.poster && !video.getAttribute("poster")) video.poster = video.dataset.poster;
+  }
+
+  const warmedPosters = new Set();
+
+  function warmNearbyPosters(index) {
+    const warm = () => {
+      [index - 1, index + 1].forEach((roomIndex) => {
+        const room = rooms[roomIndex];
+        if (!room) return;
+        room.querySelectorAll("[data-poster]").forEach((media) => {
+          const source = media.dataset.poster;
+          if (!source || warmedPosters.has(source)) return;
+          warmedPosters.add(source);
+          const image = new Image();
+          image.decoding = "async";
+          image.fetchPriority = "low";
+          image.src = source;
+          image.decode?.().catch(() => {});
+        });
+      });
+    };
+    if ("requestIdleCallback" in window) window.requestIdleCallback(warm, { timeout: 900 });
+    else window.setTimeout(warm, 60);
   }
 
   function syncFeaturePlayButton(video) {
@@ -240,8 +263,7 @@
     if (!mobileScrollHint) return;
     const room = rooms[state.room];
     const hasMoreBelow = Boolean(
-      (isMobile() || (window.innerWidth > 760 && window.innerHeight <= 780))
-      && room
+      room
       && room.scrollHeight > room.clientHeight + 18
       && room.scrollTop < 56
     );
@@ -255,10 +277,18 @@
     const from = state.room;
     state.previousRoom = from;
     state.room = index;
+    if (index !== 0 && shell.classList.contains("is-intro")) {
+      window.clearTimeout(state.introTimer);
+      shell.classList.remove("is-intro");
+    }
     stage.scrollLeft = 0;
+    markWalking(from, index);
+    // Promote the wide world before changing its transform. Doing this in the
+    // opposite order can miss the first composited frame and show up as a
+    // one-frame hitch on lower-power GPUs.
+    if (from !== index && !reduceMotion.matches) void world.offsetWidth;
     setSpatialVariables(index);
     updateRoomAccessibility(index);
-    markWalking(from, index);
 
     if (options.updateHash !== false) updateHash(index, Boolean(options.pushHistory));
     if (from !== index || options.forceAnnounce) announceRoom(index);
@@ -276,6 +306,7 @@
     });
 
     syncVideoPlayback();
+    warmNearbyPosters(index);
     window.dispatchEvent(new CustomEvent("museum:roomchange", { detail: { room: index, previousRoom: from, id: roomData[index].id } }));
   }
 

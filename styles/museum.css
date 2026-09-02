@@ -62,8 +62,8 @@
   --world-offset: 0vw;
   --visitor-left: 5vw;
   --map-progress: 16.6667%;
-  --transition-time: 880ms;
-  --ease-walk: cubic-bezier(.77, 0, .18, 1);
+  --transition-time: 680ms;
+  --ease-walk: cubic-bezier(.4, 0, .2, 1);
   --look-x: 0px;
   --look-y: 0px;
   --guide-tilt-x: 0deg;
@@ -341,16 +341,20 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   height: 100%;
   transform: translate3d(var(--world-offset), 0, 0);
   transition: transform var(--transition-time) var(--ease-walk);
-  will-change: transform;
+  backface-visibility: hidden;
+  will-change: auto;
 }
+
+.museum-shell.is-walking .museum-world { will-change: transform; }
 
 .room {
   position: relative;
   flex: 0 0 100vw;
   width: 100vw;
   height: 100%;
-  overflow: hidden;
-  overflow: clip;
+  overflow-x: clip;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   contain: layout paint;
   isolation: isolate;
 }
@@ -1000,8 +1004,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 @keyframes pet-tail-curl { to { transform: rotate(7deg); } }
 @keyframes pet-delight { 30% { transform: translateY(-7px) rotate(-2deg); } 60% { transform: translateY(1px) rotate(1deg); } }
 
-.room .pet-note, .room .pet-slab { opacity: .22; transition: opacity 480ms ease, transform 640ms var(--ease-walk); }
-.room.is-current .pet-note, .room.is-current .pet-slab { opacity: 1; }
+.room .pet-note, .room .pet-slab { opacity: 1; }
 
 @media (max-width: 900px) and (min-width: 761px) {
   .exhibit-copy--pet { grid-column: 1 / -1; grid-row: 1; }
@@ -1441,7 +1444,12 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 /* Room arrival */
 
-.room .exhibit-copy,.room .foyer-copy,.room .chapter-map,.room .foyer-motion-field,.room .guide-plinth,.room .media-exhibit,.room .archive-exhibit,.room .workbench-gallery{opacity:.22;transition:opacity 480ms ease,transform 640ms var(--ease-walk)}.room.is-current .exhibit-copy,.room.is-current .foyer-copy,.room.is-current .chapter-map,.room.is-current .foyer-motion-field,.room.is-current .guide-plinth,.room.is-current .media-exhibit,.room.is-current .archive-exhibit,.room.is-current .workbench-gallery{opacity:1}
+.room .exhibit-copy,.room .foyer-copy,.room .chapter-map,.room .foyer-motion-field,.room .guide-plinth,.room .media-exhibit,.room .archive-exhibit,.room .workbench-gallery{opacity:1}
+
+/* Offscreen rooms keep their finished artwork but stop consuming animation
+   frames. The active room remains unchanged, and the horizontal walk stays on
+   one prepared compositor layer only for the duration of the transition. */
+.room:not(.is-current) *{animation-play-state:paused!important}
 
 /* Medium widths */
 
@@ -1458,7 +1466,7 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 /* Phone and portrait tablet: each room becomes its own scrollable exhibit. */
 
 @media (max-width: 760px) {
-  :root{--header-h:72px;--map-h:74px;--transition-time:660ms}
+  :root{--header-h:72px;--map-h:74px;--transition-time:600ms}
   .museum-masthead{padding:7px 10px}.maker-mark__portrait{flex-basis:43px;width:43px;height:43px;margin-right:9px}.maker-mark__words small{margin-top:4px;font-size:.46rem}.masthead-links{gap:5px}.masthead-links a{padding:7px;font-size:.5rem}.masthead-links a:nth-child(2){display:none}
   .museum-stage{overflow:hidden}.room{overflow-x:clip;overflow-y:auto;overscroll-behavior:contain}.room::after{bottom:80px}.room-canvas{display:block;width:100%;height:auto;min-height:100%;padding:28px 18px 150px}.archive-cable{display:none}.room--alcove::before,.room-texture--alcove::after{display:none}
   .foyer-copy{max-width:none}.foyer-copy h1{font-size:clamp(3.75rem,18.5vw,6rem);line-height:.73}.foyer-copy__intro{max-width:48ch;margin-top:21px;font-size:.68rem}.foyer-actions{margin-top:23px}.guide-plinth{width:min(89vw,390px);margin:22px auto 0}.guide-speech{right:1%;font-size:.83rem}.room-canvas--foyer{padding-bottom:145px}
