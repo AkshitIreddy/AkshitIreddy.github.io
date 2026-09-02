@@ -118,25 +118,11 @@ test.describe('Software in Motion production contract', () => {
     }
   });
 
-  test('the workbench ornaments remain attached to the bottom desk', async ({ page }) => {
+  test('the workbench desk omits the loose circular ornament', async ({ page }) => {
     await page.setViewportSize({ width: 607, height: 532 });
     await page.goto('/#workbench', { waitUntil: 'domcontentloaded' });
-    const geometry = await page.locator('.workbench-desk').evaluate((desk) => {
-      const deskBox = desk.getBoundingClientRect();
-      const ornamentBox = desk.querySelector('i:nth-child(3)').getBoundingClientRect();
-      return {
-        position: getComputedStyle(desk).position,
-        deskBottom: deskBox.bottom,
-        deskTop: deskBox.top,
-        ornamentBottom: ornamentBox.bottom,
-        ornamentTop: ornamentBox.top,
-        stageBottom: document.querySelector('.museum-stage').getBoundingClientRect().bottom,
-      };
-    });
-    expect(geometry.position).toBe('absolute');
-    expect(geometry.deskBottom).toBeCloseTo(geometry.stageBottom, 0);
-    expect(geometry.ornamentTop).toBeGreaterThanOrEqual(geometry.stageBottom - 80);
-    expect(geometry.ornamentTop).toBeGreaterThanOrEqual(geometry.deskTop);
+    await expect(page.locator('.workbench-desk > i')).toHaveCount(2);
+    await expect(page.locator('.workbench-desk > i:nth-child(3)')).toHaveCount(0);
   });
 
   test('room navigation uses a prepared, bounded compositor transition', async ({ page }) => {
