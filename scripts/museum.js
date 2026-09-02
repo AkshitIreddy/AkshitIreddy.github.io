@@ -66,7 +66,7 @@
     if (themeColor) themeColor.content = frameColors[frame] || frameColors.foyer;
 
     if (room.id === "foyer") {
-      document.title = "Akshit Ireddy — this page refuses to sit still";
+      document.title = "Akshit Ireddy — Software in Motion";
       return;
     }
     const label = room.id === "archive"

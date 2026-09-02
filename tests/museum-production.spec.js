@@ -39,11 +39,11 @@ async function waitForRoomSettled(page, index) {
 test.describe('Software in Motion production contract', () => {
   test('the root URL is the selected Software in Motion experience', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle('Akshit Ireddy — this page refuses to sit still');
-    await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', 'public/favicon-aperture.svg');
-    await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', 'public/favicon-aperture-32.png');
-    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'public/favicon-aperture-180.png');
-    await expect(page.locator('link[rel="mask-icon"]')).toHaveAttribute('href', 'public/favicon-aperture-mask.svg');
+    await expect(page).toHaveTitle('Akshit Ireddy — Software in Motion');
+    await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', 'public/favicon-motion.svg');
+    await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute('href', 'public/favicon-motion-32.png');
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'public/favicon-motion-180.png');
+    await expect(page.locator('link[rel="mask-icon"]')).toHaveAttribute('href', 'public/favicon-motion-mask.svg');
     await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', 'public/site.webmanifest');
     await expect(page.locator('.museum-shell')).toBeVisible();
     await expect(page.locator('h1')).toContainText(/I make software\s*that refuses to\s*sit still/i);
