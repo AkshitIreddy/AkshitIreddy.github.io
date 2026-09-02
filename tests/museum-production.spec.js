@@ -77,6 +77,95 @@ test.describe('Software in Motion production contract', () => {
     await expect(page.locator('.museum-map button')).toHaveCount(6);
   });
 
+  test('the profile accent follows the active room and selected tool', async ({ page }) => {
+    const profileAccent = page.locator('.maker-mark__portrait i');
+    await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+    const foyer = await profileAccent.evaluate((element) => getComputedStyle(element).backgroundColor);
+
+    await page.goto('/#keyscape', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => profileAccent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(foyer);
+    const keyscape = await profileAccent.evaluate((element) => getComputedStyle(element).backgroundColor);
+
+    await page.goto('/#workbench', { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-tool="gifsmith"]').click();
+    await expect.poll(() => profileAccent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(keyscape);
+    await expect.poll(() => profileAccent.evaluate((element) => getComputedStyle(element).backgroundColor))
+      .toBe('rgb(240, 100, 73)');
+  });
+
+  test('card and supporting copy stays readable at responsive sizes', async ({ page }) => {
+    const checks = [
+      ['#alcove .exhibit-copy > p:not(.eyebrow):not(.curator-note)', 13],
+      ['.agent-card__body', 12],
+      ['#pet .pet-note__story', 12],
+      ['#keyscape .ripple-console__note', 12],
+      ['#archive .archive-description', 13],
+      ['#workbench .workbench-feature__copy [data-tool-description]', 13],
+      ['#workbench .tool-tag__id', 11],
+      ['.project-facts li', 11],
+      ['.repo-link', 11],
+      ['.media-exhibit figcaption', 11],
+    ];
+
+    for (const viewport of [{ width: 390, height: 844 }, { width: 1024, height: 768 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+      for (const [selector, minimum] of checks) {
+        const sizes = await page.locator(selector).evaluateAll((elements) => elements.map((element) => parseFloat(getComputedStyle(element).fontSize)));
+        expect(sizes.length, `${selector} exists at ${viewport.width}x${viewport.height}`).toBeGreaterThan(0);
+        expect(Math.min(...sizes), `${selector} at ${viewport.width}x${viewport.height}`).toBeGreaterThanOrEqual(minimum);
+      }
+    }
+  });
+
+  test('the workbench ornaments remain attached to the bottom desk', async ({ page }) => {
+    await page.setViewportSize({ width: 607, height: 532 });
+    await page.goto('/#workbench', { waitUntil: 'domcontentloaded' });
+    const geometry = await page.locator('.workbench-desk').evaluate((desk) => {
+      const deskBox = desk.getBoundingClientRect();
+      const ornamentBox = desk.querySelector('i:nth-child(3)').getBoundingClientRect();
+      return {
+        position: getComputedStyle(desk).position,
+        deskBottom: deskBox.bottom,
+        deskTop: deskBox.top,
+        ornamentBottom: ornamentBox.bottom,
+        ornamentTop: ornamentBox.top,
+        stageBottom: document.querySelector('.museum-stage').getBoundingClientRect().bottom,
+      };
+    });
+    expect(geometry.position).toBe('absolute');
+    expect(geometry.deskBottom).toBeCloseTo(geometry.stageBottom, 0);
+    expect(geometry.ornamentTop).toBeGreaterThanOrEqual(geometry.stageBottom - 80);
+    expect(geometry.ornamentTop).toBeGreaterThanOrEqual(geometry.deskTop);
+  });
+
+  test('room navigation uses a prepared, bounded compositor transition', async ({ page }) => {
+    await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+    const world = page.locator('.museum-world');
+    await expect(world).toHaveCSS('will-change', 'auto');
+    const transitionMs = await world.evaluate((element) => parseFloat(getComputedStyle(element).transitionDuration) * 1000);
+    expect(transitionMs).toBeLessThanOrEqual(720);
+
+    await page.locator('.museum-map [data-room-target="1"]').click();
+    await expect(page.locator('.museum-shell')).toHaveClass(/is-walking/);
+    await expect(world).toHaveCSS('will-change', 'transform');
+    await waitForRoomSettled(page, 1);
+    await expect.poll(() => page.locator('.museum-shell').evaluate((element) => element.classList.contains('is-walking'))).toBe(false);
+    await expect(world).toHaveCSS('will-change', 'auto');
+    await expect(page.locator('#foyer .guide-character')).toHaveCSS('animation-play-state', 'paused');
+  });
+
+  test('larger Alcove card copy stays clear of the visitor rail on a laptop', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
+    const clearance = await page.evaluate(() => {
+      const caption = document.querySelector('#alcove .media-exhibit figcaption').getBoundingClientRect();
+      const rail = document.querySelector('.visitor-rail').getBoundingClientRect();
+      return rail.top - caption.bottom;
+    });
+    expect(clearance).toBeGreaterThanOrEqual(2);
+  });
+
   test('all public-facing branding and navigation use the new language', async ({ page }) => {
     await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.masthead-exhibit')).toContainText('Software in Motion');
@@ -245,7 +334,7 @@ test.describe('Software in Motion production contract', () => {
     expect(coverState.opacity).toBeLessThanOrEqual(0.01);
     expect(coverState.visibility).toBe('hidden');
 
-    const pageMetrics = await page.locator('.alcove-book__page').evaluate((pageEl) => {
+    const readPageMetrics = () => page.locator('.alcove-book__page').evaluate((pageEl) => {
       const rule = Number.parseFloat(getComputedStyle(pageEl).getPropertyValue('--book-rule')) || 9;
       const pageRect = pageEl.getBoundingClientRect();
       const title = pageEl.querySelector('b');
@@ -267,9 +356,13 @@ test.describe('Software in Motion production contract', () => {
         noteAligned: inRuleBand(noteOffset),
       };
     });
-    expect(pageMetrics.withinBounds).toBe(true);
-    expect(pageMetrics.titleAligned).toBe(true);
-    expect(pageMetrics.noteAligned).toBe(true);
+    // The cover hides before the 3D leaf and block finish settling. Measure the
+    // ruled-page alignment only once that transform has reached its final pose.
+    await expect.poll(readPageMetrics).toEqual({
+      withinBounds: true,
+      titleAligned: true,
+      noteAligned: true,
+    });
   });
 
   test('feature demos decode at their real intrinsic dimensions', async ({ page }) => {
