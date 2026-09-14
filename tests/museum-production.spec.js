@@ -745,6 +745,54 @@ test.describe('Software in Motion production contract', () => {
     await expect(petVideo).toHaveJSProperty('paused', true);
   });
 
+  test('desktop chapters scroll only for overflowing content and never show the mobile prompt', async ({ page }) => {
+    for (const viewport of [{ width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
+      for (const [index, room] of rooms.entries()) {
+        await page.locator(`.museum-map [data-room-target="${index}"]`).click();
+        await waitForRoomSettled(page, index);
+        const current = page.locator(`#${room}`);
+        if (room === 'alcove') {
+          await expect(current).toHaveCSS('overflow-y', 'auto');
+          await page.locator('[data-open-book]').click();
+          await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'true');
+          const scrollTop = await current.evaluate((element) => element.scrollTop);
+          if (viewport.height === 900) expect(scrollTop).toBeGreaterThan(0);
+          else expect(scrollTop).toBe(0);
+          await page.locator('[data-open-book]').click();
+          await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'false');
+        } else {
+          await expect(current).toHaveCSS('overflow-y', 'clip');
+          await current.evaluate((element) => element.scrollTo({ top: 100 }));
+          expect(await current.evaluate((element) => element.scrollTop)).toBe(0);
+        }
+        await expect(page.locator('.mobile-scroll-hint')).toBeHidden();
+      }
+    }
+  });
+
+  test('short desktop chapters use themed scrollbars without a mobile prompt', async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
+    await waitForRoomSettled(page, 1);
+    const current = page.locator('#alcove');
+    await expect(current).toHaveCSS('overflow-y', 'auto');
+    await expect(current).toHaveCSS('scrollbar-color', 'rgb(240, 100, 73) rgb(239, 231, 211)');
+    await expect(page.locator('.mobile-scroll-hint')).toBeHidden();
+    await page.mouse.move(900, 450);
+    await page.mouse.wheel(0, 400);
+    await expect.poll(() => current.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await current.evaluate((element) => element.scrollTo({ top: 0 }));
+    await expect(page.locator('.mobile-scroll-hint')).toBeVisible();
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(page.locator('.mobile-scroll-hint')).toBeHidden();
+    await page.locator('.museum-map [data-room-target="3"]').click();
+    await waitForRoomSettled(page, 3);
+    await expect(page.locator('#keyscape')).toHaveCSS('overflow-y', 'clip');
+  });
+
   test('native page scrolling keys stay inside a short-height chapter', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 620 });
     await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });

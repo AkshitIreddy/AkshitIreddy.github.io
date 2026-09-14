@@ -352,12 +352,24 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   flex: 0 0 100vw;
   width: 100vw;
   height: 100%;
+  /* Desktop artwork may extend beyond the stage without making it scroll. */
   overflow-x: clip;
-  overflow-y: auto;
+  overflow-y: clip;
   overscroll-behavior: contain;
+  scrollbar-color: var(--coral) var(--paper);
+  scrollbar-width: thin;
   contain: layout paint;
   isolation: isolate;
 }
+
+/* Fallback for browsers that use the WebKit scrollbar styling API. */
+.room::-webkit-scrollbar { width: 10px; }
+.room::-webkit-scrollbar-track { background: var(--paper); }
+.room::-webkit-scrollbar-thumb { background: var(--coral); border: 2px solid var(--paper); border-radius: 8px; }
+.room::-webkit-scrollbar-thumb:hover { background: var(--coral-deep); }
+
+/* Alcove's notes and working bookshelf can outgrow even a laptop-height stage. */
+.room--alcove { overflow-y: auto; }
 
 .room::after {
   position: absolute;
@@ -1755,8 +1767,11 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   .room { overflow-x: clip; overflow-y: auto; overscroll-behavior: contain; }
   .room-canvas { height: auto; min-height: 680px; padding-bottom: 105px; }
   .room .doorway { display: none; }
-  .mobile-scroll-hint { display: flex; }
-  .museum-shell.is-intro .mobile-scroll-hint.is-visible { opacity: 1; }
+}
+
+/* The scroll prompt is a phone affordance; desktop uses the themed scrollbar. */
+@media (min-width: 761px) {
+  .mobile-scroll-hint { display: none; }
 }
 
 /* Give the long archive title an honest column through the tablet and compact
