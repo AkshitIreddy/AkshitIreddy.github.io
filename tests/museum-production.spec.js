@@ -787,7 +787,7 @@ test.describe('Software in Motion production contract', () => {
       expect(Math.abs(title.y - film.y)).toBeLessThan(1);
       if (viewport.width >= 1440 && viewport.height >= 900) {
         const video = await page.locator('.alcove-specimen video').boundingBox();
-        expect(video.height).toBeGreaterThanOrEqual(viewport.height === 900 ? 395 : 570);
+        expect(video.height).toBeGreaterThanOrEqual(viewport.height === 900 ? 395 : 540);
       }
       await page.locator('[data-open-book]').click();
       await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'true');
@@ -797,7 +797,7 @@ test.describe('Software in Motion production contract', () => {
   });
 
   test('Desktop Pet keeps its field note near the title and its caption clear of the stand and desk', async ({ page }) => {
-    for (const viewport of [{ width: 768, height: 1024 }, { width: 1024, height: 800 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }, { width: 390, height: 844 }]) {
+    for (const viewport of [{ width: 768, height: 1024 }, { width: 1024, height: 800 }, { width: 1440, height: 900 }, { width: 1920, height: 800 }, { width: 1920, height: 1080 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
       await page.goto('/#pet', { waitUntil: 'domcontentloaded' });
       await waitForRoomSettled(page, 2);
@@ -811,10 +811,43 @@ test.describe('Software in Motion production contract', () => {
       expect(gap, `card gap at ${viewport.width}`).toBeGreaterThanOrEqual(8);
       expect(gap, `card gap at ${viewport.width}`).toBeLessThanOrEqual(32);
       expect(caption.y - (stand.y + stand.height), `stand clearance at ${viewport.width}`).toBeGreaterThanOrEqual(8);
-      expect(desk.y - (caption.y + caption.height), `desk clearance at ${viewport.width}`).toBeGreaterThanOrEqual(8);
+      expect(caption.y - (desk.y + desk.height), `desk clearance at ${viewport.width}`).toBeGreaterThanOrEqual(8);
       expect(overlapArea(note, caption)).toBe(0);
+      if (viewport.width > 760) {
+        const stage = await page.locator('#pet').boundingBox();
+        expect(note.y + note.height).toBeLessThanOrEqual(stage.y + stage.height);
+      }
       await expect(page.locator('[data-call-pet]')).toBeVisible();
       await page.locator('#pet .repo-link').click({ trial: true });
+    }
+  });
+
+  test('expanded exhibits keep Keyscape title alignment and pack their controls beside the demo', async ({ page }) => {
+    test.setTimeout(60_000);
+    for (const viewport of [{ width: 768, height: 1024 }, { width: 1024, height: 800 }, { width: 1440, height: 800 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }, { width: 2560, height: 1440 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/#keyscape', { waitUntil: 'domcontentloaded' });
+      await waitForRoomSettled(page, 3);
+      await page.evaluate(() => document.fonts.ready);
+      const reference = await page.locator('#keyscape-title').boundingBox();
+      for (const [index, id] of [[1, 'alcove'], [2, 'pet'], [3, 'keyscape']]) {
+        await page.locator(`.museum-map [data-room-target="${index}"]`).click();
+        await waitForRoomSettled(page, index);
+        const title = await page.locator(`#${id}-title`).boundingBox();
+        expect(Math.abs(title.y - reference.y), `${id} title at ${viewport.width}`).toBeLessThan(1);
+        if (id === 'keyscape') continue;
+        const [header, controls, film, link, door] = await Promise.all([
+          page.locator(`#${id} header`).boundingBox(),
+          page.locator(id === 'alcove' ? '.alcove-notes' : '.pet-note').boundingBox(),
+          page.locator(`#${id} figure`).boundingBox(),
+          page.locator(`#${id} .repo-link`).boundingBox(),
+          page.locator(`#${id} .doorway--right`).boundingBox(),
+        ]);
+        expect(controls.y - header.y - header.height).toBeLessThanOrEqual(32);
+        expect(controls.x + controls.width).toBeLessThan(film.x);
+        expect(overlapArea(link, door)).toBe(0);
+        await page.locator(`#${id} .repo-link`).click({ trial: true });
+      }
     }
   });
 

@@ -188,47 +188,50 @@
           <section class="room room--alcove" id="alcove" aria-labelledby="alcove-title">
             <div class="room-texture room-texture--alcove" aria-hidden="true"></div>
             <div class="room-canvas room-canvas--alcove">
-              <header class="exhibit-copy exhibit-copy--alcove">
-                <p class="eyebrow"><span>01 · recent habitat</span> / 2026</p><h2 id="alcove-title" tabindex="-1">Alcove</h2>
-                <p class="project-story">A local-first notebook built like a shelf of storybooks. Pages turn, covers become places, and your library stays on your machine. An optional AI agent can answer questions and draft pages for your review.</p>
-                <ul class="project-facts" aria-label="Alcove details"><li>local-first</li><li>Rust + Tauri</li><li>page physics</li><li>kept not stored</li><li>no account</li></ul>
-              </header>
+              <div class="alcove-copy">
+                <header class="exhibit-copy exhibit-copy--alcove">
+                  <p class="eyebrow"><span>01 · recent habitat</span> / 2026</p><h2 id="alcove-title" tabindex="-1">Alcove</h2>
+                  <p class="project-story">A local-first notebook built like a shelf of storybooks. Pages turn, covers become places, and your library stays on your machine. An optional AI agent can answer questions and draft pages for your review.</p>
+                  <ul class="project-facts" aria-label="Alcove details"><li>local-first</li><li>Rust + Tauri</li><li>page physics</li><li>kept not stored</li><li>no account</li></ul>
+                </header>
+
+                <aside class="alcove-notes" aria-label="Alcove field notes">
+                  <div class="agent-card">
+                    <p class="agent-card__label">catalogue card · kept, not stored</p>
+                    <p class="agent-card__body">Your library stays local. Pull the Welcome book to explore its binding and illustrated pages.</p>
+                    <span class="agent-card__stamp" aria-hidden="true">local</span>
+                  </div>
+                  <div class="alcove-shelf-row">
+                    <div class="alcove-shelf">
+                      <span class="alcove-shelf__spines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                      <button type="button" class="alcove-book" data-open-book aria-expanded="false" aria-label="Pull the Welcome book off the shelf and open it">
+                        <span class="alcove-book__block">
+                          <span class="alcove-book__edges" aria-hidden="true"></span>
+                          <span class="alcove-book__page">
+                            <small class="alcove-book__running-head">A place for your thoughts</small>
+                            <b>Welcome</b>
+                            <svg class="alcove-book__illustration" viewBox="0 0 60 40" aria-hidden="true"><path d="M8 33V9l22-5 22 5v24l-22-5Z M30 4v24 M13 13l12-3m-12 8 12-3m10-5 12 3m-12 2 12 3M8 33l22 5 22-5M30 28v10"/><path d="M20 4V1m20 3V1M4 17H1m58 0h-3"/><circle cx="30" cy="16" r="2"/></svg>
+                            <span class="alcove-book__prose">Keep a little wonder.<br>Give an idea a home.<br>Turn a fresh page.</span>
+                            <em>your library begins here</em>
+                            <small class="alcove-book__folio">— 01 —</small>
+                          </span>
+                          <span class="alcove-book__ribbon" aria-hidden="true"></span>
+                          <span class="alcove-book__leaf">
+                            <span class="alcove-book__cover"><span class="alcove-book__edition">VOL. I · A PERSONAL LIBRARY</span><svg class="alcove-book__crest" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 35 20 20 37 5 20Z M12 25V15q4-3 8 0 4-3 8 0v10q-4-3-8 0-4-3-8 0Zm8-10v10"/><path d="M20 7v3m0 20v3M9 20h3m16 0h3"/></svg><b>Alcove</b><i>the welcome book</i><span class="alcove-book__cover-rule">✦</span></span>
+                            <span class="alcove-book__endpaper" aria-hidden="true"><span class="alcove-book__bookplate"><small>EX LIBRIS</small><svg viewBox="0 0 40 32"><path d="M20 28V10m0 9C5 19 6 5 6 5s14 0 14 14Zm0-5C32 14 34 2 34 2S20 2 20 14ZM11 28h18"/></svg><b>This little<br>library belongs<br>to you.</b><i>Kept, not stored.</i></span></span>
+                          </span>
+                        </span>
+                      </button>
+                      <span class="alcove-shelf__plank" aria-hidden="true"></span>
+                    </div>
+                    <p class="interaction-cue"><i aria-hidden="true"></i> Pull the book</p>
+                  </div>
+                </aside>
+              </div>
               <figure class="media-exhibit alcove-specimen">
                 <div class="museum-window museum-window--alcove specimen-window--alcove"><video muted loop playsinline preload="none" data-poster="public/media/features/alcove-tour-poster.webp" aria-label="Alcove guided tour: the Welcome book opens from the shelf, two pages turn, then the library, studios, and catalogue" data-room-video><source data-src="public/media/features/alcove-tour.webm" type="video/webm" /><source data-src="public/media/features/alcove-tour.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play Alcove demo"><span aria-hidden="true">▶</span></button><span class="window-label"><i></i> the guided tour · rendered, not recorded</span></div>
                 <figcaption><span><b>In motion:</b> the Welcome book opens, pages turn, and the tour continues through shelves, studios, and the catalogue.</span><a class="repo-link" href="https://github.com/AkshitIreddy/Alcove" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
-              <aside class="alcove-notes" aria-label="Alcove field notes">
-                <div class="agent-card">
-                  <p class="agent-card__label">catalogue card · kept, not stored</p>
-                  <p class="agent-card__body">Real page physics give every volume weight. Pull a book, read it in place, and return it to the shelf. The catalogue lives locally—nothing syncs to a cloud account.</p>
-                  <span class="agent-card__stamp" aria-hidden="true">local</span>
-                </div>
-                <div class="alcove-shelf-row">
-                  <div class="alcove-shelf">
-                    <span class="alcove-shelf__spines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-                    <button type="button" class="alcove-book" data-open-book aria-expanded="false" aria-label="Pull the Welcome book off the shelf and open it">
-                      <span class="alcove-book__block">
-                        <span class="alcove-book__edges" aria-hidden="true"></span>
-                        <span class="alcove-book__page">
-                          <small class="alcove-book__running-head">A place for your thoughts</small>
-                          <b>Welcome</b>
-                          <svg class="alcove-book__illustration" viewBox="0 0 60 40" aria-hidden="true"><path d="M8 33V9l22-5 22 5v24l-22-5Z M30 4v24 M13 13l12-3m-12 8 12-3m10-5 12 3m-12 2 12 3M8 33l22 5 22-5M30 28v10"/><path d="M20 4V1m20 3V1M4 17H1m58 0h-3"/><circle cx="30" cy="16" r="2"/></svg>
-                          <span class="alcove-book__prose">Keep a little wonder.<br>Give an idea a home.<br>Turn a fresh page.</span>
-                          <em>your library begins here</em>
-                          <small class="alcove-book__folio">— 01 —</small>
-                        </span>
-                        <span class="alcove-book__ribbon" aria-hidden="true"></span>
-                        <span class="alcove-book__leaf">
-                          <span class="alcove-book__cover"><span class="alcove-book__edition">VOL. I · A PERSONAL LIBRARY</span><svg class="alcove-book__crest" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 35 20 20 37 5 20Z M12 25V15q4-3 8 0 4-3 8 0v10q-4-3-8 0-4-3-8 0Zm8-10v10"/><path d="M20 7v3m0 20v3M9 20h3m16 0h3"/></svg><b>Alcove</b><i>the welcome book</i><span class="alcove-book__cover-rule">✦</span></span>
-                          <span class="alcove-book__endpaper" aria-hidden="true"><span class="alcove-book__bookplate"><small>EX LIBRIS</small><svg viewBox="0 0 40 32"><path d="M20 28V10m0 9C5 19 6 5 6 5s14 0 14 14Zm0-5C32 14 34 2 34 2S20 2 20 14ZM11 28h18"/></svg><b>This little<br>library belongs<br>to you.</b><i>Kept, not stored.</i></span></span>
-                        </span>
-                      </span>
-                    </button>
-                    <span class="alcove-shelf__plank" aria-hidden="true"></span>
-                  </div>
-                  <p class="interaction-cue"><i aria-hidden="true"></i> Pull the book</p>
-                </div>
-              </aside>
             </div>
             <button class="doorway doorway--left" type="button" data-room-target="0"><i aria-hidden="true">←</i><span>Start</span></button>
             <button class="doorway doorway--right" type="button" data-room-target="2"><span><b>02</b> Desktop companion</span><i aria-hidden="true">→</i></button>
@@ -237,60 +240,62 @@
           <section class="room room--pet" id="pet" aria-labelledby="pet-title">
             <div class="room-texture room-texture--pet" aria-hidden="true"></div>
             <div class="room-canvas room-canvas--pet">
-              <header class="exhibit-copy exhibit-copy--pet">
-                <p class="eyebrow"><span>02 · desktop companion</span> / 2026</p>
-                <h2 id="pet-title" tabindex="-1">AI Desktop Pet</h2>
-              </header>
-              <aside class="pet-note" aria-label="Field note on the desktop habitat">
-                <p class="pet-note__label">field note · the desktop habitat</p>
-                <p class="pet-note__story">A conversational desktop character that sees your screen and remembers. It climbs windows, follows the cursor, and joins other pets, turning spoken Convai conversations into body language.</p>
-                <ul class="project-facts pet-note__facts" aria-label="AI Desktop Pet details"><li>Convai voice</li><li>screen vision</li><li>long-term memory</li><li>multi-pet</li><li>window physics</li></ul>
-                <div class="pet-note__summon">
-                  <p class="pet-note__summon-label">to summon it — ring once and watch the desk edge</p>
-                  <div class="interactive-action">
-                    <button class="exhibit-button exhibit-button--dark pet-bell" type="button" data-call-pet aria-pressed="false"><svg viewBox="0 0 18 16" aria-hidden="true" focusable="false"><path d="M9 4.4C5.7 4.4 3.7 6.7 3.7 9.5v1.3h10.6V9.5c0-2.8-2-5.1-5.3-5.1Z" /><path d="M9 4.4V2.7m-1.7 0h3.4" /><path d="M1.8 12.4h14.4" /><path d="M7.6 14.1c.3.7.8 1 1.4 1s1.1-.3 1.4-1" /></svg> Call the creature</button>
-                    <p class="interaction-cue"><i aria-hidden="true"></i> Ring to call</p>
+              <div class="pet-copy">
+                <header class="exhibit-copy exhibit-copy--pet">
+                  <p class="eyebrow"><span>02 · desktop companion</span> / 2026</p>
+                  <h2 id="pet-title" tabindex="-1">AI Desktop Pet</h2>
+                </header>
+                <aside class="pet-note" aria-label="Field note on the desktop habitat">
+                  <p class="pet-note__label">field note · the desktop habitat</p>
+                  <p class="pet-note__story">A conversational desktop character with window awareness, screen vision, and long-term memory. It wanders the screen, climbs window edges, chases the cursor, joins other pets, and turns spoken Convai conversations into body language of its own.</p>
+                  <ul class="project-facts pet-note__facts" aria-label="AI Desktop Pet details"><li>Convai voice</li><li>screen vision</li><li>long-term memory</li><li>multi-pet</li><li>window physics</li></ul>
+                  <div class="pet-note__summon">
+                    <p class="pet-note__summon-label">to summon it — ring once and watch the desk edge</p>
+                    <div class="interactive-action">
+                      <button class="exhibit-button exhibit-button--dark pet-bell" type="button" data-call-pet aria-pressed="false"><svg viewBox="0 0 18 16" aria-hidden="true" focusable="false"><path d="M9 4.4C5.7 4.4 3.7 6.7 3.7 9.5v1.3h10.6V9.5c0-2.8-2-5.1-5.3-5.1Z" /><path d="M9 4.4V2.7m-1.7 0h3.4" /><path d="M1.8 12.4h14.4" /><path d="M7.6 14.1c.3.7.8 1 1.4 1s1.1-.3 1.4-1" /></svg> Call the creature</button>
+                      <p class="interaction-cue"><i aria-hidden="true"></i> Ring to call</p>
+                    </div>
                   </div>
-                </div>
-              </aside>
+                </aside>
+              </div>
               <figure class="media-exhibit pet-specimen">
                 <div class="museum-window museum-window--pet"><video muted loop playsinline preload="none" data-poster="public/media/features/pet-poster.webp" aria-label="AI Desktop Pet walking and reacting on a computer desktop" data-room-video><source data-src="public/media/features/pet.webm" type="video/webm" /><source data-src="public/media/features/pet.mp4" type="video/mp4" /></video><button class="media-play media-play--feature" type="button" data-video-toggle aria-label="Play AI Desktop Pet demo"><span aria-hidden="true">▶</span></button><span class="glass-glint" aria-hidden="true"></span><i class="pet-power" aria-hidden="true"></i></div>
                 <span class="pet-stand" aria-hidden="true"><i></i></span>
                 <blockquote class="pet-sticky">“Software can have body language.”</blockquote>
                 <span class="pet-stars" aria-label="20 GitHub stars, as of August 2026">★ 20 · aug 2026</span>
+                <div class="pet-slab" aria-hidden="true">
+                  <div class="pet-creature">
+                    <svg viewBox="0 0 76 56" focusable="false">
+                      <ellipse class="pet-creature__shadow" cx="36" cy="51" rx="22" ry="2.6" />
+                      <g class="pet-creature__pose">
+                        <g class="pet-creature__tail">
+                          <path class="pet-creature__tail-outline" d="M19 39 C9 42 3 36 6 27 C8 20 14 18 17 23" />
+                          <path class="pet-creature__tail-fill" d="M19 39 C9 42 3 36 6 27 C8 20 14 18 17 23" />
+                        </g>
+                        <path class="pet-creature__leg pet-creature__leg--a" d="M22 40 Q19 46 22 49.5 L28 49.5 Q30 45 28 40 Z" />
+                        <path class="pet-creature__leg pet-creature__leg--b" d="M42 40 Q39 46 42 49.5 L48 49.5 Q50 45 48 40 Z" />
+                        <path class="pet-creature__body" d="M15 38 C15 28 25 21 37 21 C49 21 57 27 57 36 C57 44 49 48 37 48 C25 48 16 45 15 38 Z" />
+                        <g class="pet-creature__head-turn">
+                          <g class="pet-creature__head">
+                            <path class="pet-creature__ear" d="M44 10 L42 1 L52 7 Z" />
+                            <path class="pet-creature__ear" d="M60 6 L68 0 L68 11 Z" />
+                            <path class="pet-creature__face" d="M42 18 C42 9 50 3.5 58 4.5 C66 5.5 71 11.5 70 19.5 C69 27.5 62 32.5 54 31.5 C46.5 30.5 42 25.5 42 18 Z" />
+                            <g class="pet-creature__eyes">
+                              <ellipse class="pet-creature__eye" cx="53" cy="17" rx="4.4" ry="5" />
+                              <ellipse class="pet-creature__eye" cx="63.5" cy="17.8" rx="4.1" ry="4.7" />
+                              <circle class="pet-creature__pupil" cx="54.2" cy="18.4" r="2" />
+                              <circle class="pet-creature__pupil" cx="64.6" cy="19.1" r="1.85" />
+                            </g>
+                            <path class="pet-creature__nose" d="M58.4 23.4 l2.2 -1.1 2.2 1.1 -2.2 1.9 Z" />
+                          </g>
+                          <path class="pet-creature__collar" d="M47 30.5 Q55 35 64 31.5 L64.6 34.2 Q55 38.4 46.4 33.4 Z" />
+                        </g>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
                 <figcaption><span><b>Behavior:</b> climbs windows, chases the cursor, remembers, converses, and coexists.</span><a class="repo-link" href="https://github.com/AkshitIreddy/AI-Desktop-Pet" target="_blank" rel="noreferrer">View source <span aria-hidden="true">↗</span></a></figcaption>
               </figure>
-              <div class="pet-slab" aria-hidden="true">
-                <div class="pet-creature">
-                  <svg viewBox="0 0 76 56" focusable="false">
-                    <ellipse class="pet-creature__shadow" cx="36" cy="51" rx="22" ry="2.6" />
-                    <g class="pet-creature__pose">
-                      <g class="pet-creature__tail">
-                        <path class="pet-creature__tail-outline" d="M19 39 C9 42 3 36 6 27 C8 20 14 18 17 23" />
-                        <path class="pet-creature__tail-fill" d="M19 39 C9 42 3 36 6 27 C8 20 14 18 17 23" />
-                      </g>
-                      <path class="pet-creature__leg pet-creature__leg--a" d="M22 40 Q19 46 22 49.5 L28 49.5 Q30 45 28 40 Z" />
-                      <path class="pet-creature__leg pet-creature__leg--b" d="M42 40 Q39 46 42 49.5 L48 49.5 Q50 45 48 40 Z" />
-                      <path class="pet-creature__body" d="M15 38 C15 28 25 21 37 21 C49 21 57 27 57 36 C57 44 49 48 37 48 C25 48 16 45 15 38 Z" />
-                      <g class="pet-creature__head-turn">
-                        <g class="pet-creature__head">
-                          <path class="pet-creature__ear" d="M44 10 L42 1 L52 7 Z" />
-                          <path class="pet-creature__ear" d="M60 6 L68 0 L68 11 Z" />
-                          <path class="pet-creature__face" d="M42 18 C42 9 50 3.5 58 4.5 C66 5.5 71 11.5 70 19.5 C69 27.5 62 32.5 54 31.5 C46.5 30.5 42 25.5 42 18 Z" />
-                          <g class="pet-creature__eyes">
-                            <ellipse class="pet-creature__eye" cx="53" cy="17" rx="4.4" ry="5" />
-                            <ellipse class="pet-creature__eye" cx="63.5" cy="17.8" rx="4.1" ry="4.7" />
-                            <circle class="pet-creature__pupil" cx="54.2" cy="18.4" r="2" />
-                            <circle class="pet-creature__pupil" cx="64.6" cy="19.1" r="1.85" />
-                          </g>
-                          <path class="pet-creature__nose" d="M58.4 23.4 l2.2 -1.1 2.2 1.1 -2.2 1.9 Z" />
-                        </g>
-                        <path class="pet-creature__collar" d="M47 30.5 Q55 35 64 31.5 L64.6 34.2 Q55 38.4 46.4 33.4 Z" />
-                      </g>
-                    </g>
-                  </svg>
-                </div>
-              </div>
             </div>
             <button class="doorway doorway--left" type="button" data-room-target="1"><i aria-hidden="true">←</i><span>Living library</span></button><button class="doorway doorway--right doorway--night" type="button" data-room-target="3"><span><b>03</b> Light instrument</span><i aria-hidden="true">→</i></button>
           </section>

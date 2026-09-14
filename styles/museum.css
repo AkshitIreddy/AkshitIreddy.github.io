@@ -2120,48 +2120,64 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
   .alcove-specimen { transform: translateY(-20px); }
 }
 
-/* A full-width lower shelf keeps the notes and working book inside the stage. */
-@media (min-width: 761px) and (min-height: 781px) {
-  .room-canvas--alcove { grid-template-columns: minmax(0,.9fr) minmax(0,1.5fr); grid-template-rows: minmax(0,1fr) auto; gap: 20px 32px; padding-block: 22px 46px; }
-  .alcove-specimen { grid-row: 1; margin: 0; transform: none; }
-  .museum-window--alcove video { max-height: calc(100dvh - var(--header-h) - var(--map-h) - 320px); }
-  .alcove-notes { grid-column: 1 / -1; grid-row: 2; flex-direction: row; align-items: flex-end; gap: 40px; }
-  .alcove-notes .agent-card { flex: 1; }
-  .alcove-notes .agent-card__body { max-width: none; }
-  .alcove-shelf-row { flex: 0 0 330px; flex-wrap: nowrap; }
-  .alcove-shelf-row .interaction-cue { align-self: center; margin: 0; }
-}
-
-/* The monitor caption takes up real space below its stand; the field note
-   follows the heading instead of sinking to the bottom of a stretched row. */
+/* Two complete compositions: a close-set reading column beside the full demo. */
+.alcove-copy, .pet-copy { min-width: 0; }
 @media (min-width: 761px) {
-  .room-canvas--pet { grid-template-columns: minmax(0,.9fr) minmax(0,1.3fr); grid-template-rows: max-content minmax(0,1fr) auto; gap: 22px 36px; padding-block: 28px 54px; }
-  .pet-note, .pet-specimen { align-self: start; }
-  .pet-specimen { margin: 0; }
+  .room-canvas--alcove, .room-canvas--pet { width: min(100%,1840px); grid-template-columns: minmax(0,1fr) minmax(0,1.35fr); grid-template-rows: auto; align-content: start; align-items: start; gap: 38px; padding: var(--exhibit-top,30px) clamp(28px,2.4vw,46px) 20px; }
+  .alcove-copy, .pet-copy { display: flex; flex-direction: column; gap: 24px; grid-column: 1; grid-row: 1; }
+  .alcove-specimen, .pet-specimen { grid-column: 2; grid-row: 1; align-self: start; margin: 0; transform: none; }
+  .museum-window--alcove video { max-height: max(260px,calc(100dvh - var(--header-h) - var(--map-h) - var(--exhibit-top,30px) - 160px)); }
+  .alcove-notes { display: grid; grid-template-columns: minmax(0,1fr) 200px; align-items: center; gap: 22px; margin: 0; }
+  .alcove-notes .agent-card { padding: 14px; }
+  .alcove-notes .agent-card__body { max-width: none; }
+  .alcove-shelf-row { flex-direction: column; align-items: center; gap: 12px; }
+  .alcove-shelf-row .interaction-cue { flex: none; margin: 0; }
+  .exhibit-copy--pet h2 { font-size: clamp(3.2rem,6vw,6.7rem); }
+  .pet-note { align-self: stretch; padding: 22px 24px; }
+  .pet-note__story { font-size: clamp(.88rem,1vw,1.12rem); line-height: 1.65; }
+  .pet-note__facts li { font-size: clamp(.72rem,.8vw,.9rem); padding: 7px 9px; }
+  .pet-note__summon { margin-top: 18px; padding-top: 16px; }
+  .pet-specimen .pet-slab { height: 46px; width: calc(100% + 12px); margin: -2px 0 0 -6px; }
   .pet-specimen figcaption { position: static; width: 100%; margin: 14px 0 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; }
-  .pet-slab { height: 64px; margin-top: 0; }
   .pet-sticky { left: 14px; }
-  .museum-window--pet video { max-height: clamp(200px,calc(100dvh - var(--header-h) - var(--map-h) - 330px),660px); object-fit: contain; }
+  .museum-window--pet { overflow: clip; }
+  .museum-window--pet video { max-height: max(220px,calc(100dvh - var(--header-h) - var(--map-h) - var(--exhibit-top,30px) - 220px)); object-fit: contain; }
+  .pet-creature { bottom: 9px; }
 }
 @media (min-width: 761px) and (max-width: 1180px) {
-  .exhibit-copy--pet { grid-column: 1 / -1; }
-  .pet-specimen { grid-row: 2; }
+  .room-canvas--alcove, .room-canvas--pet { gap: 26px; grid-template-columns: minmax(0,1fr) minmax(0,1.12fr); padding-inline: 28px; }
+  .alcove-notes { grid-template-columns: minmax(0,1fr) 175px; gap: 12px; }
+  .alcove-notes .agent-card { padding: 10px; }
+  .alcove-notes .agent-card__label { font-size: .62rem; padding-right: 0; }
+  .alcove-notes .agent-card__stamp { display: none; }
+  .alcove-notes .agent-card__body { font-size: .76rem; line-height: 1.5; }
+  .exhibit-copy--pet h2 { font-size: clamp(3rem,5.2vw,4rem); }
   .pet-note__story { font-size: .76rem; line-height: 1.55; }
   .pet-note { padding: 13px 14px; }
   .pet-note__facts { gap: 6px; }
   .pet-note__facts li { padding: 4px 7px; }
   .pet-specimen figcaption { gap: 12px; }
   .pet-specimen .repo-link { justify-self: start; }
-  .museum-window--pet video { max-height: clamp(200px,calc(100dvh - var(--header-h) - var(--map-h) - 390px),660px); }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  .alcove-notes { grid-template-columns: 1fr; }
+  .alcove-shelf-row { flex-direction: row; }
 }
 @media (max-width: 760px) {
-  .pet-slab { margin-top: 16px; }
+  .room-canvas--alcove { display: flex; flex-direction: column; gap: 0; }
+  .alcove-copy { display: contents; }
+  .exhibit-copy--alcove { order: 0; }
+  .alcove-specimen { order: 1; }
+  .alcove-notes { order: 2; }
+  .pet-specimen .pet-slab { margin-top: 12px; }
 }
 @media (min-width: 761px) and (min-height: 781px) and (max-height: 850px) {
   .exhibit-copy--alcove h2 { font-size: clamp(3rem,5vw,4.5rem); }
   .exhibit-copy--alcove > .project-story { font-size: .82rem; line-height: 1.55; }
   .exhibit-copy--alcove .project-facts { gap: 6px; margin-top: 16px; }
   .exhibit-copy--alcove .project-facts li { padding: 4px 7px; }
+  .pet-note { padding: 16px 18px; }
+  .pet-note__story { font-size: .88rem; line-height: 1.55; }
 }
 
 /* Cloth binding, gilt tooling, layered stock and a printed ex-libris spread. */

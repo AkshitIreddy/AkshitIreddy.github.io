@@ -917,12 +917,34 @@
 
   reduceMotion.addEventListener?.("change", syncMotionPreference);
 
+  // Keep the two expanded exhibits on Keyscape's existing title line. Measure
+  // its natural layout without changing the other chapters or phone flow.
+  const titleReference = document.querySelector("#keyscape-title");
+  const alignedCanvases = [...document.querySelectorAll(".room-canvas--alcove, .room-canvas--pet")];
+  function alignExhibitTitles() {
+    if (!titleReference || isMobile()) return;
+    const referenceRoom = titleReference.closest(".room");
+    const titleTop = titleReference.getBoundingClientRect().top - referenceRoom.getBoundingClientRect().top + referenceRoom.scrollTop;
+    const offsets = alignedCanvases.map((canvas) => {
+      const header = canvas.querySelector("header");
+      return titleTop - (header.querySelector("h2").getBoundingClientRect().top - header.getBoundingClientRect().top);
+    });
+    alignedCanvases.forEach((canvas, index) => canvas.style.setProperty("--exhibit-top", `${offsets[index]}px`));
+  }
+  const titleObserver = new ResizeObserver(alignExhibitTitles);
+  if (titleReference) titleObserver.observe(titleReference.closest(".room-canvas"));
+  if (titleReference) titleObserver.observe(titleReference.closest("header"));
+  alignedCanvases.forEach((canvas) => titleObserver.observe(canvas.querySelector("header")));
+  document.fonts.ready.then(alignExhibitTitles);
+  alignExhibitTitles();
+
   let resizeFrame = 0;
   window.addEventListener("resize", () => {
     if (resizeFrame) return;
     resizeFrame = window.requestAnimationFrame(() => {
       resizeFrame = 0;
       setSpatialVariables(state.room);
+      alignExhibitTitles();
       syncMobileScrollHint();
       if (petRoom?.classList.contains("is-called") || petRoom?.classList.contains("is-visiting")) measurePetStop();
     });
