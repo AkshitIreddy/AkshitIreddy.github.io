@@ -782,10 +782,39 @@ test.describe('Software in Motion production contract', () => {
         expect(box.top, `${viewport.width} ${box.name} top`).toBeGreaterThanOrEqual(0);
         expect(box.bottom, `${viewport.width} ${box.name} bottom`).toBeGreaterThanOrEqual(0);
       }
+      const title = await page.locator('.exhibit-copy--alcove').boundingBox();
+      const film = await page.locator('.alcove-specimen').boundingBox();
+      expect(Math.abs(title.y - film.y)).toBeLessThan(1);
+      if (viewport.width >= 1440 && viewport.height >= 900) {
+        const video = await page.locator('.alcove-specimen video').boundingBox();
+        expect(video.height).toBeGreaterThanOrEqual(viewport.height === 900 ? 395 : 570);
+      }
       await page.locator('[data-open-book]').click();
       await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'true');
       expect(await page.locator('#alcove').evaluate((room) => room.scrollTop)).toBe(0);
       await page.locator('[data-open-book]').click();
+    }
+  });
+
+  test('Desktop Pet keeps its field note near the title and its caption clear of the stand and desk', async ({ page }) => {
+    for (const viewport of [{ width: 768, height: 1024 }, { width: 1024, height: 800 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/#pet', { waitUntil: 'domcontentloaded' });
+      await waitForRoomSettled(page, 2);
+      await page.evaluate(() => document.fonts.ready);
+      const [title, note, stand, caption, desk] = await Promise.all([
+        page.locator('.exhibit-copy--pet').boundingBox(), page.locator('.pet-note').boundingBox(),
+        page.locator('.pet-stand').boundingBox(), page.locator('.pet-specimen figcaption').boundingBox(),
+        page.locator('.pet-slab').boundingBox(),
+      ]);
+      const gap = note.y - (title.y + title.height);
+      expect(gap, `card gap at ${viewport.width}`).toBeGreaterThanOrEqual(8);
+      expect(gap, `card gap at ${viewport.width}`).toBeLessThanOrEqual(32);
+      expect(caption.y - (stand.y + stand.height), `stand clearance at ${viewport.width}`).toBeGreaterThanOrEqual(8);
+      expect(desk.y - (caption.y + caption.height), `desk clearance at ${viewport.width}`).toBeGreaterThanOrEqual(8);
+      expect(overlapArea(note, caption)).toBe(0);
+      await expect(page.locator('[data-call-pet]')).toBeVisible();
+      await page.locator('#pet .repo-link').click({ trial: true });
     }
   });
 

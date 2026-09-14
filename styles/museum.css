@@ -873,10 +873,10 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 .room-texture--alcove { background: radial-gradient(circle at 68% 7%, rgba(255,250,236,.82), transparent 30%), repeating-linear-gradient(90deg, rgba(67,41,26,.045) 0 1px, transparent 1px 46px), linear-gradient(100deg, rgba(67,41,26,.12), transparent 14%, transparent 86%, rgba(67,41,26,.14)); }
 .room-texture--alcove::after { position: absolute; top: 11.5%; right: 6%; bottom: 15.5%; width: 50.5%; content: ""; border: 1.5px solid rgba(67,41,26,.1); border-bottom: 0; border-radius: 47% 47% 0 0 / 24% 24% 0 0; }
 .room-canvas--alcove { display: grid; grid-template-columns: minmax(300px, .72fr) minmax(520px, 1.42fr); grid-template-rows: auto 1fr; align-items: center; column-gap: clamp(45px, 5vw, 90px); row-gap: 24px; }
-.exhibit-copy--alcove { grid-column: 1; grid-row: 1; align-self: end; }
+.exhibit-copy--alcove { grid-column: 1; grid-row: 1; align-self: start; }
 .exhibit-copy--alcove h2 { color: #712531; text-shadow: 4px 5px 0 rgba(255,248,232,.72); }
 .exhibit-copy--alcove .project-facts li { color: #4f3120; }
-.alcove-specimen { grid-column: 2; grid-row: 1 / 3; align-self: center; width: 100%; }
+.alcove-specimen { grid-column: 2; grid-row: 1 / 3; align-self: start; width: 100%; }
 .museum-window--alcove { position: relative; padding: clamp(10px, 1.1vw, 17px); background: linear-gradient(118deg, rgba(255,246,224,.16), transparent 42%), repeating-linear-gradient(93deg, rgba(20,10,4,.06) 0 3px, transparent 3px 9px), linear-gradient(135deg, #5a3a22, #43291a 58%, #37200f); border: 2.5px solid #2e1a0e; border-radius: 7px 4px 9px 4px; box-shadow: 9px 11px 0 rgba(67,41,26,.38), 14px 16px 0 rgba(46,26,14,.88); transform: rotate(.45deg); }
 .museum-window--alcove::before,
 .museum-window--alcove::after { position: absolute; z-index: 3; width: 24px; height: 24px; content: ""; border: 2.5px solid #b8863b; pointer-events: none; }
@@ -2122,14 +2122,40 @@ h2[tabindex="-1"]:focus { outline: none; box-shadow: none; }
 
 /* A full-width lower shelf keeps the notes and working book inside the stage. */
 @media (min-width: 761px) and (min-height: 781px) {
-  .room-canvas--alcove { grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); grid-template-rows: minmax(0,1fr) auto; gap: 20px 32px; padding-block: 22px 54px; }
-  .alcove-specimen { grid-row: 1; transform: none; }
-  .museum-window--alcove video { max-height: calc(100dvh - var(--header-h) - var(--map-h) - 390px); }
+  .room-canvas--alcove { grid-template-columns: minmax(0,.9fr) minmax(0,1.5fr); grid-template-rows: minmax(0,1fr) auto; gap: 20px 32px; padding-block: 22px 46px; }
+  .alcove-specimen { grid-row: 1; margin: 0; transform: none; }
+  .museum-window--alcove video { max-height: calc(100dvh - var(--header-h) - var(--map-h) - 320px); }
   .alcove-notes { grid-column: 1 / -1; grid-row: 2; flex-direction: row; align-items: flex-end; gap: 40px; }
   .alcove-notes .agent-card { flex: 1; }
   .alcove-notes .agent-card__body { max-width: none; }
-  .alcove-shelf-row { flex: 0 0 290px; }
-  .alcove-shelf-row .interaction-cue { margin: 0; }
+  .alcove-shelf-row { flex: 0 0 330px; flex-wrap: nowrap; }
+  .alcove-shelf-row .interaction-cue { align-self: center; margin: 0; }
+}
+
+/* The monitor caption takes up real space below its stand; the field note
+   follows the heading instead of sinking to the bottom of a stretched row. */
+@media (min-width: 761px) {
+  .room-canvas--pet { grid-template-columns: minmax(0,.9fr) minmax(0,1.3fr); grid-template-rows: max-content minmax(0,1fr) auto; gap: 22px 36px; padding-block: 28px 54px; }
+  .pet-note, .pet-specimen { align-self: start; }
+  .pet-specimen { margin: 0; }
+  .pet-specimen figcaption { position: static; width: 100%; margin: 14px 0 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; }
+  .pet-slab { height: 64px; margin-top: 0; }
+  .pet-sticky { left: 14px; }
+  .museum-window--pet video { max-height: clamp(200px,calc(100dvh - var(--header-h) - var(--map-h) - 330px),660px); object-fit: contain; }
+}
+@media (min-width: 761px) and (max-width: 1180px) {
+  .exhibit-copy--pet { grid-column: 1 / -1; }
+  .pet-specimen { grid-row: 2; }
+  .pet-note__story { font-size: .76rem; line-height: 1.55; }
+  .pet-note { padding: 13px 14px; }
+  .pet-note__facts { gap: 6px; }
+  .pet-note__facts li { padding: 4px 7px; }
+  .pet-specimen figcaption { gap: 12px; }
+  .pet-specimen .repo-link { justify-self: start; }
+  .museum-window--pet video { max-height: clamp(200px,calc(100dvh - var(--header-h) - var(--map-h) - 390px),660px); }
+}
+@media (max-width: 760px) {
+  .pet-slab { margin-top: 16px; }
 }
 @media (min-width: 761px) and (min-height: 781px) and (max-height: 850px) {
   .exhibit-copy--alcove h2 { font-size: clamp(3rem,5vw,4.5rem); }
