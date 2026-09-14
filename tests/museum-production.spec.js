@@ -302,7 +302,7 @@ test.describe('Software in Motion production contract', () => {
     }
   });
 
-  test('the Welcome book hides its cover and keeps ruled page copy in bounds at 390', async ({ page }) => {
+  test('the Welcome book opens to a detailed spread with its printed copy in bounds at 390', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
     const book = page.locator('[data-open-book]');
@@ -321,34 +321,30 @@ test.describe('Software in Motion production contract', () => {
     expect(coverState.visibility).toBe('hidden');
 
     const readPageMetrics = () => page.locator('.alcove-book__page').evaluate((pageEl) => {
-      const rule = Number.parseFloat(getComputedStyle(pageEl).getPropertyValue('--book-rule')) || 9;
       const pageRect = pageEl.getBoundingClientRect();
       const title = pageEl.querySelector('b');
       const note = pageEl.querySelector('em');
       const titleRect = title.getBoundingClientRect();
       const noteRect = note.getBoundingClientRect();
-      const titleOffset = titleRect.top - pageRect.top;
-      const noteOffset = noteRect.top - pageRect.top;
-      const inRuleBand = (offset) => {
-        const pos = ((offset % rule) + rule) % rule;
-        return pos >= 0.5 && pos <= rule - 1.5;
-      };
+      const proseRect = pageEl.querySelector('.alcove-book__prose').getBoundingClientRect();
+      const illustrationRect = pageEl.querySelector('svg').getBoundingClientRect();
       return {
         withinBounds: titleRect.left >= pageRect.left - 0.5
           && titleRect.right <= pageRect.right + 0.5
           && noteRect.left >= pageRect.left - 0.5
           && noteRect.bottom <= pageRect.bottom + 1.5,
-        titleAligned: inRuleBand(titleOffset),
-        noteAligned: inRuleBand(noteOffset),
+        copySeparated: titleRect.bottom < illustrationRect.top && illustrationRect.bottom < proseRect.top && proseRect.bottom <= noteRect.top,
       };
     });
     // The cover hides before the 3D leaf and block finish settling. Measure the
-    // ruled-page alignment only once that transform has reached its final pose.
+    // printed-page layout only once that transform has reached its final pose.
     await expect.poll(readPageMetrics).toEqual({
       withinBounds: true,
-      titleAligned: true,
-      noteAligned: true,
+      copySeparated: true,
     });
+    await expect(page.locator('.alcove-book__bookplate')).toContainText('This little');
+    await book.click();
+    await expect(book).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('feature demos decode at their real intrinsic dimensions', async ({ page }) => {
@@ -745,7 +741,7 @@ test.describe('Software in Motion production contract', () => {
     await expect(petVideo).toHaveJSProperty('paused', true);
   });
 
-  test('desktop chapters scroll only for overflowing content and never show the mobile prompt', async ({ page }) => {
+  test('full-height desktop chapters stay fixed without the mobile prompt', async ({ page }) => {
     for (const viewport of [{ width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
       await page.setViewportSize(viewport);
       await page.goto('/#foyer', { waitUntil: 'domcontentloaded' });
@@ -753,13 +749,12 @@ test.describe('Software in Motion production contract', () => {
         await page.locator(`.museum-map [data-room-target="${index}"]`).click();
         await waitForRoomSettled(page, index);
         const current = page.locator(`#${room}`);
+        await expect(current).toHaveCSS('overflow-y', 'clip');
         if (room === 'alcove') {
-          await expect(current).toHaveCSS('overflow-y', 'auto');
           await page.locator('[data-open-book]').click();
           await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'true');
           const scrollTop = await current.evaluate((element) => element.scrollTop);
-          if (viewport.height === 900) expect(scrollTop).toBeGreaterThan(0);
-          else expect(scrollTop).toBe(0);
+          expect(scrollTop).toBe(0);
           await page.locator('[data-open-book]').click();
           await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'false');
         } else {
@@ -769,6 +764,28 @@ test.describe('Software in Motion production contract', () => {
         }
         await expect(page.locator('.mobile-scroll-hint')).toBeHidden();
       }
+    }
+  });
+
+  test('Alcove fits its copy, demo and book controls inside the desktop stage', async ({ page }) => {
+    for (const viewport of [{ width: 768, height: 1024 }, { width: 1024, height: 800 }, { width: 1440, height: 800 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('/#alcove', { waitUntil: 'domcontentloaded' });
+      await waitForRoomSettled(page, 1);
+      await page.evaluate(() => document.fonts.ready);
+      const bounds = await page.locator('#alcove').evaluate((room) => {
+        const stage = room.getBoundingClientRect();
+        const elements = [...room.querySelectorAll('.exhibit-copy, .media-exhibit, .alcove-notes')];
+        return elements.map((element) => { const rect = element.getBoundingClientRect(); return { name: element.className, top: rect.top - stage.top, bottom: stage.bottom - rect.bottom }; });
+      });
+      for (const box of bounds) {
+        expect(box.top, `${viewport.width} ${box.name} top`).toBeGreaterThanOrEqual(0);
+        expect(box.bottom, `${viewport.width} ${box.name} bottom`).toBeGreaterThanOrEqual(0);
+      }
+      await page.locator('[data-open-book]').click();
+      await expect(page.locator('[data-open-book]')).toHaveAttribute('aria-expanded', 'true');
+      expect(await page.locator('#alcove').evaluate((room) => room.scrollTop)).toBe(0);
+      await page.locator('[data-open-book]').click();
     }
   });
 

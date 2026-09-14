@@ -537,7 +537,7 @@
     alcoveBook.classList.toggle("is-open", open);
     alcoveBook.setAttribute("aria-expanded", String(open));
     announceReaction(open
-      ? "The Welcome book slides off the shelf and opens on its first ruled page."
+      ? "The Welcome book slides off the shelf and opens to an illustrated welcome spread."
       : "The Welcome book closes and slides back onto the shelf.");
   });
 
